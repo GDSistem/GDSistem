@@ -1,26 +1,28 @@
 import React from 'react'
 import '../Styles/Profile.css'
-import { FcOnlineSupport } from "react-icons/fc";
-import { FaChevronDown } from "react-icons/fa";
+import { FaUserCircle } from "react-icons/fa";
+// import { FaChevronDown } from "react-icons/fa";
+import { IoLogOut } from "react-icons/io5";
 
 
 
 
-function Profile() {
+
+
+function Profile({ user }) {
   return (
     <div className='profile'>
         <div className='img'>
-        <FcOnlineSupport />
+        <FaUserCircle />
             
 
         </div>
         <div className='Contenido'>
-            <h1 className='nombre'>Giovanna Cianfaglione</h1>
-            <h4 className='cargo'>Programador</h4>
+            <h1 className='nombre'>{user?.nombre}</h1>
 
         </div>
         <div className='icon'>
-        <FaChevronDown />
+        <IoLogOut />
 
 
         </div>
@@ -31,37 +33,3 @@ function Profile() {
 
 export default Profile
 
-
-
-// function Profile({ user, toggleModal }) {
-//   return (
-//     <div className='profile'>
-//         <div className='img'>
-//         <FcOnlineSupport />
-            
-
-//         </div>
-//         <div className='Contenido'>
-
-//           {user && (
-//             <>
-//               <h1 className='nombre'>{user.nombre}</h1>
-//               <h4 className='cargo'>{user.cargo}</h4>
-//             </>
-//           )}
-
-//             {/* <h1 className='nombre'>Giovanna Cianfaglione</h1>
-//             <h4 className='cargo'>Programador</h4> */}
-
-//         </div>
-//         <div className='icon'>
-//         <FaChevronDown onClick={toggleModal} />
-
-
-//         </div>
-        
-//     </div>
-//   )
-// }
-
-// export default Profile

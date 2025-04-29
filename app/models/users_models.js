@@ -12,8 +12,8 @@ const obtenerUsuarios = async () => {
 const obtenerUsuario = async (nombre) => {
   const pool = await poolPromise;
   const result = await pool.request()
-    .input('NomUsuario', nombre)
-    .query('SELECT * FROM dbo.TblUsuarios WHERE NomUsuario = @NomUsuario');
+    .input('CodUsuario', nombre)
+    .query('SELECT * FROM dbo.TblUsuarios WHERE CodUsuario = @CodUsuario');
 
   return result.recordset[0]; // devuelve solo un usuario o undefined
 };

@@ -11,11 +11,12 @@ import './App.css'
 const App = () => {
   const [menuSeleccionado, setMenuSeleccionado] = useState('');
   const [sidebarVisible, setSidebarVisible] = useState(false); // Estado para mostrar/ocultar el SideBarSecundario
+  const [user, setUser] = useState(null);
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
  
 
-  // Si ya está logueado (localStorage), actualiza estado
+  // // Si ya está logueado (localStorage), actualiza estado
   // useEffect(() => {
   //   const user = localStorage.getItem('user');
   //   if (user) {
@@ -33,17 +34,30 @@ const App = () => {
     setSidebarVisible(false);  // Cerrar el sidebar cuando se haga clic en una opción
   };
   
-  const handleLogin = (username) => {
-    // Aquí luego llamarás a tu API real
-    localStorage.setItem('user', username); 
-    setIsAuthenticated(true);
+  // const handleLogin = (username) => {
+  //   // Aquí luego llamarás a tu API real
+  //   localStorage.setItem('user', username); 
+  //   setIsAuthenticated(true);
+   
+  // };
+
+  const handleLogin = (usuario) => {
+    localStorage.setItem('user', JSON.stringify(usuario)); 
+  setUser(usuario);
+  setIsAuthenticated(true);
    
   };
+
+  // const handleLogout = () => {
+  //   localStorage.removeItem('user');
+  //   setIsAuthenticated(false);
+   
+  // };
 
   const handleLogout = () => {
     localStorage.removeItem('user');
     setIsAuthenticated(false);
-   
+    setUser(null);
   };
 
   if (!isAuthenticated) {
@@ -58,7 +72,7 @@ const App = () => {
         <SideBar setMenuSeleccionado={handleMenuSeleccionado} />
         {sidebarVisible && <SidebarSecundario menu={menuSeleccionado} closeSideSecundario={closeSidebar} className={sidebarVisible ? 'visible' : ''}  />}
         <div className='dashboard'>
-          <ContentHeader  onLogout={handleLogout}  />
+          <ContentHeader  user={user} onLogout={handleLogout}  />
           
           <Content />
         </div>

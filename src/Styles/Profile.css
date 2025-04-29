@@ -7,6 +7,8 @@
     border-radius: 50px;
     justify-content: center; /* Centra los elementos horizontalmente */
     align-items: center; 
+    /* justify-content: space-between;  */
+   
 }
 
 .Contenido{
@@ -28,14 +30,15 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    color: #8b8b8b;
 }
 
 .icon svg {
-    font-size: 15px; /* Ajusta el tamaño de los íconos */
+    font-size: 23px; /* Ajusta el tamaño de los íconos */
 }
 
 .img svg {
-    font-size: 30px; /* Ajusta el tamaño de los íconos */
+    font-size: 20px; /* Ajusta el tamaño de los íconos */
 }
 
 /* Si decides usar una imagen en lugar de un ícono */

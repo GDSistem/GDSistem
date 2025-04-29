@@ -34,7 +34,9 @@ function Login({ onLogin }) {
 
       if (data.success) {
         setErrorMessage('');
-        onLogin(username); // ✅ accede a la app
+        onLogin(data.usuario); // pasa el objeto usuario completo
+
+        // onLogin(username); // ✅ accede a la app
       } else {
         // alert(data.message || 'Usuario o contraseña incorrectos');
         setErrorMessage(data.message || 'Usuario o contraseña incorrectos');

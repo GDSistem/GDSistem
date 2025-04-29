@@ -4,11 +4,11 @@ import Profile from './Profile';
 import SearchBar from './SearchBar';
 import { useNavigate } from 'react-router-dom';
 
-function ContentHeader() {
+function ContentHeader({ user, onLogout }) {
   return (
     <div className='header'>
         <SearchBar/>
-        <Profile/>
+        <Profile user={user}/>
 
     </div>
   )
