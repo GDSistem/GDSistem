@@ -2,7 +2,15 @@ import React from 'react'
 
 function Facturacion() {
   return (
-    <div>Facturacion</div>
+    <div className='bill'>
+      <div className='files'>
+
+        
+
+      </div>
+
+
+    </div>
   )
 }
 

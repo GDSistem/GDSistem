@@ -9,7 +9,13 @@ import { IoLogOut } from "react-icons/io5";
 
 
 
-function Profile({ user }) {
+function Profile({ user, onLogout }) {
+
+  const handleLogoutClick = () => {
+    onLogout(); // Llama a la función de logout
+    alert('Sesión cerrada con éxito'); // Mensaje de cierre de sesión
+  };
+
   return (
     <div className='profile'>
         <div className='img'>
@@ -21,7 +27,7 @@ function Profile({ user }) {
             <h1 className='nombre'>{user?.nombre}</h1>
 
         </div>
-        <div className='icon'>
+        <div className='icon' onClick={handleLogoutClick} style={{ cursor: 'pointer' }}>
         <IoLogOut />
 
 

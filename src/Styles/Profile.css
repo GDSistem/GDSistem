@@ -26,7 +26,7 @@
     font-size: 12px;
 
 }
-.icon, .img {
+.img {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -36,6 +36,23 @@
 .icon svg {
     font-size: 23px; /* Ajusta el tamaño de los íconos */
 }
+
+.icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #8b8b8b;
+    transition: transform 0.1s ease, color 0.2s ease;
+    cursor: pointer; /* Indica que es interactivo */
+  }
+  
+  .icon:hover {
+    color: #ff4d4d; /* Cambia a rojo o cualquier color al pasar el mouse */
+  }
+  
+  .icon:active {
+    transform: scale(0.95); /* Le da un efecto de "hundido" */
+  }
 
 .img svg {
     font-size: 20px; /* Ajusta el tamaño de los íconos */

@@ -8,7 +8,7 @@ function ContentHeader({ user, onLogout }) {
   return (
     <div className='header'>
         <SearchBar/>
-        <Profile user={user}/>
+        <Profile user={user} onLogout={onLogout}/>
 
     </div>
   )
