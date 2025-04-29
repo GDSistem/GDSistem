@@ -6,13 +6,15 @@ import Logo from '../../assets/img/images.png';
 function Login({ onLogin }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+
 
   // ✅ handleSubmit ahora es async
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!username || !password) {
-      alert('Por favor ingresa usuario y contraseña');
+      setErrorMessage('Por favor ingresa usuario y contraseña');
       return;
     }
 
@@ -31,13 +33,17 @@ function Login({ onLogin }) {
       const data = await response.json();
 
       if (data.success) {
+        setErrorMessage('');
         onLogin(username); // ✅ accede a la app
       } else {
-        alert(data.message || 'Usuario o contraseña incorrectos');
+        // alert(data.message || 'Usuario o contraseña incorrectos');
+        setErrorMessage(data.message || 'Usuario o contraseña incorrectos');
       }
     } catch (error) {
       console.error('Error al iniciar sesión:', error);
-      alert('Ocurrió un error al intentar iniciar sesión');
+      // alert('Ocurrió un error al intentar iniciar sesión');
+      setErrorMessage('Ocurrió un error al intentar iniciar sesión');
+
     }
   };
 
@@ -70,6 +76,12 @@ function Login({ onLogin }) {
 
           <button type="submit">Ingresar</button>
         </form>
+        {errorMessage && (
+          <div className="error-popup">
+            {errorMessage}
+          </div>
+        )}
+
       </div>
     </div>
   );
