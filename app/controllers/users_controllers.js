@@ -13,6 +13,12 @@ const getUsuarios = async (req, res) => {
 
 
 // Controlador para iniciar sesión
+
+// Payload que espera recibir el login
+// {
+//   "nombre": "usuario",
+//   "contrasena": "contraseña"
+// }
 const loginUsuario = async (req, res) => {
   const { nombre, contrasena } = req.body;
 
@@ -24,22 +30,21 @@ const loginUsuario = async (req, res) => {
   }
 
   try {
-    const data = await obtenerUsuario(nombre, contrasena);
+    const usuario = await obtenerUsuario(nombre);
 
-    if (data) {
-      // Aquí podrías generar un token si usas JWT (opcional)
-      // const token = generarToken(data.id);
-
-      res.status(200).json({
-        success: true,
-        message: 'Inicio de sesión exitoso',
-      });
-    } else {
-      res.status(401).json({
+    // Verifica existencia y clave
+    if (!usuario || usuario.Clave !== contrasena) {
+      return res.status(401).json({
         success: false,
         message: 'Usuario o contraseña incorrectos',
       });
     }
+
+    // Si todo bien, responde éxito
+    res.status(200).json({
+      success: true,
+      message: 'Inicio de sesión exitoso',
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -48,6 +53,7 @@ const loginUsuario = async (req, res) => {
     });
   }
 };
+
 
 
 module.exports = { getUsuarios, loginUsuario };

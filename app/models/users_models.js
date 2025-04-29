@@ -9,16 +9,15 @@ const obtenerUsuarios = async () => {
   return result.recordset; // devuelve array de objetos
 };
 
-// Función para obtener un usuario por nombre de usuario y contraseña
-const obtenerUsuario = async (nombre, contrasena) => {
-    const pool = await poolPromise;
-    const result = await pool.request()
-      .input('NomUsuario', nombre)   // Parámetro 1
-      .input('Clave', contrasena)    // Parámetro 2
-      .query('SELECT * FROM dbo.TblUsuarios WHERE NomUsuario = @NomUsuario AND Clave = @Clave');
-    
-    return result.recordset; // Devuelve array de objetos
-  };
+const obtenerUsuario = async (nombre) => {
+  const pool = await poolPromise;
+  const result = await pool.request()
+    .input('NomUsuario', nombre)
+    .query('SELECT * FROM dbo.TblUsuarios WHERE NomUsuario = @NomUsuario');
+
+  return result.recordset[0]; // devuelve solo un usuario o undefined
+};
+
   
 
 
