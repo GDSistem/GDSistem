@@ -1,0 +1,46 @@
+.profile {
+    display: flex;
+    flex-direction: row;
+    height: 50px;   /* Ajusta el tamaño de acuerdo con tus necesidades */
+    width: 20%;    /* Para que ocupe el 100% del ancho del contenedor */
+    background-color: #F5F5F5;
+    border-radius: 50px;
+    justify-content: center; /* Centra los elementos horizontalmente */
+    align-items: center; 
+}
+
+.Contenido{
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+
+}
+
+.nombre{
+    font-size: 15px;
+
+}
+.cargo{
+    font-size: 12px;
+
+}
+.icon, .img {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.icon svg {
+    font-size: 15px; /* Ajusta el tamaño de los íconos */
+}
+
+.img svg {
+    font-size: 30px; /* Ajusta el tamaño de los íconos */
+}
+
+/* Si decides usar una imagen en lugar de un ícono */
+.img img {
+    width: 30px;  /* Ajusta el tamaño de la imagen */
+    height: 30px; /* Ajusta el tamaño de la imagen */
+    border-radius: 50%; /* Si quieres una imagen circular */
+}

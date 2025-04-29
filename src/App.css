@@ -1,0 +1,16 @@
+.App {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: row;
+}
+
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;  /* Asegura que ocupe toda la altura de la ventana */
+  width: 100%;    /* Ocupará todo el ancho disponible */
+  position: relative;
+}
+
+

@@ -1,0 +1,56 @@
+.sideBar{
+    height: 100%;
+    width: 160px;
+    background-color: #444595;
+    /* padding: 20px; */
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Para que los elementos se alineen desde arriba */
+    align-items: center; 
+    position: relative;
+   
+    
+    
+}
+
+.logo img {
+    max-width: 120px;  /* Ajusta el tamaño máximo del logo */
+    max-height: 80px;  /* Ajusta el tamaño máximo del logo */
+    width: auto;  /* Esto mantiene la proporción del logo */
+    height: auto;  /* Esto mantiene la proporción del logo */
+    margin-bottom: 10px;  /* Si deseas espacio debajo del logo */
+    margin-top: 20px;
+}
+
+/* Estilo para los botones */
+.sidebar-button {
+    width: 130px;
+    margin: 5px 0;
+    padding: 10px;
+    background-color: #444595;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    text-transform: capitalize;
+    transition: background-color 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Efecto hover */
+.sidebar-button:hover {
+    background-color: #6f71db;
+}
+
+.sidebar-button svg {
+    margin-bottom: 5px; /* Ajusta el espacio entre el ícono y el texto */
+    font-size: 18px; /* Ajusta el tamaño del ícono si es necesario */
+}
+
+
+

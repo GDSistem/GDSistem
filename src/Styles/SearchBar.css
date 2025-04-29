@@ -1,0 +1,45 @@
+.container {
+    display: flex;
+    flex-direction: row;
+    height: 50px;   /* Ajusta el tamaño de acuerdo con tus necesidades */
+    width: 25%;    /* Para que ocupe el 100% del ancho del contenedor */
+    background-color: #F5F5F5;
+    border-radius: 50px;
+    justify-content: center; /* Centra los elementos horizontalmente */
+    align-items: center; 
+    padding: 5px 10px; 
+}
+
+.search-box {
+    border: none;
+    outline: none;
+    padding: 10px 15px; /* Espaciado interno del campo de búsqueda */
+    font-size: 14px;
+    border-radius: 50px;  /* Bordes redondeados para coincidir con el contenedor */
+    width: 100%;   /* Asegura que el input ocupe todo el espacio disponible */
+    box-sizing: border-box; /* Incluye el padding dentro del tamaño total */
+    background-color: #F5F5F5;  /* Color de fondo del input */
+    color: #333333;  /* Color del texto */
+    transition: all 0.3s ease; /* Transición suave para cambios de estilo */
+}
+
+.search-box::placeholder {
+    color: #999999; /* Color del placeholder */
+    font-style: italic;
+}
+
+/* Cambiar color y agregar sombra al hacer focus */
+.search-box:focus {
+    background-color: #F5F5F5;  /* Cambiar color de fondo al enfocar */
+}
+
+.search-box:focus::placeholder {
+    color: #444595; /* Cambiar el color del placeholder al hacer focus */
+}
+.search-icon {
+    font-size: 24px; /* Tamaño que quieras: 24px, 30px, etc */
+   
+    padding-left: 20px;
+  
+}
+

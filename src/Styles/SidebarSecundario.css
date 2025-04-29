@@ -1,0 +1,87 @@
+.sidebar-secundario {
+    position: absolute; /* o absolute, dependiendo de tu estructura */
+    top: 0;
+    left: 145px;
+    width: 200px; /* o lo que quieras */
+    height: 97.5vh; /* altura total de la pantalla */
+    background-color: rgb(248, 248, 251); /* o el color que uses */
+    border-top-right-radius: 25px;
+    border-bottom-right-radius: 25px;
+    z-index: 1000; /* un número alto para que esté encima */
+    box-shadow: 2px 0px 8px rgba(0,0,0,0.2); /* opcional para que se vea flotante */
+    padding-left: 40px;
+    padding-top: 20px;
+    padding-right: 20px;
+    transition: transform 0.3s ease;
+    max-height: 100vh; /* El alto no puede superar la altura de la pantalla */
+    overflow-y: auto;
+    
+  }
+  
+  .sidebar-secundario.visible {
+    transform: translateX(0);
+ 
+   
+    /* left: 0; */
+  }
+  
+  .sidebar-opcion {
+    margin-bottom: 10px;
+  }
+  
+  .sidebar-link {
+    /* text-decoration: none;
+    color: black;
+    font-weight: bold;
+    transition: color 0.3s ease;
+    word-break: break-word; 
+    white-space: normal;  */
+    text-decoration: none;
+    color: black;
+    font-size: 15px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    word-break: break-word;
+    white-space: normal;
+    padding: 5px; /* <-- mover el padding aquí */
+    border-radius: 5px; /* <-- también moverlo aquí */
+    display: block; /* <-- para que ocupe el ancho disponible */
+    
+  }
+  
+  .sidebar-link:hover {
+    /* color: black; 
+    background-color: #C2C2ED;
+    padding: 8px;
+    border-radius: 5px; */
+    color: black;
+    background-color: #C2C2ED;
+
+
+  }
+  
+  .sidebar-no-opciones {
+    color: #666;
+    font-style: italic;
+    margin-top: 20px;
+  }
+
+  .sidebar-icon{
+    margin-right: 10px; /* separa el ícono del nombre */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+  }
+  .sidebar-titulo {
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    color: #44444495;
+    padding-bottom: 5px; /* espacio entre el texto y la línea */
+    border-bottom: 1px solid #ababab; /* grosor y color de la línea */
+
+  }
+  
+  
