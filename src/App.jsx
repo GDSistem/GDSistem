@@ -16,13 +16,13 @@ const App = () => {
  
 
   // Si ya está logueado (localStorage), actualiza estado
-  useEffect(() => {
-    const user = localStorage.getItem('user');
-    if (user) {
-      setIsAuthenticated(true);
+  // useEffect(() => {
+  //   const user = localStorage.getItem('user');
+  //   if (user) {
+  //     setIsAuthenticated(true);
       
-    }
-  }, []);
+  //   }
+  // }, []);
 
   const handleMenuSeleccionado = (menu) => {
     setMenuSeleccionado(menu);
