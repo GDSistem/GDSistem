@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 
 import '../../Styles/Login.css'
+import Logo from '../../assets/img/images.png'
 
 function Login({ onLogin }) {
 
@@ -12,21 +13,6 @@ function Login({ onLogin }) {
     e.preventDefault();
 
 
-    // const user = {
-    //   nombre: 'Juan Pérez', // Aquí podrías obtenerlo del backend
-    //   cargo: 'Gerente', // Igual que el nombre, lo puedes obtener del backend
-    // };
-
-    // // Si hay username y password, simula login
-    // if (username && password) {
-    //   localStorage.setItem('user', JSON.stringify(user)); // Guardar datos en el localStorage
-    //   onLogin(); // Llamar a la función onLogin para redirigir al dashboard o realizar cualquier otra acción
-    // } else {
-    //   alert('Por favor ingresa usuario y contraseña');
-    // }
-
- 
-
     // Aquí después conectarás con tu backend
     if (username && password) {
       onLogin(username); // Por ahora simula que si escribe algo, se loguea
@@ -34,24 +20,37 @@ function Login({ onLogin }) {
       alert('Por favor ingresa usuario y contraseña');
     }
   };
+
   return (
+    <div className='big-container'>
+      <div className="bienvenida">
+            <img src={Logo} alt="Logo de la empresa" className="logo-img" />
+            <h1 className='titulo'>Bienvenidos al Sistema</h1>
+      </div>
+
+    
     <div className="login-container">
     <h2>Iniciar Sesión</h2>
+
     <form onSubmit={handleSubmit}>
+    <label htmlFor="username">Usuario</label>
       <input
         type="text"
         placeholder="Usuario"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
       />
+
+    <label htmlFor="password">Contraseña</label>
       <input
         type="password"
         placeholder="Contraseña"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-      <button type="submit">Entrar</button>
+      <button type="submit">Ingresar</button>
     </form>
+  </div>
   </div>
 );
 };
