@@ -1,0 +1,46 @@
+.bill {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f5f5f5;
+  }
+  
+  .files {
+    background-color: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 400px;
+  }
+  
+  .files form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .files label {
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .files input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+  }
+  
+  .files input:focus {
+    outline: none;
+    border-color: #007bff;
+  }
+  
+  .files input[readonly] {
+    background-color: #f0f0f0;
+    cursor: not-allowed;
+  }
+  
