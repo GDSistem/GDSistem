@@ -44,6 +44,9 @@ const loginUsuario = async (req, res) => {
     res.status(200).json({
       success: true,
       message: 'Inicio de sesión exitoso',
+      usuario: {
+        nombre: usuario.NomUsuario,
+      },
     });
   } catch (error) {
     console.error(error);
