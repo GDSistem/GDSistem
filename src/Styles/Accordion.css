@@ -1,0 +1,98 @@
+.accordion-container {
+    /* margin: 20px; */
+    /* border: 1px solid #ccc; */
+    /* border-radius: 6px;
+    overflow: hidden;
+    background-color: #f9f9f9; */
+  }
+  
+  /* .accordion-item {
+    border-bottom: 1px solid #ddd;
+  } */
+  
+  /* .accordion-header {
+    background-color: #eee;
+    padding: 12px 16px;
+    width:100%;
+    text-align: left;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .accordion-body {
+    padding: 12px 16px;
+    background-color: white;
+  }
+  
+  .arrow {
+    font-size: 12px;
+  } */
+
+  .accordion {
+    border: 0px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .accordion-item {
+    margin: 20px 0;
+  }
+  
+  .accordion-title {
+    background: #f0f0f0;
+    cursor: pointer;
+    padding: 20px;
+    width: 100%;
+    text-align: left;
+    border-radius: 10px;
+    border: 0px;
+    font-size: 15px;
+  }
+  
+  .accordion-content {
+    padding: 20px;
+    background: #fff;
+    /* display: flex;
+    flex-direction: column; */
+  }
+  
+  .formulario-acordeon label {
+    display: block;
+    margin: 10px 0 10px;
+  }
+  
+  .formulario-acordeon input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+  }
+
+  .formulario-acordeon{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+  }
+  
+  .accordion-icon {
+    font-size: 15px;
+  }
+.acordeon-container{
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    /* flex-wrap: wrap; */
+    gap: 5px;
+    margin-bottom: 20px;
+    background-color: aquamarine;
+    padding: 10px;
+
+}
+  
+.huge-container{
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import '../../Styles/FacturacionVentas.css';
 import MenuPage from '../../Components/MenuPage';
+import AccordionSection from '../../Components/AccordionSection';
 
 function Facturacion() {
   const [codigoEmpresa, setCodigoEmpresa] = useState('');
@@ -97,15 +98,20 @@ function Facturacion() {
                 <input type="text" value={nombreEmpresa} readOnly className='input-big' />
               </div>
               <div className="form-group">
-                <label>Tipo de Documento:</label>
-                <input
-                  type="text"
-                  className="input-small"
-                  value={codigoEmpresa}
-                  onChange={handleEmpresaInput}
-                  onKeyDown={handleEmpresaKeyDown}
-                  placeholder="Ej: 01"
-                />
+                <label>Tipo Documento:</label>
+                <select
+                  className="desplegable"
+                  value={tipo}
+                  onChange={(e) => setTipo(e.target.value)}
+                  
+                >
+                  <option value="">Seleccione</option>
+                  <option value="F">F</option>
+                  <option value="P">P</option>
+                  <option value="NC">NC</option>
+                  <option value="ND">ND</option>
+                  <option value="OI">OI</option>
+                </select>
               </div>
               <div className="form-group">
                 <label>Nombre Documento:</label>
@@ -171,21 +177,6 @@ function Facturacion() {
                   <option value="BS">BS</option>
                 </select>
               </div>
-              <div className="form-group">
-                <label>Tipo:</label>
-                <select
-                  className="desplegable"
-                  value={tipo}
-                  onChange={(e) => setTipo(e.target.value)}
-                  
-                >
-                  <option value="">Seleccione</option>
-                  <option value="Cliente">Cliente</option>
-                  <option value="Despacho">Despacho</option>
-                  <option value="Productos">Productos</option>
-                  <option value="Listados">Listados</option>
-                </select>
-              </div>
             </div>
           </form>
         </div>
@@ -193,7 +184,200 @@ function Facturacion() {
       
       </div>
       <div>
-        page
+      <AccordionSection 
+      sections={[
+        {
+          title: 'Datos del Cliente',
+          content: (
+            <div className='huge-container'>
+              <div className='acordeon-container'>
+              <div className="formulario-acordeon">
+              <label>Empresa:</label>
+              <input type="text" value={nombreEmpresa} readOnly />
+              {/* <label>Empresa Seleccionada:</label> */}
+              <input type="text" value={nombreEmpresa} readOnly />
+              </div>
+              <div className="formulario-acordeon">
+              <label>Sucursal:</label>
+              <input type="text" value={nombreSucursal} readOnly />
+              <input type="text" value={nombreSucursal} readOnly />
+
+              </div>
+              <div className="formulario-acordeon">
+              <label>Fecha Documento</label>
+              <input type="text" value={nombreSucursal} readOnly />
+              <label>Fecha Contabilizada</label>
+              <input type="text" value={nombreSucursal} readOnly />
+
+              </div>
+              <div className="formulario-acordeon">
+              <label>Tipo Persona:</label>
+              <input type="text" value={nombreSucursal} readOnly />
+              <input type="text" value={nombreSucursal} readOnly />
+
+              </div>
+              <div className="formulario-acordeon">
+              <label>Lista Precios:</label>
+              <input type="text" value={nombreSucursal} readOnly />
+              <input type="text" value={nombreSucursal} readOnly />
+
+              </div>
+              <div className="formulario-acordeon">
+              <label>Vendedor Interno:</label>
+              <input type="text" value={nombreSucursal} readOnly />
+              <input type="text" value={nombreSucursal} readOnly />
+
+              </div>
+
+              <div className="formulario-acordeon">
+              <label>Vendedor Externo:</label>
+              <input type="text" value={nombreSucursal} readOnly />
+              <input type="text" value={nombreSucursal} readOnly />
+
+              </div>
+
+              <div className="formulario-acordeon">
+              <label>Días Credito</label>
+              <input type="text" value={nombreSucursal} readOnly />
+              <label>Fecha Vencimiento</label>
+              <input type="text" value={nombreSucursal} readOnly />
+
+              </div>
+
+              <div className="formulario-acordeon">
+              <label>Días Adicionales</label>
+              <input type="text" value={nombreSucursal} readOnly />
+              <label>% Contado</label>
+              <input type="text" value={nombreSucursal} readOnly />
+
+              </div>
+
+              <div className="formulario-acordeon">
+              <label>Monto Credito</label>
+              <input type="text" value={nombreSucursal} readOnly />
+              <label>Credito Grupo</label>
+              <input type="text" value={nombreSucursal} readOnly />
+
+              </div>
+              <div className="formulario-acordeon">
+              <label>Plazo entrega</label>
+              <input type="text" value={nombreSucursal} readOnly />
+              <label>Fecha Compromiso</label>
+              <input type="text" value={nombreSucursal} readOnly />
+
+              </div>
+
+              <div className="formulario-acordeon">
+              <label>Exportación</label>
+              <input type="text" value={nombreSucursal} readOnly />
+              <label>Retención Iva</label>
+              <input type="text" value={nombreSucursal} readOnly />
+
+              </div>
+
+              <div className="formulario-acordeon">
+              <label>Fecha</label>
+              <input type="text" value={nombreSucursal} readOnly />
+              <label>Fecha Nula</label>
+              <input type="text" value={nombreSucursal} readOnly />
+
+              </div>
+
+              <div className="formulario-acordeon">
+              <label>Equipo </label>
+              <input type="text" value={nombreSucursal} readOnly />
+              <label>Equipo Nula</label>
+              <input type="text" value={nombreSucursal} readOnly />
+
+              </div>
+
+              <div className="formulario-acordeon">
+              <label>Usuario </label>
+              <input type="text" value={nombreSucursal} readOnly />
+              <label>Usuario Nula</label>
+              <input type="text" value={nombreSucursal} readOnly />
+
+              </div>
+              
+            </div>
+
+            {/* Contenedor Derecho */}
+            <div className='acordeon-container'>
+              <div className="formulario-acordeon">
+              <label>Rif:</label>
+              <input type="text" value={nombreEmpresa} readOnly />
+              <label>Nit:</label>
+              <input type="text" value={nombreEmpresa} readOnly />
+              
+              </div>
+              <div className="formulario-acordeon">
+              <label>Dirección:</label>
+              <input type="text" value={nombreSucursal} readOnly />
+              </div>
+              <div className="formulario-acordeon">
+              <label>Ciudad:</label>
+              <input type="text" value={nombreSucursal} readOnly />
+              </div>
+              <div className="formulario-acordeon">
+              <label>Estado:</label>
+              <input type="text" value={nombreSucursal} readOnly />
+              </div>
+              <div className="formulario-acordeon">
+              <label>País:</label>
+              <input type="text" value={nombreSucursal} readOnly />
+              </div>
+              <div className="formulario-acordeon">
+              <label>Teléfono 1:</label>
+              <input type="text" value={nombreSucursal} readOnly />
+              </div>
+              <div className="formulario-acordeon">
+              <label>Teléfono 2:</label>
+              <input type="text" value={nombreSucursal} readOnly />
+              </div>
+              <div className="formulario-acordeon">
+              <label>Fax:</label>
+              <input type="text" value={nombreSucursal} readOnly />
+              </div>
+              <div className="formulario-acordeon">
+              <label>E-mail:</label>
+              <input type="text" value={nombreSucursal} readOnly />
+              </div>
+              <div className="formulario-acordeon">
+              <label>Comentario Doc:</label>
+              <input type="text" value={nombreSucursal} readOnly />
+              </div>
+
+              <div className="formulario-acordeon">
+              <label>Comentario Nula:</label>
+              <input type="text" value={nombreSucursal} readOnly />
+              </div>
+
+            </div>
+
+            </div>
+            
+            
+
+            
+            
+          ),
+        },
+        {
+          title: 'Detalles del Documento',
+          content: (
+            <div className="formulario-acordeon">
+              <label>Tipo Documento:</label>
+              <input type="text" value={tipo} readOnly />
+    
+              <label>Moneda:</label>
+              <input type="text" value={moneda} readOnly />
+            </div>
+          ),
+        },
+        // puedes agregar más secciones aquí
+      ]}/>
+      
+    
       </div>
       
     </div>
