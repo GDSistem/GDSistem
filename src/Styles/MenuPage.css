@@ -1,0 +1,57 @@
+.container-menu {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end; /* 🔽 Esto alinea los elementos hijos al fondo */
+    justify-content: left; 
+    
+    
+}
+
+.consultar {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+}
+
+.modificar {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+
+}
+
+.nuevo {
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+
+}
+
+.anular {
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+}
+
+.tittle {
+    padding-top: 10px;
+    font-size: 14px;
+    color: #444595;
+}
+
+.icon1, .icon2, .icon3, .icon4{
+    width: 15px;  /* Ajusta el tamaño de la imagen */
+    height: 15px;
+    color: #444595;
+
+}
