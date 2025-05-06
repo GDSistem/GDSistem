@@ -1,7 +1,11 @@
-const {obtenerVentas} = require('../models/billing_sales_models.js'); // Asegúrate de que la ruta sea correcta
+const {ontenerEmpresa, obtenerEmpresa} = require('../models/company_models.js'); // Asegúrate de que la ruta sea correcta
 
-// Controlador para obtener todas las ventas
-const getVentas = async (req, res) => {
+// Controlador para obtener la empresa y sus sucursales
+// Payload que espera recibir
+// {
+//   "codEmpresa": "empresa"
+// }
+const getEmpresa = async (req, res) => {
     const { codEmpresa } = req.body;
   
     // Validación básica
@@ -13,7 +17,7 @@ const getVentas = async (req, res) => {
     }
   
     try {
-      const data = await obtenerVentas(codEmpresa);
+      const data = await obtenerEmpresa(codEmpresa);
   
       if (data.length === 0) {
         return res.status(404).json({
@@ -30,7 +34,7 @@ const getVentas = async (req, res) => {
       console.error('Error al obtener ventas:', error);
       res.status(500).json({
         success: false,
-        message: 'Error interno del servidor al obtener ventas.'
+        message: 'Error interno del servidor al obtener la empresa.'
       });
     }
   };
@@ -41,4 +45,4 @@ const getVentas = async (req, res) => {
 
 
 
-module.exports = { getVentas };
+module.exports = { getEmpresa };

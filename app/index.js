@@ -22,7 +22,8 @@ app.use(express.json());
 
 //Routes
 app.use('/api/usuarios', require('./routes/users_routes.js'));
-app.use('/api/billing', require('./routes/billing_sales_routes.js'));
+app.use('/api/empresa', require('./routes/company_routes.js'));
+app.use('/api/documento', require('./routes/document_routes.js'));
 
 
 // Starting Server

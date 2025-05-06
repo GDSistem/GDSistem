@@ -1,7 +1,7 @@
 const { poolPromise } = require('../configs/database.js'); // Asegúrate de que la ruta sea correcta
 
 // Funcion para obtener las Ventas
-const obtenerVentas = async (codEmpresa) => {
+const obtenerEmpresa = async (codEmpresa) => {
     const pool = await poolPromise;
     
     const result = await pool.request()
@@ -40,4 +40,4 @@ const obtenerVentas = async (codEmpresa) => {
   };
 };
 
-module.exports = { obtenerVentas };
+module.exports = { obtenerEmpresa };

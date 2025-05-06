@@ -1,8 +1,8 @@
 // routes/metodos.routes.js
 const express = require('express');
 const router = express.Router();
-const { getVentas } = require('../controllers/billing_sales_controllers.js');
+const { getEmpresa } = require('../controllers/company_controllers.js');
 
-router.post('/all-billing', getVentas);
+router.post('/codEmpresa', getEmpresa);
 
 module.exports = router;
