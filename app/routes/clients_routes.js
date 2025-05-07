@@ -3,6 +3,6 @@ const express = require('express');
 const router = express.Router();
 const { getCliente } = require('../controllers/clients_controllers');
 
-router.post('/cliente', getCliente);
+router.post('/', getCliente);
 
 module.exports = router;
