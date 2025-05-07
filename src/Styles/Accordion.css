@@ -1,0 +1,75 @@
+
+  .accordion {
+    border: 0px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .accordion-item {
+    margin: 20px 0;
+  }
+  
+  .accordion-title {
+    background: #f0f0f0;
+    cursor: pointer;
+    padding: 20px;
+    width: 100%;
+    text-align: left;
+    border-radius: 10px;
+    border: 0px;
+    font-size: 15px;
+  }
+  
+  .accordion-content {
+    padding: 20px;
+    background: #fff;
+    /* display: flex;
+    flex-direction: column; */
+  }
+  
+  .formulario-acordeon label {
+    /* display: block; */
+    margin: 10px 0 10px;
+    font-size: 12px;
+    width: 15% ;
+  }
+  
+  .formulario-acordeon input {
+    width: 90%;
+    height: 60%;
+    /* padding: 5px; */
+    margin-bottom: 0px;
+    border: 0px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 12px;
+    flex: 1;
+    /* transition: border-color 0.3s ease; */
+  }
+
+  .formulario-acordeon{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    align-items: left;
+  }
+  
+  .accordion-icon {
+    font-size: 15px;
+  }
+.acordeon-container{
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    gap: 10px;
+    margin-bottom: 20px;
+    background-color: white;
+    padding: 10px;
+
+}
+  
+.huge-container{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
