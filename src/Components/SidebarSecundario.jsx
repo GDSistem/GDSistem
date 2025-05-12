@@ -103,6 +103,71 @@ function SidebarSecundario({ menu, closeSideSecundario}) {
             ]
           }
         ],
+        inventario: [
+          {
+            titulo: 'Inventario',
+            opciones: [
+                { nombre: 'Translado de Mercancia', path: '/inventario/transladodeMercancia' ,icon: <IoIosPaper />  },
+                { nombre: 'Recepci de Mercancia', path: '/inventario/recepcionMercancia',icon: <AiOutlineDeliveredProcedure />  },
+            ]
+          },
+          {
+            titulo: 'Productos',
+            opciones: [
+              { nombre: 'Tipos', path: '/inventario/tipo', icon: <GiReceiveMoney /> },
+              { nombre: 'Clases', path: '/inventario/clases' ,icon: <GiPayMoney />  },
+              { nombre: 'Productos', path: '/inventario/productos' ,icon: <GiCoins />  },
+            ]
+          },
+          {
+            titulo: 'Reportes',
+            opciones: [
+                { nombre: 'Reportes de Inventario', path: '/inventario/reportesInventario',icon: <FaUsers /> },
+                { nombre: 'Reportes de Producto', path: '/inventario/reportesProductos' ,icon: <MdOutlineSell />  },
+            ]
+          },
+          
+        ],
+
+        contabilidad: [
+          {
+            titulo: 'Retenciones IVA',
+            opciones: [
+                { nombre: 'Ventas', path: '/contabilidad/ventasIVA' ,icon: <IoIosPaper />  },
+                { nombre: 'Compras', path: '/contabilidad/comprasIVA',icon: <AiOutlineDeliveredProcedure />  },
+            ]
+          },
+          {
+            titulo: 'Retenciones ISLR',
+            opciones: [
+              { nombre: 'Ventas', path: '/contabilidad/ventasISLR', icon: <GiReceiveMoney /> },
+              { nombre: 'Compras', path: '/contabilidad/comprasISLR' ,icon: <GiPayMoney />  },
+             
+            ]
+          },
+          {
+            titulo: 'Pagos',
+            opciones: [
+                { nombre: 'Ret. IVA', path: '/contabilidad/retIBA',icon: <FaUsers /> },
+                { nombre: 'Ret. ISLR', path: '/contabilidad/retISLR' ,icon: <MdOutlineSell />  },
+            ]
+          },
+          {
+            titulo: 'Datos',
+            opciones: [
+                { nombre: 'Tipos IVA', path: '/contabilidad/tipoIVA',icon: <FaUsers /> },
+                { nombre: 'Tipos ISLR', path: '/contabilidad/tipoISLR' ,icon: <MdOutlineSell />  },
+            ]
+          },
+          {
+            titulo: 'Reportes',
+            opciones: [
+                { nombre: 'Reportes Contables', path: '/contabilidad/reporteContable',icon: <FaUsers /> }
+            ]
+          },
+
+          
+        ],
 
       };
 

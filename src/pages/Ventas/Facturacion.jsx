@@ -8,9 +8,33 @@ function Facturacion() {
   const [nombreEmpresa, setNombreEmpresa] = useState('');
   const [codigoSucursal, setCodigoSucursal] = useState('');
   const [nombreSucursal, setNombreSucursal] = useState('');
+  // const [tipoDocumento, setTipoDocumento] = useState('');
+  // const [nombreDocumento, setNombreDocumento] = useState('');
+  // const [numDocumento, setNumDocumento] = useState('');
   const [sucursales, setSucursales] = useState([]);
   const [moneda, setMoneda] = useState('');
-  const [tipo, setTipo] = useState('');
+  // const [tipo, setTipo] = useState('');
+  const [documentos, setDocumentos] = useState([]);
+
+
+  const [codSeleccionado, setCodSeleccionado] = useState('');
+  const [nomTipoDoc, setNomTipoDoc] = useState('');
+
+  useEffect(() => {
+    axios.get('http://localhost:3000/api/documento/codDocumento')
+      .then((res) => {
+        setDocumentos(res.data); // asegúrate de que es un array
+      })
+      .catch((err) => console.error(err));
+  }, []);
+
+  const handleChange = (e) => {
+    const selectedCod = e.target.value;
+    setCodSeleccionado(selectedCod);
+
+    const documento = documentos.find(doc => doc.CodTipoDoc === selectedCod);
+    setNomTipoDoc(documento ? documento.NomTipoDoc : '');
+  };
 
 
   const handleEmpresaInput = (e) => {
@@ -28,7 +52,7 @@ function Facturacion() {
 
       if (codigoEmpresa.length > 0) {
         try {
-          const response = await fetch('http://localhost:3000/api/billing/all-billing', {
+          const response = await fetch('http://localhost:3000/api/empresa/codEmpresa', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -101,21 +125,26 @@ function Facturacion() {
                 <label>Tipo Documento:</label>
                 <select
                   className="desplegable"
-                  value={tipo}
-                  onChange={(e) => setTipo(e.target.value)}
-                  
-                >
-                  <option value="">Seleccione</option>
+                  value={codSeleccionado}
+                  onChange={(handleChange) }>
+                    {/* => setTipo(e.target.value) */}
+                    <option value="">-- Selecciona --</option>
+                    {documentos.map((doc) => (
+                      <option key={doc.CodTipoDoc} value={doc.CodTipoDoc}>
+                        {doc.CodTipoDoc}
+                      </option>
+                    ))}   
+                  {/* <option value="">Seleccione</option>
                   <option value="F">F</option>
                   <option value="P">P</option>
                   <option value="NC">NC</option>
                   <option value="ND">ND</option>
-                  <option value="OI">OI</option>
+                  <option value="OI">OI</option> */}
                 </select>
               </div>
               <div className="form-group">
                 <label>Nombre Documento:</label>
-                <input type="text" value={nombreEmpresa} readOnly  className='input-big' />
+                <input type="text" value={nomTipoDoc} readOnly  className='input-big' />
               </div>
             </div>
 
