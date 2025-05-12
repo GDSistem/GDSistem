@@ -1,10 +1,10 @@
 const { poolPromise } = require('../configs/database.js'); // Asegúrate de que la ruta sea correcta
 
-// Funcion para obtener las Ventas
+// Función para obtener la empresa, sucursales y datos de la moneda
 const obtenerEmpresa = async (codEmpresa) => {
-    const pool = await poolPromise;
-    
-    const result = await pool.request()
+  const pool = await poolPromise;
+
+  const result = await pool.request()
     .input('CodEmpresa', codEmpresa)
     .query(`
       SELECT
@@ -12,9 +12,12 @@ const obtenerEmpresa = async (codEmpresa) => {
         e.CodEmpresa,
         e.NomEmpresa,
         s.CodSucursal,
-        s.NomSucursal
+        s.NomSucursal,
+        m.NomMoneda,
+        m.Simbolo
       FROM dbo.TblEmpresas e
       INNER JOIN dbo.TblSucursales s ON s.IdEmpresa = e.IdEmpresa
+      LEFT JOIN dbo.TblMonedas m ON e.IdMoneda = m.IdMoneda
       WHERE e.CodEmpresa = @CodEmpresa
     `);
 
@@ -24,19 +27,21 @@ const obtenerEmpresa = async (codEmpresa) => {
   if (records.length === 0) return null;
 
   // Desestructuramos la información de la primera empresa
-  const { CodEmpresa, NomEmpresa } = records[0];
+  const { CodEmpresa, NomEmpresa, NomMoneda, Simbolo } = records[0];
 
   // Mapeamos las sucursales asociadas a esa empresa
-  const sucursales = records.map(row => ({
+  const Sucursales = records.map(row => ({
     CodSucursal: row.CodSucursal,
     NomSucursal: row.NomSucursal
   }));
 
-  // Devolvemos la estructura esperada
+  // Devolvemos la estructura completa
   return {
     CodEmpresa,
     NomEmpresa,
-    Sucursales: sucursales
+    NomMoneda,
+    Simbolo,
+    Sucursales
   };
 };
 
