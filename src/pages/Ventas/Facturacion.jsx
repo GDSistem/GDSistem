@@ -1,42 +1,162 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../Styles/FacturacionVentas.css';
 import MenuPage from '../../Components/MenuPage';
 import AccordionSection from '../../Components/AccordionSection';
+
+
 
 function Facturacion() {
   const [codigoEmpresa, setCodigoEmpresa] = useState('');
   const [nombreEmpresa, setNombreEmpresa] = useState('');
   const [codigoSucursal, setCodigoSucursal] = useState('');
   const [nombreSucursal, setNombreSucursal] = useState('');
-  // const [tipoDocumento, setTipoDocumento] = useState('');
-  // const [nombreDocumento, setNombreDocumento] = useState('');
-  // const [numDocumento, setNumDocumento] = useState('');
+
   const [sucursales, setSucursales] = useState([]);
   const [moneda, setMoneda] = useState('');
   // const [tipo, setTipo] = useState('');
-  const [documentos, setDocumentos] = useState([]);
+  // const [documentos, setDocumentos] = useState([]);
 
 
   const [codSeleccionado, setCodSeleccionado] = useState('');
   const [nomTipoDoc, setNomTipoDoc] = useState('');
+  const [numeroDocumento, setNumeroDocumento] = useState('');
 
-  useEffect(() => {
-    axios.get('http://localhost:3000/api/documento/codDocumento')
-      .then((res) => {
-        setDocumentos(res.data); // asegúrate de que es un array
-      })
-      .catch((err) => console.error(err));
-  }, []);
+  
+  // const handleTipoDocChange = async (e) => {
+  //   const tipoDoc = e.target.value;  // Obtienes el tipo de documento seleccionado
+  //   setCodSeleccionado(tipoDoc);  // Actualizas el estado del tipo de documento seleccionado
+  
+  //   if (tipoDoc) {
+  //     try {
+  //       // Realizas la solicitud al servidor
+  //       const response = await fetch('http://localhost:3000/api/documento/codDocumento', {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //         body: JSON.stringify({ codDocumento: tipoDoc }),  // Envías el tipo de documento
+  //       });
+  
+  //       const json = await response.json();
+  
+  //       if (json.success && json.data) {
+  //         // Actualizas los estados con la respuesta del servidor
+  //         setNomTipoDoc(json.data.NomTipoDoc);
+  //         setNumeroDocumento(json.data.NDocumento);
+  //       } else {
+  //         setNomTipoDoc('No encontrado');
+  //         setNumeroDocumento('');
+  //       }
+  //     } catch (error) {
+  //       console.error('Error al obtener el documento:', error);
+  //     }
+  //   }
+  // };
 
-  const handleChange = (e) => {
-    const selectedCod = e.target.value;
-    setCodSeleccionado(selectedCod);
-
-    const documento = documentos.find(doc => doc.CodTipoDoc === selectedCod);
-    setNomTipoDoc(documento ? documento.NomTipoDoc : '');
+  // const handleTipoDocChange = async (e) => {
+  //   const tipoDoc = e.target.value;  // Obtienes el tipo de documento seleccionado
+  //   setCodSeleccionado(tipoDoc);  // Actualizas el estado del tipo de documento seleccionado
+  
+  //   // Validar que los tres datos necesarios estén presentes
+  //   if (!codigoEmpresa || !nombreEmpresa || !tipoDoc) {
+  //     // Si no están presentes, no realizamos la solicitud y limpiamos los campos
+  //     setNomTipoDoc('');
+  //     setNumeroDocumento('');
+  //     return;
+  //   }
+  
+  //   try {
+  //     // Realizas la solicitud al servidor
+  //     const response = await fetch('http://localhost:3000/api/documento/codDocumento', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({ 
+  //         codDocumento: tipoDoc, 
+  //         codEmpresa: codigoEmpresa, // Incluimos el código de la empresa
+  //         nomEmpresa: nombreEmpresa  // Incluimos el nombre de la empresa
+  //       }),  
+  //     });
+  
+  //     const json = await response.json();
+  
+  //     if (json.success && json.data) {
+  //       // Actualizas los estados con la respuesta del servidor
+  //       setNomTipoDoc(json.data.NomTipoDoc);
+  //       setNumeroDocumento(json.data.NDocumento);
+  //     } else {
+  //       setNomTipoDoc('No encontrado');
+  //       setNumeroDocumento('');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error al obtener el documento:', error);
+  //   }
+  // };
+  
+  const handleTipoDocChange = async (e) => {
+    const tipoDoc = e.target.value;  // Obtienes el tipo de documento seleccionado
+    setCodSeleccionado(tipoDoc);  // Actualizas el estado del tipo de documento seleccionado
+  
+    // Validar que el tipo de documento esté seleccionado para obtener su nombre
+    if (tipoDoc) {
+      try {
+        // Realizas la solicitud al servidor solo para obtener el nombre del documento
+        const response = await fetch('http://localhost:3000/api/documento/codDocumento', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ codDocumento: tipoDoc }),  // Envío solo el tipo de documento
+        });
+  
+        const json = await response.json();
+  
+        if (json.success && json.data) {
+          // Actualizas los estados con el nombre del documento
+          setNomTipoDoc(json.data.NomTipoDoc);
+        } else {
+          setNomTipoDoc('No encontrado');
+        }
+      } catch (error) {
+        console.error('Error al obtener el nombre del documento:', error);
+      }
+    }
+  
+    // Solo obtener el número de documento cuando todos los valores estén presentes
+    if (codigoEmpresa && nombreEmpresa && tipoDoc) {
+      try {
+        const response = await fetch('http://localhost:3000/api/documento/codDocumento', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ 
+            codDocumento: tipoDoc,
+            codEmpresa: codigoEmpresa,
+            nomEmpresa: nombreEmpresa 
+          }),  
+        });
+  
+        const json = await response.json();
+  
+        if (json.success && json.data) {
+          // Actualizas el estado con el número de documento
+          setNumeroDocumento(json.data.NDocumento);
+        } else {
+          setNumeroDocumento('');
+        }
+      } catch (error) {
+        console.error('Error al obtener el número del documento:', error);
+      }
+    } else {
+      // Si no se cumplen las condiciones, limpiamos el número de documento
+      setNumeroDocumento('');
+    }
   };
-
-
+  
+  
+ 
   const handleEmpresaInput = (e) => {
     setCodigoEmpresa(e.target.value);
   };
@@ -122,24 +242,18 @@ function Facturacion() {
                 <input type="text" value={nombreEmpresa} readOnly className='input-big' />
               </div>
               <div className="form-group">
-                <label>Tipo Documento:</label>
+                <label> Tipo Documento:</label>
                 <select
                   className="desplegable"
                   value={codSeleccionado}
-                  onChange={(handleChange) }>
-                    {/* => setTipo(e.target.value) */}
+                  onChange={(handleTipoDocChange) }>
                     <option value="">-- Selecciona --</option>
-                    {documentos.map((doc) => (
-                      <option key={doc.CodTipoDoc} value={doc.CodTipoDoc}>
-                        {doc.CodTipoDoc}
-                      </option>
-                    ))}   
-                  {/* <option value="">Seleccione</option>
-                  <option value="F">F</option>
-                  <option value="P">P</option>
-                  <option value="NC">NC</option>
-                  <option value="ND">ND</option>
-                  <option value="OI">OI</option> */}
+                    <option value="F">F</option>
+                    <option value="P">P</option>
+                    <option value="NC">NC</option>
+                    <option value="ND">ND</option>
+                    <option value="OI">OI</option>
+                   
                 </select>
               </div>
               <div className="form-group">
@@ -170,11 +284,11 @@ function Facturacion() {
                 <input
                   type="text"
                   className="input-small"
-                  value={codigoSucursal}
+                  value={numeroDocumento}
                   onChange={(e) => setCodigoSucursal(e.target.value)}
                   onKeyDown={handleSucursalKeyDown}
                   placeholder="Ej: A"
-                  disabled={!nombreEmpresa}
+                  // disabled={!nombreEmpresa}
                 />
               </div>
               <div className="form-group">
@@ -396,7 +510,7 @@ function Facturacion() {
           content: (
             <div className="formulario-acordeon">
               <label>Tipo Documento:</label>
-              <input type="text" value={tipo} readOnly />
+              <input type="text" value={moneda} readOnly />
     
               <label>Moneda:</label>
               <input type="text" value={moneda} readOnly />
