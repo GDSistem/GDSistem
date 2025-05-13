@@ -1,5 +1,11 @@
 const { obtenerUsuarios, obtenerUsuario } = require('../models/users_models.js'); // Asegúrate de exportar obtenerUsuario
 
+
+//Payload que debe recibir el login
+// {
+//   "nombre": "usuario",
+//   "contrasena": "contraseña"
+// }
 // Controlador para obtener todos los usuarios
 const getUsuarios = async (req, res) => {
   try {
