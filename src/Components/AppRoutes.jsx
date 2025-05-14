@@ -28,6 +28,28 @@ import Proveedores from "../pages/Compras/Proveedores";
 import Reintegroo from "../pages/Compras/Reintegro";
 import ReportesdeDatos from "../pages/Compras/ReportesdeDatos";
 import Inicio from '../pages/Inicio/Inicio'
+import TransladoMercancia from '../pages/Inventario/TrasladoMercancia'
+import RecepcionMercancia from '../pages/Inventario/RecepcionMercancia'
+import Tipo from '../pages/Inventario/Tipo'
+import Clases from '../pages/Inventario/Clases'
+import Pructos from '../pages/Inventario/Productos'
+import ReportesInventario from '../pages/Inventario/ReportesInventario';
+import ReportesProductos from '../pages/Inventario/ReportesProductos';
+import VentasIVA from '../pages/Contabilidad/VentasIVA';
+import ComprasIVA from '../pages/Contabilidad/ComprasIVA';
+import VentasISLR from '../pages/Contabilidad/VentasISLR';
+import ComprasISLR from '../pages/Contabilidad/CompraISLR';
+import RetIVA from '../pages/Contabilidad/RetIVA'
+import RetISLR from '../pages/Contabilidad/RetISLR'
+import TipoIVA from '../pages/Contabilidad/TiposIVA'
+import TipoISLR from '../pages/Contabilidad/TiposISLR'
+import ReportesContable from '../pages/Contabilidad/ReportesContabilidad'
+
+
+
+
+
+
 
 
 function AppRoutes() {
@@ -81,6 +103,28 @@ function AppRoutes() {
         <Route path='/produccion/salidas' element={<Salidas/>} />
         <Route path='/produccion/orden' element={<Orden/>} />
         <Route path='/produccion/ordenprodu' element={<OrdenProdu/>} />
+
+        {/* Rutas de Inventario */}
+        <Route path='/inventario/transladodeMercancia' element={<TransladoMercancia/>} />
+        <Route path='/inventario/recepcionMercancia' element={<RecepcionMercancia/>} />
+        <Route path='/inventario/tipo' element={<Tipo/>} />
+        <Route path='/inventario/clases' element={<Clases/>} />
+        <Route path='/inventario/productos' element={<Pructos/>} />
+        <Route path='/inventario/reportesInventario' element={<ReportesInventario/>} />
+        <Route path='/inventario/reportesProductos' element={<ReportesProductos/>} />
+
+        {/* Rutas de Contabilidad */}
+        <Route path='/contabilidad/ventasIVA' element={<VentasIVA/>} />
+        <Route path='/contabilidad/comprasIVA' element={<ComprasIVA/>} />
+        <Route path='/contabilidad/ventasISLR' element={<VentasISLR/>} />
+        <Route path='/contabilidad/comprasISLR' element={<ComprasISLR/>} />
+        <Route path='/contabilidad/retIBA' element={<RetIVA/>} />
+        <Route path='/contabilidad/retISLR' element={<RetISLR/>} />
+        <Route path='/contabilidad/tipoIVA' element={<TipoIVA/>} />
+        <Route path='/contabilidad/tipoISLR' element={<TipoISLR/>} />
+        <Route path='/contabilidad/reporteContable' element={<ReportesContable/>} />
+
+
 
     </Routes>
   )

@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../Styles/FacturacionVentas.css';
 import MenuPage from '../../Components/MenuPage';
 import AccordionSection from '../../Components/AccordionSection';
+
+
 
 function Facturacion() {
   const [codigoEmpresa, setCodigoEmpresa] = useState('');
@@ -10,9 +12,72 @@ function Facturacion() {
   const [nombreSucursal, setNombreSucursal] = useState('');
   const [sucursales, setSucursales] = useState([]);
   const [moneda, setMoneda] = useState('');
-  const [tipo, setTipo] = useState('');
+  const [empresaData, setEmpresaData] = useState(null);
+  const [codSeleccionado, setCodSeleccionado] = useState('');
+  const [nomTipoDoc, setNomTipoDoc] = useState('');
+  const [numeroDocumento, setNumeroDocumento] = useState('');
+
+const [simboloMoneda, setSimboloMoneda] = useState('');
 
 
+
+
+  
+  const handleTipoDocChange = async (e) => {
+    const tipoDoc = e.target.value;  // Obtienes el tipo de documento seleccionado
+    setCodSeleccionado(tipoDoc);  // Actualizas el estado del tipo de documento seleccionado
+  
+    // Validar que el tipo de documento esté seleccionado para obtener su nombre
+    if (tipoDoc) {
+      try {
+        // Realizas la solicitud al servidor solo para obtener el nombre del documento
+        const response = await fetch('http://localhost:3000/api/documento/codDocumento', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ codDocumento: tipoDoc }),  // Envío solo el tipo de documento
+        });
+  
+        const json = await response.json();
+  
+        if (json.success && json.data) {
+          // Actualizas los estados con el nombre del documento
+          setNomTipoDoc(json.data.NomTipoDoc);
+        } else {
+          setNomTipoDoc('No encontrado');
+        }
+      } catch (error) {
+        console.error('Error al obtener el nombre del documento:', error);
+      }
+    }
+
+    if (empresaData && codigoSucursal && tipoDoc) {
+      const sucursal = empresaData.Sucursales.find(
+        (suc) => suc.CodSucursal.toLowerCase() === codigoSucursal.toLowerCase()
+      );
+  
+      if (sucursal) {
+        const documento = sucursal.Documentos.find(
+          (doc) => doc.CodTipoDoc === tipoDoc
+        );
+  
+        if (documento) {
+          setNumeroDocumento(documento.NDocumento);
+        } else {
+          setNumeroDocumento('No encontrado');
+        }
+      } else {
+        setNumeroDocumento('No hay');
+      }
+    } else {
+      setNumeroDocumento('');
+    }
+
+  };
+  
+  
+ 
   const handleEmpresaInput = (e) => {
     setCodigoEmpresa(e.target.value);
   };
@@ -25,10 +90,14 @@ function Facturacion() {
       setCodigoSucursal('');
       setNombreSucursal('');
       setSucursales([]);
+      setMoneda('');
+      setMoneda('');
+      setSimboloMoneda('');
+      
 
       if (codigoEmpresa.length > 0) {
         try {
-          const response = await fetch('http://localhost:3000/api/billing/all-billing', {
+          const response = await fetch('http://localhost:3000/api/empresa/codEmpresa', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -41,9 +110,23 @@ function Facturacion() {
           if (json.success && json.data.CodEmpresa === codigoEmpresa) {
             setNombreEmpresa(json.data.NomEmpresa);
             setSucursales(json.data.Sucursales);
-          } else {
-            setNombreEmpresa('No encontrada');
-          }
+            setEmpresaData(json.data);
+            const simbolo = json.data.Simbolo;
+
+          // Mapear símbolo a moneda interna
+            const simboloToMoneda = {
+            'Bs.': 'BS',
+            '$': 'USD',
+            'USD': 'USD',
+          };
+          const monedaDetectada = simboloToMoneda[simbolo] || '';
+          setMoneda(monedaDetectada);
+          setSimboloMoneda(simbolo); // si lo necesitas para mostrarlo
+        } else {
+          setNombreEmpresa('No encontrada');
+          setMoneda('Seleccione');
+        }
+
         } catch (error) {
           console.error('Error al buscar empresa:', error);
         }
@@ -61,8 +144,20 @@ function Facturacion() {
 
       if (sucursalEncontrada) {
         setNombreSucursal(sucursalEncontrada.NomSucursal);
+        if (codSeleccionado) {
+          const documento = sucursalEncontrada.Documentos.find(
+            (doc) => doc.CodTipoDoc === codSeleccionado
+          );
+  
+          if (documento) {
+            setNumeroDocumento(documento.NDocumento);
+          } else {
+            setNumeroDocumento('No encontrado');
+          }
+        }
       } else {
         setNombreSucursal('No encontrada');
+        setNumeroDocumento('');
       }
     }
   };
@@ -98,24 +193,23 @@ function Facturacion() {
                 <input type="text" value={nombreEmpresa} readOnly className='input-big' />
               </div>
               <div className="form-group">
-                <label>Tipo Documento:</label>
+                <label> Tipo Documento:</label>
                 <select
                   className="desplegable"
-                  value={tipo}
-                  onChange={(e) => setTipo(e.target.value)}
-                  
-                >
-                  <option value="">Seleccione</option>
-                  <option value="F">F</option>
-                  <option value="P">P</option>
-                  <option value="NC">NC</option>
-                  <option value="ND">ND</option>
-                  <option value="OI">OI</option>
+                  value={codSeleccionado}
+                  onChange={(handleTipoDocChange) }>
+                    <option value="">-- Selecciona --</option>
+                    <option value="F">F</option>
+                    <option value="P">P</option>
+                    <option value="NC">NC</option>
+                    <option value="ND">ND</option>
+                    <option value="OI">OI</option>
+                   
                 </select>
               </div>
               <div className="form-group">
                 <label>Nombre Documento:</label>
-                <input type="text" value={nombreEmpresa} readOnly  className='input-big' />
+                <input type="text" value={nomTipoDoc} readOnly  className='input-big' />
               </div>
             </div>
 
@@ -141,11 +235,11 @@ function Facturacion() {
                 <input
                   type="text"
                   className="input-small"
-                  value={codigoSucursal}
+                  value={numeroDocumento}
                   onChange={(e) => setCodigoSucursal(e.target.value)}
                   onKeyDown={handleSucursalKeyDown}
                   placeholder="Ej: A"
-                  disabled={!nombreEmpresa}
+                  // disabled={!nombreEmpresa}
                 />
               </div>
               <div className="form-group">
@@ -367,7 +461,7 @@ function Facturacion() {
           content: (
             <div className="formulario-acordeon">
               <label>Tipo Documento:</label>
-              <input type="text" value={tipo} readOnly />
+              <input type="text" value={moneda} readOnly />
     
               <label>Moneda:</label>
               <input type="text" value={moneda} readOnly />
