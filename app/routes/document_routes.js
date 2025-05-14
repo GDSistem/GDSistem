@@ -3,6 +3,6 @@ const express = require('express');
 const router = express.Router();
 const { getDocumento } = require('../controllers/document_controllers');
 
-router.post('/codDocumento', getDocumento);
+router.get('/codDocumento', getDocumento);
 
 module.exports = router;
