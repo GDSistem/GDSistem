@@ -19,33 +19,6 @@ function Facturacion() {
 
 const [simboloMoneda, setSimboloMoneda] = useState('');
 
-const handleTipoDocChange = (e) => {
-  const tipoDoc = e.target.value;
-  setCodSeleccionado(tipoDoc);
-
-  if (empresaData && codigoSucursal && tipoDoc) {
-    const sucursal = empresaData.Sucursal;
-    if (sucursal && sucursal.CodSucursal.toLowerCase() === codigoSucursal.toLowerCase()) {
-      const documento = sucursal.Documentos.find(
-        (doc) => doc.CodTipoDoc === tipoDoc
-      );
-
-      if (documento) {
-        setNomTipoDoc(documento.NomTipoDoc);
-        setNumeroDocumento(documento.NDocumento);
-      } else {
-        setNomTipoDoc('No encontrado');
-        setNumeroDocumento('No encontrado');
-      }
-    } else {
-      setNomTipoDoc('No hay');
-      setNumeroDocumento('No hay');
-    }
-  } else {
-    setNomTipoDoc('');
-    setNumeroDocumento('');
-  }
-};
 
 
   // const handleTipoDocChange = async (e) => {
@@ -107,52 +80,143 @@ const handleTipoDocChange = (e) => {
     setCodigoEmpresa(e.target.value);
   };
 
+  const buscarDatos = async (empresa, sucursal, tipoDoc) => {
+    // Limpiar estado antes de buscar
+    setNombreEmpresa('');
+    setNombreSucursal('');
+    setSucursales([]);
+    setMoneda('');
+    setSimboloMoneda('');
+    setEmpresaData(null);
+    setNomTipoDoc('');
+    setNumeroDocumento('');
+  
+    if (!empresa.trim()) return;
+  
+    const hasEmpresa = empresa.trim();
+    const hasSucursal = sucursal?.trim();
+    const hasTipoDoc = tipoDoc?.trim();
+  
+    try {
+      if (hasEmpresa && !hasSucursal && !hasTipoDoc) {
+        // Solo Empresa
+        const response = await fetch('http://localhost:3000/api/ventas/factura/formulario', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ codEmpresa: empresa }),
+        });
+  
+        const json = await response.json();
+  
+        if (json.success && json.data.CodEmpresa === empresa) {
+          setNombreEmpresa(json.data.NomEmpresa);
+          setSucursales(json.data.Sucursales || []);
+          setEmpresaData(json.data);
+          const simbolo = json.data.Simbolo;
+          const simboloToMoneda = { 'Bs.': 'BS', '$': 'USD', 'USD': 'USD' };
+          setMoneda(simboloToMoneda[simbolo] || '');
+          setSimboloMoneda(simbolo);
+        } else {
+          setNombreEmpresa('No encontrada');
+          setMoneda('Seleccione');
+        }
+      } else if (hasEmpresa && hasSucursal && hasTipoDoc) {
+        // Empresa + Sucursal + TipoDoc
+        const payload = {
+          codEmpresa: empresa,
+          codSucursal: sucursal,
+          codTipoDoc: tipoDoc,
+        };
+  
+        const response = await fetch('http://localhost:3000/api/ventas/factura/formulario', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+  
+        const json = await response.json();
+  
+        if (json.success && json.data.CodEmpresa === empresa) {
+          setNombreEmpresa(json.data.NomEmpresa);
+          setEmpresaData(json.data);
+  
+          const suc = json.data.Sucursal;
+          if (suc) {
+            setNombreSucursal(suc.NomSucursal || '');
+            const doc = suc.Documentos?.find((d) => d.CodTipoDoc === tipoDoc);
+            if (doc) {
+              setNomTipoDoc(doc.NomTipoDoc);
+              setNumeroDocumento(doc.NDocumento);
+            } else {
+              setNomTipoDoc('No encontrado');
+              setNumeroDocumento('No encontrado');
+            }
+          }
+  
+          const simbolo = json.data.Simbolo;
+          const simboloToMoneda = { 'Bs.': 'BS', '$': 'USD', 'USD': 'USD' };
+          setMoneda(simboloToMoneda[simbolo] || '');
+          setSimboloMoneda(simbolo);
+        } else {
+          setNombreEmpresa('No encontrada');
+          setMoneda('Seleccione');
+        }
+      } else {
+        console.warn('Debe completar todos los campos necesarios para la búsqueda.');
+      }
+    } catch (error) {
+      console.error('Error al buscar empresa:', error);
+    }
+  };
+  
+  // Evento keyDown para inputs de empresa y sucursal
   const handleEmpresaKeyDown = async (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-  
-      setNombreEmpresa('');
-      setCodigoSucursal('');
-      setNombreSucursal('');
-      setSucursales([]);
-      setMoneda('');
-      setSimboloMoneda('');
-      setEmpresaData(null);
-  
-      if (codigoEmpresa.length > 0) {
-        try {
-          const response = await fetch(`http://localhost:3000/api/ventas/factura/formulario?codEmpresa=${codigoEmpresa}&codSucursal=${codigoSucursal}&codTipoDoc=${codSeleccionado}`, {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          });
-  
-          const json = await response.json();
-  
-          if (json.success && json.data.CodEmpresa === codigoEmpresa) {
-            setNombreEmpresa(json.data.NomEmpresa);
-            setEmpresaData(json.data);
-  
-            const simbolo = json.data.Simbolo;
-            const simboloToMoneda = {
-              'Bs.': 'BS',
-              '$': 'USD',
-              'USD': 'USD',
-            };
-            const monedaDetectada = simboloToMoneda[simbolo] || '';
-            setMoneda(monedaDetectada);
-            setSimboloMoneda(simbolo);
-          } else {
-            setNombreEmpresa('No encontrada');
-            setMoneda('Seleccione');
-          }
-        } catch (error) {
-          console.error('Error al buscar empresa:', error);
-        }
-      }
+      await buscarDatos(codigoEmpresa, codigoSucursal, codSeleccionado);
     }
   };
+  
+  const handleTipoDocChange = (e) => {
+    const nuevoTipoDoc = e.target.value;
+    setCodSeleccionado(nuevoTipoDoc);
+  
+    if (!empresaData || !codigoSucursal) {
+      setNomTipoDoc('');
+      setNumeroDocumento('');
+      return;
+    }
+  
+    const sucursalData = Array.isArray(empresaData.Sucursales)
+      ? empresaData.Sucursales.find(
+          (s) => s.CodSucursal?.toLowerCase() === codigoSucursal.toLowerCase()
+        )
+      : empresaData.Sucursal?.CodSucursal?.toLowerCase() === codigoSucursal.toLowerCase()
+      ? empresaData.Sucursal
+      : null;
+  
+    if (sucursalData) {
+      const documento = sucursalData.Documentos?.find(
+        (doc) => doc.CodTipoDoc === nuevoTipoDoc
+      );
+  
+      if (documento) {
+        setNomTipoDoc(documento.NomTipoDoc || 'No encontrado');
+        setNumeroDocumento(documento.NDocumento || 'No encontrado');
+      } else {
+        setNomTipoDoc('Documento no encontrado');
+        setNumeroDocumento('No encontrado');
+      }
+    } else {
+      setNomTipoDoc('Sucursal no encontrada');
+      setNumeroDocumento('No encontrado');
+    }
+  };
+  
+  
+  
+  
+  
   
 
   // const handleEmpresaKeyDown = async (e) => {
