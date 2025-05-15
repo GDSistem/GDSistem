@@ -47,60 +47,6 @@ const handleTipoDocChange = (e) => {
   }
 };
 
-
-  // const handleTipoDocChange = async (e) => {
-  //   const tipoDoc = e.target.value;  // Obtienes el tipo de documento seleccionado
-  //   setCodSeleccionado(tipoDoc);  // Actualizas el estado del tipo de documento seleccionado
-  
-  //   // Validar que el tipo de documento esté seleccionado para obtener su nombre
-  //   if (tipoDoc) {
-  //     try {
-  //       // Realizas la solicitud al servidor solo para obtener el nombre del documento
-  //       const response = await fetch('http://localhost:3000/api/documento/codDocumento', {
-  //         method: 'POST',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //         },
-  //         body: JSON.stringify({ codDocumento: tipoDoc }),  // Envío solo el tipo de documento
-  //       });
-  
-  //       const json = await response.json();
-  
-  //       if (json.success && json.data) {
-  //         // Actualizas los estados con el nombre del documento
-  //         setNomTipoDoc(json.data.NomTipoDoc);
-  //       } else {
-  //         setNomTipoDoc('No encontrado');
-  //       }
-  //     } catch (error) {
-  //       console.error('Error al obtener el nombre del documento:', error);
-  //     }
-  //   }
-
-  //   if (empresaData && codigoSucursal && tipoDoc) {
-  //     const sucursal = empresaData.Sucursales.find(
-  //       (suc) => suc.CodSucursal.toLowerCase() === codigoSucursal.toLowerCase()
-  //     );
-  
-  //     if (sucursal) {
-  //       const documento = sucursal.Documentos.find(
-  //         (doc) => doc.CodTipoDoc === tipoDoc
-  //       );
-  
-  //       if (documento) {
-  //         setNumeroDocumento(documento.NDocumento);
-  //       } else {
-  //         setNumeroDocumento('No encontrado');
-  //       }
-  //     } else {
-  //       setNumeroDocumento('No hay');
-  //     }
-  //   } else {
-  //     setNumeroDocumento('');
-  //   }
-
-  // };
-  
   
  
   const handleEmpresaInput = (e) => {
@@ -121,11 +67,12 @@ const handleTipoDocChange = (e) => {
   
       if (codigoEmpresa.length > 0) {
         try {
-          const response = await fetch(`http://localhost:3000/api/ventas/factura/formulario?codEmpresa=${codigoEmpresa}&codSucursal=${codigoSucursal}&codTipoDoc=${codSeleccionado}`, {
-            method: 'GET',
+          const response = await fetch("http://localhost:3000/api/ventas/factura/formulario", {
+            method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
+            body: JSON.stringify({ codigoEmpresa }), // Aquí envías el código en el body
           });
   
           const json = await response.json();
@@ -133,6 +80,7 @@ const handleTipoDocChange = (e) => {
           if (json.success && json.data.CodEmpresa === codigoEmpresa) {
             setNombreEmpresa(json.data.NomEmpresa);
             setEmpresaData(json.data);
+            setSucursales(json.data.Sucursales || []);
   
             const simbolo = json.data.Simbolo;
             const simboloToMoneda = {
@@ -154,58 +102,6 @@ const handleTipoDocChange = (e) => {
     }
   };
   
-
-  // const handleEmpresaKeyDown = async (e) => {
-  //   if (e.key === 'Enter') {
-  //     e.preventDefault();
-
-  //     setNombreEmpresa('');
-  //     setCodigoSucursal('');
-  //     setNombreSucursal('');
-  //     setSucursales([]);
-  //     setMoneda('');
-  //     setMoneda('');
-  //     setSimboloMoneda('');
-      
-
-  //     if (codigoEmpresa.length > 0) {
-  //       try {
-  //         const response = await fetch('http://localhost:3000/api/empresa/codEmpresa', {
-  //           method: 'POST',
-  //           headers: {
-  //             'Content-Type': 'application/json',
-  //           },
-  //           body: JSON.stringify({ codEmpresa: codigoEmpresa }),
-  //         });
-
-  //         const json = await response.json();
-
-  //         if (json.success && json.data.CodEmpresa === codigoEmpresa) {
-  //           setNombreEmpresa(json.data.NomEmpresa);
-  //           setSucursales(json.data.Sucursales);
-  //           setEmpresaData(json.data);
-  //           const simbolo = json.data.Simbolo;
-
-  //         // Mapear símbolo a moneda interna
-  //           const simboloToMoneda = {
-  //           'Bs.': 'BS',
-  //           '$': 'USD',
-  //           'USD': 'USD',
-  //         };
-  //         const monedaDetectada = simboloToMoneda[simbolo] || '';
-  //         setMoneda(monedaDetectada);
-  //         setSimboloMoneda(simbolo); // si lo necesitas para mostrarlo
-  //       } else {
-  //         setNombreEmpresa('No encontrada');
-  //         setMoneda('Seleccione');
-  //       }
-
-  //       } catch (error) {
-  //         console.error('Error al buscar empresa:', error);
-  //       }
-  //     }
-  //   }
-  // };
 
   const handleSucursalKeyDown = (e) => {
     if (e.key === 'Enter') {
@@ -319,18 +215,6 @@ const handleTipoDocChange = (e) => {
                 <label># Control:</label>
                 <input type="text" value={nombreSucursal} readOnly  className="input-small"/>
               </div>
-              {/* <div className="form-group">
-                <label># Doc. Origen:</label>
-                <input
-                  type="text"
-                  className="input-small"
-                  value={codigoSucursal}
-                  onChange={(e) => setCodigoSucursal(e.target.value)}
-                  onKeyDown={handleSucursalKeyDown}
-                  placeholder="Ej: A"
-                  disabled={!nombreEmpresa}
-                />
-              </div> */}
               <div className="form-group">
                 <label>Moneda:</label>
                 <select
