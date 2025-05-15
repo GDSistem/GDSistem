@@ -16,6 +16,7 @@ const obtenerFactura = async (codEmpresa) => {
         m.NomMoneda,
         m.Simbolo,
         td.CodTipoDoc,
+        td.NomTipoDoc, -- ✅ Se agregó esta línea para incluir el nombre del tipo de documento
         snd.NDocumento
       FROM dbo.TblEmpresas e
       INNER JOIN dbo.TblSucursales s ON s.IdEmpresa = e.IdEmpresa
@@ -47,7 +48,8 @@ const obtenerFactura = async (codEmpresa) => {
     if (row.CodTipoDoc && row.NDocumento) {
       sucursalesMap.get(key).Documentos.push({
         CodTipoDoc: row.CodTipoDoc,
-        NDocumento: row.NDocumento
+        NDocumento: row.NDocumento,
+        NomTipoDoc: row.NomTipoDoc // ✅ Se agregó correctamente al resultado final
       });
     }
   });
