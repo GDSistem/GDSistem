@@ -31,7 +31,7 @@ const getFactura = async (req, res) => {
     let sucursales = data.Sucursales;
 
     // Si se proporciona codSucursal, filtramos la sucursal específica
-    if (codSucursal && typeof codSucursal === 'string') {
+    if (typeof codSucursal === 'string') {
       const sucursal = sucursales.find(s => s.CodSucursal === codSucursal);
 
       if (!sucursal) {
@@ -41,27 +41,13 @@ const getFactura = async (req, res) => {
         });
       }
 
-      // Si también se proporciona codTipoDoc, filtramos los documentos
-      if (codTipoDoc && typeof codTipoDoc === 'string') {
-        const documentosFiltrados = sucursal.Documentos.filter(doc => doc.CodTipoDoc === codTipoDoc);
+      let documentos = sucursal.Documentos;
 
-        return res.status(200).json({
-          success: true,
-          data: {
-            CodEmpresa: data.CodEmpresa,
-            NomEmpresa: data.NomEmpresa,
-            NomMoneda: data.NomMoneda,
-            Simbolo: data.Simbolo,
-            Sucursal: {
-              CodSucursal: sucursal.CodSucursal,
-              NomSucursal: sucursal.NomSucursal,
-              Documentos: documentosFiltrados
-            }
-          }
-        });
+      // Si se proporciona también codTipoDoc, filtrar documentos
+      if (typeof codTipoDoc === 'string') {
+        documentos = documentos.filter(doc => doc.CodTipoDoc === codTipoDoc);
       }
 
-      // Solo sucursal
       return res.status(200).json({
         success: true,
         data: {
@@ -69,12 +55,40 @@ const getFactura = async (req, res) => {
           NomEmpresa: data.NomEmpresa,
           NomMoneda: data.NomMoneda,
           Simbolo: data.Simbolo,
-          Sucursal: sucursal
+          Sucursal: {
+            CodSucursal: sucursal.CodSucursal,
+            NomSucursal: sucursal.NomSucursal,
+            Documentos: documentos
+          }
         }
       });
     }
 
-    // Si no se especifica codSucursal, retornar toda la información
+    // Si NO se especifica codSucursal pero sí codTipoDoc
+    if (typeof codTipoDoc === 'string') {
+      // Filtrar documentos en todas las sucursales
+      const sucursalesFiltradas = sucursales.map(sucursal => {
+        const documentosFiltrados = sucursal.Documentos.filter(doc => doc.CodTipoDoc === codTipoDoc);
+        return {
+          CodSucursal: sucursal.CodSucursal,
+          NomSucursal: sucursal.NomSucursal,
+          Documentos: documentosFiltrados
+        };
+      });
+
+      return res.status(200).json({
+        success: true,
+        data: {
+          CodEmpresa: data.CodEmpresa,
+          NomEmpresa: data.NomEmpresa,
+          NomMoneda: data.NomMoneda,
+          Simbolo: data.Simbolo,
+          Sucursales: sucursalesFiltradas
+        }
+      });
+    }
+
+    // Si no se especifica codSucursal ni codTipoDoc, retornar todo
     return res.status(200).json({
       success: true,
       data
@@ -90,3 +104,4 @@ const getFactura = async (req, res) => {
 };
 
 module.exports = { getFactura };
+
