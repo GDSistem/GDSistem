@@ -19,10 +19,6 @@ function Facturacion() {
 
 const [simboloMoneda, setSimboloMoneda] = useState('');
 
-
-
-
-  
   const handleTipoDocChange = async (e) => {
     const tipoDoc = e.target.value;  // Obtienes el tipo de documento seleccionado
     setCodSeleccionado(tipoDoc);  // Actualizas el estado del tipo de documento seleccionado
