@@ -10,7 +10,6 @@ const { obtenerFactura} = require('../../models/ventas/facturacion_models.js'); 
 const getFactura = async (req, res) => {
   const { codEmpresa, codSucursal, codTipoDoc } = req.body;
 
-  // Validación básica
   if (!codEmpresa || typeof codEmpresa !== 'string') {
     return res.status(400).json({
       success: false,
@@ -28,10 +27,21 @@ const getFactura = async (req, res) => {
       });
     }
 
+    // Si codSucursal y codTipoDoc NO están definidos o están vacíos → devolver toda la empresa
+    const isCodSucursalEmpty = !codSucursal || codSucursal.trim() === '';
+    const isCodTipoDocEmpty = !codTipoDoc || codTipoDoc.trim() === '';
+
+    if (isCodSucursalEmpty && isCodTipoDocEmpty) {
+      return res.status(200).json({
+        success: true,
+        data
+      });
+    }
+
     let sucursales = data.Sucursales;
 
-    // Si se proporciona codSucursal, filtramos la sucursal específica
-    if (typeof codSucursal === 'string') {
+    // Si codSucursal está presente
+    if (!isCodSucursalEmpty) {
       const sucursal = sucursales.find(s => s.CodSucursal === codSucursal);
 
       if (!sucursal) {
@@ -43,8 +53,8 @@ const getFactura = async (req, res) => {
 
       let documentos = sucursal.Documentos;
 
-      // Si se proporciona también codTipoDoc, filtrar documentos
-      if (typeof codTipoDoc === 'string') {
+      // Si también hay codTipoDoc
+      if (!isCodTipoDocEmpty) {
         documentos = documentos.filter(doc => doc.CodTipoDoc === codTipoDoc);
       }
 
@@ -64,9 +74,8 @@ const getFactura = async (req, res) => {
       });
     }
 
-    // Si NO se especifica codSucursal pero sí codTipoDoc
-    if (typeof codTipoDoc === 'string') {
-      // Filtrar documentos en todas las sucursales
+    // Si NO hay codSucursal, pero SÍ codTipoDoc
+    if (!isCodTipoDocEmpty) {
       const sucursalesFiltradas = sucursales.map(sucursal => {
         const documentosFiltrados = sucursal.Documentos.filter(doc => doc.CodTipoDoc === codTipoDoc);
         return {
@@ -88,12 +97,6 @@ const getFactura = async (req, res) => {
       });
     }
 
-    // Si no se especifica codSucursal ni codTipoDoc, retornar todo
-    return res.status(200).json({
-      success: true,
-      data
-    });
-
   } catch (error) {
     console.error('Error al obtener factura:', error);
     res.status(500).json({
@@ -104,4 +107,5 @@ const getFactura = async (req, res) => {
 };
 
 module.exports = { getFactura };
+
 
