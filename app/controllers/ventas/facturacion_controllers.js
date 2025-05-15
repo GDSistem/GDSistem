@@ -1,11 +1,11 @@
-const {ontenerEmpresa, obtenerEmpresa} = require('../models/company_models.js'); // Asegúrate de que la ruta sea correcta
+const { obtenerFactura} = require('../../models/ventas/facturacion_models.js'); // Asegúrate de que la ruta sea correcta
 
-// Controlador para obtener la empresa y sus sucursales
+// Controlador para obtener la informacion del formulario
 // Payload que espera recibir
 // {
 //   "codEmpresa": "empresa"
 // }
-const getEmpresa = async (req, res) => {
+const getFactura = async (req, res) => {
     const { codEmpresa } = req.body;
   
     // Validación básica
@@ -17,7 +17,7 @@ const getEmpresa = async (req, res) => {
     }
   
     try {
-      const data = await obtenerEmpresa(codEmpresa);
+      const data = await obtenerFactura(codEmpresa);
   
       if (data.length === 0) {
         return res.status(404).json({
@@ -39,10 +39,4 @@ const getEmpresa = async (req, res) => {
     }
   };
   
-  
-
-
-
-
-
-module.exports = { getEmpresa };
+module.exports = { getFactura };

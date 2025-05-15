@@ -1,6 +1,6 @@
-const { poolPromise } = require('../configs/database.js');
+const { poolPromise } = require('../../configs/database.js');
 
-const obtenerEmpresa = async (codEmpresa) => {
+const obtenerFactura = async (codEmpresa) => {
   const pool = await poolPromise;
 
   const result = await pool.request()
@@ -63,4 +63,4 @@ const obtenerEmpresa = async (codEmpresa) => {
   };
 };
 
-module.exports = { obtenerEmpresa };
+module.exports = { obtenerFactura };
