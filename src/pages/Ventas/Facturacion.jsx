@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import '../../Styles/FacturacionVentas.css';
 import MenuPage from '../../Components/MenuPage';
-import AccordionSection from '../../Components/AccordionSection';
+import TablaListadoFcaturacion from '../../Components/TablaListadoFcaturacion';
+// import AccordionSection from '../../Components/AccordionSection';
+import InfoClienteDespacho from '../../Components/InfoClienteDespacho';
+
 
 
 
@@ -18,32 +21,135 @@ function Facturacion() {
   const [numeroDocumento, setNumeroDocumento] = useState('');
 
 const [simboloMoneda, setSimboloMoneda] = useState('');
+const [facturaSeleccionada, setFacturaSeleccionada] = useState(null);
 
-const handleTipoDocChange = (e) => {
-  const tipoDoc = e.target.value;
-  setCodSeleccionado(tipoDoc);
 
-  if (empresaData && codigoSucursal && tipoDoc) {
-    const sucursal = empresaData.Sucursal;
-    if (sucursal && sucursal.CodSucursal.toLowerCase() === codigoSucursal.toLowerCase()) {
-      const documento = sucursal.Documentos.find(
-        (doc) => doc.CodTipoDoc === tipoDoc
-      );
+const [resultados, setResultados] = useState([]); 
+// Donde se almacenarán los datos traídos por el endpoint (cuando esté listo)
 
-      if (documento) {
-        setNomTipoDoc(documento.NomTipoDoc);
-        setNumeroDocumento(documento.NDocumento);
-      } else {
-        setNomTipoDoc('No encontrado');
-        setNumeroDocumento('No encontrado');
-      }
-    } else {
-      setNomTipoDoc('No hay');
-      setNumeroDocumento('No hay');
-    }
-  } else {
-    setNomTipoDoc('');
-    setNumeroDocumento('');
+// Por ahora puedes probar con datos simulados:
+useEffect(() => {
+  const datosPrueba = [
+    {
+      tipoDocumento: 'p',
+      codigoSucursal: 'A1',
+      fecha: '2025-05-15',
+      hora: '14:30',
+      numeroDocumento: '000123',
+      codigoCliente: 'CL001',
+      cliente: 'giova',
+      tasa: '36.5',
+      monto: '100.00',
+      montoIVA: '16.00',
+      igtf: '3.00',
+      total: '119.00',
+      nula: false,
+    },
+    {
+      tipoDocumento: 'F',
+      codigoSucursal: 'A1',
+      fecha: '2025-05-15',
+      hora: '14:30',
+      numeroDocumento: '000123',
+      codigoCliente: 'CL001',
+      cliente: 'Juan Pérez',
+      tasa: '36.5',
+      monto: '100.00',
+      montoIVA: '16.00',
+      igtf: '3.00',
+      total: '119.00',
+      nula: false,
+    },
+    {
+      tipoDocumento: 'F',
+      codigoSucursal: 'A1',
+      fecha: '2025-05-15',
+      hora: '14:30',
+      numeroDocumento: '000123',
+      codigoCliente: 'CL001',
+      cliente: 'Juan Pérez',
+      tasa: '36.5',
+      monto: '100.00',
+      montoIVA: '16.00',
+      igtf: '3.00',
+      total: '119.00',
+      nula: false,
+    },
+    {
+      tipoDocumento: 'F',
+      codigoSucursal: 'A1',
+      fecha: '2025-05-15',
+      hora: '14:30',
+      numeroDocumento: '000123',
+      codigoCliente: 'CL001',
+      cliente: 'Juan Pérez',
+      tasa: '36.5',
+      monto: '100.00',
+      montoIVA: '16.00',
+      igtf: '3.00',
+      total: '119.00',
+      nula: false,
+    },
+    {
+      tipoDocumento: 'F',
+      codigoSucursal: 'A1',
+      fecha: '2025-05-15',
+      hora: '14:30',
+      numeroDocumento: '000123',
+      codigoCliente: 'CL001',
+      cliente: 'Juan Pérez',
+      tasa: '36.5',
+      monto: '100.00',
+      montoIVA: '16.00',
+      igtf: '3.00',
+      total: '119.00',
+      nula: false,
+    },
+  ];
+  setResultados(datosPrueba);
+}, []);
+
+
+const handleConsultar = async () => {
+  const payload = {
+    codEmpresa: codigoEmpresa,
+    nombreEmpresa,
+    codSucursal: codigoSucursal,
+    nombreSucursal,
+    moneda,
+    simboloMoneda,
+    tipoDocumento: codSeleccionado,
+    nombreTipoDoc: nomTipoDoc,
+    numeroDocumento,
+  };
+
+  console.log("Payload enviado:", payload);
+
+  try {
+    // Aquí iría el fetch real a la API, por ahora puedes usar los datos simulados:
+    const datosPrueba = [
+      {
+        tipoDocumento: 'F',
+        codigoSucursal: 'A1',
+        fecha: '2025-05-15',
+        hora: '14:30',
+        numeroDocumento: '000123',
+        codigoCliente: 'CL001',
+        cliente: 'Juan Pérez',
+        tasa: '36.5',
+        monto: '100.00',
+        montoIVA: '16.00',
+        igtf: '3.00',
+        total: '119.00',
+        nula: false,
+      },
+      // Más registros si deseas
+    ];
+
+    setResultados(datosPrueba); // Reemplazar por los resultados reales si usas una API
+
+  } catch (error) {
+    console.error("Error al consultar:", error);
   }
 };
 
@@ -53,54 +159,130 @@ const handleTipoDocChange = (e) => {
     setCodigoEmpresa(e.target.value);
   };
 
-  const handleEmpresaKeyDown = async (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
+  const buscarDatos = async (empresa, sucursal, tipoDoc) => {
+    // Limpiar estado antes de buscar
+    setNombreEmpresa('');
+    setNombreSucursal('');
+    setSucursales([]);
+    setMoneda('');
+    setSimboloMoneda('');
+    setEmpresaData(null);
+    setNomTipoDoc('');
+    setNumeroDocumento('');
   
-      setNombreEmpresa('');
-      setCodigoSucursal('');
-      setNombreSucursal('');
-      setSucursales([]);
-      setMoneda('');
-      setSimboloMoneda('');
-      setEmpresaData(null);
+    if (!empresa.trim()) return;
   
-      if (codigoEmpresa.length > 0) {
-        try {
-          const response = await fetch("http://localhost:3000/api/ventas/factura/formulario", {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ codigoEmpresa }), // Aquí envías el código en el body
-          });
+    const hasEmpresa = empresa.trim();
+    const hasSucursal = sucursal?.trim();
+    const hasTipoDoc = tipoDoc?.trim();
   
-          const json = await response.json();
+    try {
+      if (hasEmpresa && !hasSucursal && !hasTipoDoc) {
+        // Solo Empresa
+        const response = await fetch('http://localhost:3000/api/ventas/factura/formulario', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ codEmpresa: empresa }),
+        });
+  
+        const json = await response.json();
+  
+        if (json.success && json.data.CodEmpresa === empresa) {
+          setNombreEmpresa(json.data.NomEmpresa);
+          setSucursales(json.data.Sucursales || []);
+          setEmpresaData(json.data);
+          const simbolo = json.data.Simbolo;
+          const simboloToMoneda = { 'Bs.': 'BS', '$': 'USD', 'USD': 'USD' };
+          setMoneda(simboloToMoneda[simbolo] || '');
+          setSimboloMoneda(simbolo);
+        } else {
+          setNombreEmpresa('No encontrada');
+          setMoneda('Seleccione');
+        }
+      } else if (hasEmpresa && hasSucursal && hasTipoDoc) {
+        // Empresa + Sucursal + TipoDoc
+        const payload = {
+          codEmpresa: empresa,
+          codSucursal: sucursal,
+          codTipoDoc: tipoDoc,
+        };
+  
+        const response = await fetch('http://localhost:3000/api/ventas/factura/formulario', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+  
+        const json = await response.json();
   
           if (json.success && json.data.CodEmpresa === codigoEmpresa) {
             setNombreEmpresa(json.data.NomEmpresa);
             setEmpresaData(json.data);
-            setSucursales(json.data.Sucursales || []);
   
-            const simbolo = json.data.Simbolo;
-            const simboloToMoneda = {
-              'Bs.': 'BS',
-              '$': 'USD',
-              'USD': 'USD',
-            };
-            const monedaDetectada = simboloToMoneda[simbolo] || '';
-            setMoneda(monedaDetectada);
-            setSimboloMoneda(simbolo);
-          } else {
-            setNombreEmpresa('No encontrada');
-            setMoneda('Seleccione');
-          }
-        } catch (error) {
-          console.error('Error al buscar empresa:', error);
+          const simbolo = json.data.Simbolo;
+          const simboloToMoneda = { 'Bs.': 'BS', '$': 'USD', 'USD': 'USD' };
+          setMoneda(simboloToMoneda[simbolo] || '');
+          setSimboloMoneda(simbolo);
+        } else {
+          setNombreEmpresa('No encontrada');
+          setMoneda('Seleccione');
         }
+      } else {
+        console.warn('Debe completar todos los campos necesarios para la búsqueda.');
       }
+    } catch (error) {
+      console.error('Error al buscar empresa:', error);
     }
   };
+  
+  // Evento keyDown para inputs de empresa y sucursal
+  const handleEmpresaKeyDown = async (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      await buscarDatos(codigoEmpresa, codigoSucursal, codSeleccionado);
+    }
+  };
+  
+  const handleTipoDocChange = (e) => {
+    const nuevoTipoDoc = e.target.value;
+    setCodSeleccionado(nuevoTipoDoc);
+  
+    if (!empresaData || !codigoSucursal) {
+      setNomTipoDoc('');
+      setNumeroDocumento('');
+      return;
+    }
+  
+    const sucursalData = Array.isArray(empresaData.Sucursales)
+      ? empresaData.Sucursales.find(
+          (s) => s.CodSucursal?.toLowerCase() === codigoSucursal.toLowerCase()
+        )
+      : empresaData.Sucursal?.CodSucursal?.toLowerCase() === codigoSucursal.toLowerCase()
+      ? empresaData.Sucursal
+      : null;
+  
+    if (sucursalData) {
+      const documento = sucursalData.Documentos?.find(
+        (doc) => doc.CodTipoDoc === nuevoTipoDoc
+      );
+  
+      if (documento) {
+        setNomTipoDoc(documento.NomTipoDoc || 'No encontrado');
+        setNumeroDocumento(documento.NDocumento || 'No encontrado');
+      } else {
+        setNomTipoDoc('Documento no encontrado');
+        setNumeroDocumento('No encontrado');
+      }
+    } else {
+      setNomTipoDoc('Sucursal no encontrada');
+      setNumeroDocumento('No encontrado');
+    }
+  };
+  
+  
+  
+  
+  
   
 
   const handleSucursalKeyDown = (e) => {
@@ -134,7 +316,10 @@ const handleTipoDocChange = (e) => {
   return (
     <div className='bill'>
       <div className='Buscador'>
-      <MenuPage/>
+      <MenuPage onConsultar={handleConsultar}
+      onModificar={() => alert('Modificar clicked!')}
+      onNuevo={() => alert('Nuevo clicked!')}
+      onAnular={() => alert('Anular clicked!')}/>
 
       </div>
 
@@ -235,7 +420,11 @@ const handleTipoDocChange = (e) => {
       
       </div>
       <div>
-      <AccordionSection 
+        {/* <TablaListadoFcaturacion  data={resultados}/> */}
+        <TablaListadoFcaturacion data={resultados} onRowSelect={setFacturaSeleccionada} />
+
+
+      {/* <AccordionSection 
       sections={[
         {
           title: 'Datos del Cliente',
@@ -245,7 +434,7 @@ const handleTipoDocChange = (e) => {
               <div className="formulario-acordeon">
               <label>Empresa:</label>
               <input type="text" value={nombreEmpresa} readOnly />
-              {/* <label>Empresa Seleccionada:</label> */}
+              
               <input type="text" value={nombreEmpresa} readOnly />
               </div>
               <div className="formulario-acordeon">
@@ -352,7 +541,7 @@ const handleTipoDocChange = (e) => {
               
             </div>
 
-            {/* Contenedor Derecho */}
+      
             <div className='acordeon-container'>
               <div className="formulario-acordeon">
               <label>Rif:</label>
@@ -425,10 +614,15 @@ const handleTipoDocChange = (e) => {
             </div>
           ),
         },
-        // puedes agregar más secciones aquí
-      ]}/>
+     
+      ]}/> */}
       
     
+      </div>
+      <div>
+      {facturaSeleccionada && (
+  <InfoClienteDespacho item={facturaSeleccionada} />
+)}
       </div>
       
     </div>

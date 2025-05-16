@@ -1,39 +1,34 @@
-import React from 'react'
+import React from 'react';
 import { FaSearch } from "react-icons/fa";
 import { IoCreate } from "react-icons/io5";
 import { FaPlus } from "react-icons/fa";
 import { FaTrashAlt } from "react-icons/fa";
-import '../Styles/MenuPage.css'
+import '../Styles/MenuPage.css';
 
-
-
-
-function MenuPage() {
+const MenuPage = ({ onConsultar, onModificar, onNuevo, onAnular }) => {
   return (
-    <div className='container-menu'>
-        <div className='consultar'>
-            <FaSearch  className='icon1'/>
-            <h3 className='tittle'>Consultar</h3>
+    <div className="container-menu">
+      <button className="consultar" onClick={onConsultar}>
+        <FaSearch className='icon1' />
+        <h3 className='tittle'>Consultar</h3>
+      </button>
 
-        </div>
-        <div className='modificar'>
-            <IoCreate className='icon2' />
-            <h3 className='tittle'>Modificar</h3>
-            
-        </div>
-        <div className='nuevo'>
-            <FaPlus className='icon3' />
-            <h3 className='tittle'>Nuevo</h3>
+      <button className="modificar" onClick={onModificar}>
+        <IoCreate className='icon2' />
+        <h3 className='tittle'>Modificar</h3>
+      </button>
 
-        </div>
-        <div className='anular'>
-            <FaTrashAlt className='icon4'  />
-            <h3 className='tittle'>Anular</h3>
+      <button className="nuevo" onClick={onNuevo}>
+        <FaPlus className='icon3' />
+        <h3 className='tittle'>Nuevo</h3>
+      </button>
 
-        </div>
-
+      <button className="anular" onClick={onAnular}>
+        <FaTrashAlt className='icon4' />
+        <h3 className='tittle'>Anular</h3>
+      </button>
     </div>
-  )
+  );
 }
 
-export default MenuPage
+export default MenuPage;
