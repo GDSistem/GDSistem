@@ -1,28 +1,47 @@
 const sql = require('mssql');
 const { poolPromise } = require('../../configs/database.js');
 
-const obtenerCliente = async (codDocumento) => {
+const obtenerCliente = async (nDocumento) => {
   try {
+    console.log('🔍 Buscando cliente con NDocumento:', nDocumento);
+
     const pool = await poolPromise;
 
     const result = await pool.request()
-      .input('codDocumento', sql.VarChar, codDocumento)
+      .input('nDocumento', sql.VarChar, nDocumento)
       .query(`
-        SELECT c.* 
-        FROM dbo.TblTipoDoc td
-        INNER JOIN dbo.TblSucursalNDoc snd ON td.IdTipoDoc = snd.IdTipoDoc
-        INNER JOIN dbo.TblVentas v ON snd.NDocumento = v.NDocumento
-        INNER JOIN dbo.TblClientes c ON v.IdCliente = c.IdCliente
-        WHERE td.CodTipoDoc = @codDocumento
+        DECLARE @IdSucursal INT, @IdCliente INT, @IdVendedorInt INT;
+
+        -- Obtener datos desde TblVentas por NDocumento
+        SELECT TOP 1 
+          @IdSucursal = IdSucursal,
+          @IdCliente = IdCliente,
+          @IdVendedorInt = IdVendedorInt
+        FROM dbo.TblVentas
+        WHERE NDocumento = @nDocumento;
+
+        -- Retornar datos del cliente y vendedor
+        SELECT 
+          c.*,
+          v.CodVendedor,
+          v.NomVendedor
+        FROM dbo.TblClientes c
+        LEFT JOIN dbo.TblVendedores v ON @IdVendedorInt = v.IdVendedor
+        WHERE c.IdCliente = @IdCliente;
       `);
 
     const records = result.recordset;
+    console.log('📄 Registros encontrados:', records.length);
 
-    if (records.length === 0) return null;
+    if (records.length === 0) {
+      console.log('⚠️ No se encontró ningún cliente para ese NDocumento');
+      return null;
+    }
 
-    return records[0]; // retorna la info completa del cliente
+    console.log('✅ Cliente encontrado:', records[0]);
+    return records[0];
   } catch (error) {
-    console.error('Error al obtener cliente:', error);
+    console.error('❌ Error al obtener cliente:', error);
     throw error;
   }
 };
