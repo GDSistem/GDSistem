@@ -1,4 +1,4 @@
-const {obtenerCliente} = require('../models/clients_models'); // Asegúrate de que la ruta sea correcta
+const {obtenerCliente} = require('../models/clientes_models'); // Asegúrate de que la ruta sea correcta
 
 // Controlador para obtener la empresa y sus sucursales
 // Payload que espera recibir

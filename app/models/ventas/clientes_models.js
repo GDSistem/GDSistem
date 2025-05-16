@@ -1,76 +1,30 @@
+const sql = require('mssql');
 const { poolPromise } = require('../../configs/database.js');
 
-const obtenerListado = async (codEmpresa, codSucursal, codTipoDoc, fechaInicio, fechaFin) => {
-  console.log('Parámetros recibidos en obtenerListado:');
-  console.log('codEmpresa:', codEmpresa);
-  console.log('codSucursal:', codSucursal);
-  console.log('codTipoDoc:', codTipoDoc);
-  console.log('fechaInicio:', fechaInicio);
-  console.log('fechaFin:', fechaFin);
+const obtenerCliente = async (codDocumento) => {
+  try {
+    const pool = await poolPromise;
 
-  const pool = await poolPromise;
-  const request = pool.request();
+    const result = await pool.request()
+      .input('codDocumento', sql.VarChar, codDocumento)
+      .query(`
+        SELECT c.* 
+        FROM dbo.TblTipoDoc td
+        INNER JOIN dbo.TblSucursalNDoc snd ON td.IdTipoDoc = snd.IdTipoDoc
+        INNER JOIN dbo.TblVentas v ON snd.NDocumento = v.NDocumento
+        INNER JOIN dbo.TblClientes c ON v.IdCliente = c.IdCliente
+        WHERE td.CodTipoDoc = @codDocumento
+      `);
 
-  request.input('CodEmpresa', codEmpresa);
-  request.input('CodSucursal', codSucursal);
-  request.input('CodTipoDoc', codTipoDoc);
-  request.input('FechaInicio', fechaInicio);
-  request.input('FechaFin', fechaFin);
+    const records = result.recordset;
 
-  const result = await request.query(`
-    DECLARE @IdEmpresa INT;
-    DECLARE @IdSucursal INT;
-    DECLARE @IdTipoDoc INT;
+    if (records.length === 0) return null;
 
-    -- Obtener IdEmpresa
-    SELECT @IdEmpresa = IdEmpresa
-    FROM dbo.TblEmpresas
-    WHERE CodEmpresa = @CodEmpresa;
-
-    -- Obtener IdSucursal vinculado a la empresa
-    SELECT @IdSucursal = IdSucursal
-    FROM dbo.TblSucursales
-    WHERE CodSucursal = @CodSucursal AND IdEmpresa = @IdEmpresa;
-
-    -- Obtener IdTipoDoc
-    SELECT @IdTipoDoc = IdTipoDoc
-    FROM dbo.TblTipoDoc
-    WHERE CodTipoDoc = @CodTipoDoc;
-
-    IF @IdEmpresa IS NOT NULL AND @IdSucursal IS NOT NULL AND @IdTipoDoc IS NOT NULL
-    BEGIN
-      SELECT
-        td.CodTipoDoc,
-        s.CodSucursal,
-        e.CodEmpresa,
-        v.Fecha,
-        v.NDocumento,
-        v.TipoCambioBCV,
-        v.MontoBase,
-        v.MontoIVA,
-        v.IGTF,
-        v.Nula,
-        v.MontoBase + v.MontoIVA AS MontoTotal,
-        c.CodCliente,
-        c.NomCliente
-      FROM dbo.TblVentas v
-      INNER JOIN dbo.TblTipoDoc td ON td.IdTipoDoc = v.IdTipoDoc
-      INNER JOIN dbo.TblSucursales s ON s.IdSucursal = v.IdSucursal
-      INNER JOIN dbo.TblEmpresas e ON e.IdEmpresa = s.IdEmpresa
-      LEFT JOIN dbo.TblClientes c ON c.IdCliente = v.IdCliente
-      WHERE v.IdSucursal = @IdSucursal
-        AND v.IdTipoDoc = @IdTipoDoc
-        AND s.IdEmpresa = @IdEmpresa
-        AND CONVERT(date, v.Fecha) BETWEEN @FechaInicio AND @FechaFin
-    END
-    ELSE
-    BEGIN
-      SELECT NULL AS CodTipoDoc
-    END
-  `);
-
-  // Filtrar registros nulos antes de retornar
-  return result.recordset.filter(row => row.CodTipoDoc !== null);
+    return records[0]; // retorna la info completa del cliente
+  } catch (error) {
+    console.error('Error al obtener cliente:', error);
+    throw error;
+  }
 };
 
-module.exports = { obtenerListado };
+module.exports = { obtenerCliente };
