@@ -25,6 +25,7 @@ app.use('/api/usuarios', require('./routes/users_routes.js'));
 app.use('/api/ventas', require('./routes/ventas/facturacion_routes.js'));
 app.use('/api/documento', require('./routes/document_routes.js'));
 app.use('/api/cliente', require('./routes/clients_routes.js'));
+app.use('/api/ventas', require('./routes/ventas/listado_routes.js'));
 
 
 // Starting Server
