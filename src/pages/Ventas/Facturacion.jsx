@@ -38,6 +38,44 @@ function obtenerHora12Horas(isoString) {
 }
 
 
+const fetchClienteInfo = async (numeroDocumento) => {
+  try {
+    const response = await fetch("http://localhost:3000/api/ventas/factura/cliente", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ nDocumento: numeroDocumento })
+    });
+
+    if (!response.ok) {
+      throw new Error("Error al consultar información del cliente");
+    }
+
+    const data = await response.json();
+    return data.success ? data.data : null;
+  } catch (error) {
+    console.error("Error al obtener cliente:", error);
+    return null;
+  }
+};
+
+const handleRowSelect = async (itemSeleccionado) => {
+  const clienteData = await fetchClienteInfo(itemSeleccionado.numeroDocumento);
+
+  if (clienteData) {
+    // Combina la info del item original (factura) con la del cliente
+    const facturaConCliente = {
+      ...itemSeleccionado,
+      clienteData: clienteData
+    };
+
+    setFacturaSeleccionada(facturaConCliente);
+  }
+};
+
+
+
 const handleConsultar = async () => {
   const payload = {
     codEmpresa: codigoEmpresa,
@@ -381,7 +419,11 @@ if (data.success && Array.isArray(data.data)) {
       </div>
       <div>
         {/* <TablaListadoFcaturacion  data={resultados}/> */}
-        <TablaListadoFcaturacion resultados={resultados} onRowSelect={setFacturaSeleccionada} />
+        {/* <TablaListadoFcaturacion resultados={resultados} onRowSelect={setFacturaSeleccionada} /> */}
+        <TablaListadoFcaturacion
+          resultados={resultados}
+          onRowSelect={handleRowSelect}
+        />
 
 
       {/* <AccordionSection 

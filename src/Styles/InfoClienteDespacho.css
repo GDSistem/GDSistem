@@ -16,3 +16,13 @@ p {
   margin: 5px 0;
   font-size: 14px;
 }
+.cliente-info {
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+  }
+  
+  .columna-izquierda, .columna-derecha {
+    flex: 1;
+  }
+  
