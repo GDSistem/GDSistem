@@ -44,7 +44,7 @@ const obtenerListado = async (codEmpresa, codSucursal, codTipoDoc, fechaInicio, 
         s.CodSucursal,
         e.CodEmpresa,
         v.Fecha,
-        v.NDocumento,
+        STUFF(v.NDocumento, 1, 1, '') AS NDocumento,
         v.TipoCambioBCV,
         v.MontoBase,
         v.MontoIVA,
@@ -69,7 +69,6 @@ const obtenerListado = async (codEmpresa, codSucursal, codTipoDoc, fechaInicio, 
     END
   `);
 
-  // Filtrar registros nulos antes de retornar
   return result.recordset.filter(row => row.CodTipoDoc !== null);
 };
 
