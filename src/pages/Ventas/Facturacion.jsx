@@ -19,145 +19,111 @@ function Facturacion() {
   const [codSeleccionado, setCodSeleccionado] = useState('');
   const [nomTipoDoc, setNomTipoDoc] = useState('');
   const [numeroDocumento, setNumeroDocumento] = useState('');
+  const [simboloMoneda, setSimboloMoneda] = useState('');
+  const [facturaSeleccionada, setFacturaSeleccionada] = useState(null);
+  const [resultados, setResultados] = useState([]); 
+  const [mostrarModalError, setMostrarModalError] = useState(false);
+  const [mensajeError, setMensajeError] = useState('');
 
-const [simboloMoneda, setSimboloMoneda] = useState('');
-const [facturaSeleccionada, setFacturaSeleccionada] = useState(null);
 
-
-const [resultados, setResultados] = useState([]); 
-// Donde se almacenarán los datos traídos por el endpoint (cuando esté listo)
-
-// Por ahora puedes probar con datos simulados:
-useEffect(() => {
-  const datosPrueba = [
-    {
-      tipoDocumento: 'p',
-      codigoSucursal: 'A1',
-      fecha: '2025-05-15',
-      hora: '14:30',
-      numeroDocumento: '000123',
-      codigoCliente: 'CL001',
-      cliente: 'giova',
-      tasa: '36.5',
-      monto: '100.00',
-      montoIVA: '16.00',
-      igtf: '3.00',
-      total: '119.00',
-      nula: false,
-    },
-    {
-      tipoDocumento: 'F',
-      codigoSucursal: 'A1',
-      fecha: '2025-05-15',
-      hora: '14:30',
-      numeroDocumento: '000123',
-      codigoCliente: 'CL001',
-      cliente: 'Juan Pérez',
-      tasa: '36.5',
-      monto: '100.00',
-      montoIVA: '16.00',
-      igtf: '3.00',
-      total: '119.00',
-      nula: false,
-    },
-    {
-      tipoDocumento: 'F',
-      codigoSucursal: 'A1',
-      fecha: '2025-05-15',
-      hora: '14:30',
-      numeroDocumento: '000123',
-      codigoCliente: 'CL001',
-      cliente: 'Juan Pérez',
-      tasa: '36.5',
-      monto: '100.00',
-      montoIVA: '16.00',
-      igtf: '3.00',
-      total: '119.00',
-      nula: false,
-    },
-    {
-      tipoDocumento: 'F',
-      codigoSucursal: 'A1',
-      fecha: '2025-05-15',
-      hora: '14:30',
-      numeroDocumento: '000123',
-      codigoCliente: 'CL001',
-      cliente: 'Juan Pérez',
-      tasa: '36.5',
-      monto: '100.00',
-      montoIVA: '16.00',
-      igtf: '3.00',
-      total: '119.00',
-      nula: false,
-    },
-    {
-      tipoDocumento: 'F',
-      codigoSucursal: 'A1',
-      fecha: '2025-05-15',
-      hora: '14:30',
-      numeroDocumento: '000123',
-      codigoCliente: 'CL001',
-      cliente: 'Juan Pérez',
-      tasa: '36.5',
-      monto: '100.00',
-      montoIVA: '16.00',
-      igtf: '3.00',
-      total: '119.00',
-      nula: false,
-    },
-  ];
-  setResultados(datosPrueba);
-}, []);
+function obtenerHora12Horas(isoString) {
+  const fecha = new Date(isoString);
+  const opciones = {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+    timeZone: 'UTC', // o tu zona horaria, como 'America/Caracas'
+  };
+  return fecha.toLocaleTimeString('es-VE', opciones);
+}
 
 
 const handleConsultar = async () => {
   const payload = {
     codEmpresa: codigoEmpresa,
-    nombreEmpresa,
     codSucursal: codigoSucursal,
-    nombreSucursal,
-    moneda,
-    simboloMoneda,
-    tipoDocumento: codSeleccionado,
-    nombreTipoDoc: nomTipoDoc,
-    numeroDocumento,
+    codTipoDoc: codSeleccionado,
+    fechaInicio: "2016-01-01", // Puedes permitir que el usuario seleccione fechas
+    fechaFin: "2016-01-01",
   };
 
   console.log("Payload enviado:", payload);
 
   try {
-    // Aquí iría el fetch real a la API, por ahora puedes usar los datos simulados:
-    const datosPrueba = [
-      {
-        tipoDocumento: 'F',
-        codigoSucursal: 'A1',
-        fecha: '2025-05-15',
-        hora: '14:30',
-        numeroDocumento: '000123',
-        codigoCliente: 'CL001',
-        cliente: 'Juan Pérez',
-        tasa: '36.5',
-        monto: '100.00',
-        montoIVA: '16.00',
-        igtf: '3.00',
-        total: '119.00',
-        nula: false,
+    const response = await fetch("http://localhost:3000/api/ventas/factura/listado", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
       },
-      // Más registros si deseas
-    ];
+      body: JSON.stringify(payload)
+    });
+    if (!response.ok) {
+      if (response.status === 404) {
+        setMensajeError('No se encontraron resultados para la consulta.');
+        setMostrarModalError(true);
+      } else {
+        setMensajeError('Ocurrió un error al consultar los datos.');
+        setMostrarModalError(true);
+      }
+      setResultados([]); // Limpiar resultados
+      return;
+    }
 
-    setResultados(datosPrueba); // Reemplazar por los resultados reales si usas una API
+    const data = await response.json();
+
+if (data.success && Array.isArray(data.data)) {
+  const resultadosTransformados = data.data.map((item) => ({
+    
+    tipoDocumento: item.CodTipoDoc,
+    codigoSucursal: item.CodSucursal,
+    fecha: item.Fecha?.split("T")[0],
+    hora: obtenerHora12Horas(item.Fecha),
+
+    numeroDocumento: item.NDocumento,
+    codigoCliente: item.CodCliente,
+    cliente: item.NomCliente,
+    tasa: item.TipoCambioBCV ?? 0,
+    // tasa: item.TipoCambioBCV != null ? item.TipoCambioBCV : 0,
+    monto: item.MontoBase,
+    montoIVA: item.MontoIVA,
+    igtf: item.IGTF,
+    total: item.MontoTotal,
+    nula: item.Nula,
+  }));
+
+
+
+  setResultados(resultadosTransformados);
+  console.log("Datos recibidos:", resultados);
+
+} else {
+  console.error("Respuesta no esperada:", data);
+}
+
 
   } catch (error) {
     console.error("Error al consultar:", error);
   }
 };
 
+
   
  
   const handleEmpresaInput = (e) => {
     setCodigoEmpresa(e.target.value);
   };
+
+  // const extraerHora = (fechaISO) => {
+  //   if (!fechaISO) return '';
+  //   const hora = new Date(fechaISO).toLocaleTimeString('es-VE', {
+  //     hour: '2-digit',
+  //     minute: '2-digit',
+  //     second: '2-digit',
+  //     hour12: false // puedes cambiar a true si prefieres AM/PM
+  //   });
+  //   return hora;
+  // };
+  
 
   const buscarDatos = async (empresa, sucursal, tipoDoc) => {
     // Limpiar estado antes de buscar
@@ -278,12 +244,6 @@ const handleConsultar = async () => {
       setNumeroDocumento('No encontrado');
     }
   };
-  
-  
-  
-  
-  
-  
 
   const handleSucursalKeyDown = (e) => {
     if (e.key === 'Enter') {
@@ -421,7 +381,7 @@ const handleConsultar = async () => {
       </div>
       <div>
         {/* <TablaListadoFcaturacion  data={resultados}/> */}
-        <TablaListadoFcaturacion data={resultados} onRowSelect={setFacturaSeleccionada} />
+        <TablaListadoFcaturacion resultados={resultados} onRowSelect={setFacturaSeleccionada} />
 
 
       {/* <AccordionSection 

@@ -154,57 +154,71 @@
 
 // export default TablaListadoFacturacion;
 
-import React from 'react';
+import React, { useState } from 'react';
 import "../Styles/TablaListadoFacturacion.css";
 
-function TablaListadoFacturacion({ data, onRowSelect }) {
+function TablaListadoFacturacion({ resultados, onRowSelect }) {
+
+    const [selectedIndex, setSelectedIndex] = useState(null);
+
+    const handleRowClick = (item, index) => {
+    setSelectedIndex(index);
+    onRowSelect(item);
+  };
   return (
+   
     <div className="factura-table-container">
-      <table className="factura-table">
-        <thead>
-          <tr>
-            <th>Tipo Doc</th>
-            <th>Sucursal</th>
-            <th>Fecha</th>
-            <th>Hora</th>
-            <th># Documento</th>
-            <th>Cód Cliente</th>
-            <th>Cliente</th>
-            <th>Tasa</th>
-            <th>Monto</th>
-            <th>IVA</th>
-            <th>IGTF</th>
-            <th>Total</th>
-            <th>Nula</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.length === 0 ? (
-            <tr><td colSpan="13" style={{ textAlign: 'center' }}>Sin resultados</td></tr>
-          ) : (
-            data.map((item, index) => (
-              <tr key={index} onClick={() => onRowSelect(item)} className="clickable-row">
-                <td>{item.tipoDocumento}</td>
-                <td>{item.codigoSucursal}</td>
-                <td>{item.fecha}</td>
-                <td>{item.hora}</td>
-                <td>{item.numeroDocumento}</td>
-                <td>{item.codigoCliente}</td>
-                <td>{item.cliente}</td>
-                <td>{item.tasa}</td>
-                <td>{item.monto}</td>
-                <td>{item.montoIVA}</td>
-                <td>{item.igtf}</td>
-                <td>{item.total}</td>
-                <td>{item.nula ? 'Sí' : 'No'}</td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
-    </div>
+  <table className="factura-table">
+    <thead>
+      <tr>
+        <th>Tipo Doc</th>
+        <th>Sucursal</th>
+        <th>Fecha</th>
+        <th>Hora</th>
+        <th># Documento</th>
+        <th>Cód Cliente</th>
+        <th>Cliente</th>
+        <th>Tasa</th>
+        <th>Monto</th>
+        <th>IVA</th>
+        <th>IGTF</th>
+        <th>Total</th>
+        <th>Nula</th>
+      </tr>
+    </thead>
+  </table>
+  <div className="factura-table-body-scroll">
+    <table className="factura-table">
+      <tbody>
+        {resultados.length === 0 ? (
+          <tr><td colSpan="13" style={{ textAlign: 'center' }}>Sin resultados</td></tr>
+        ) : (
+          resultados.map((item, index) => (
+            <tr key={index} onClick={() => handleRowClick(item, index)}  className={`clickable-row ${selectedIndex === index ? 'selected-row' : ''}`}>
+              <td>{item.tipoDocumento}</td>
+              <td>{item.codigoSucursal}</td>
+              <td>{item.fecha}</td>
+              <td>{item.hora}</td>
+              <td>{item.numeroDocumento}</td>
+              <td>{item.codigoCliente}</td>
+              <td>{item.cliente}</td>
+              <td>{item.tasa}</td>
+              <td>{item.monto}</td>
+              <td>{item.montoIVA}</td>
+              <td>{item.igtf}</td>
+              <td>{item.total}</td>
+              <td>{item.nula ? 'Sí' : 'No'}</td>
+            </tr>
+          ))
+        )}
+      </tbody>
+    </table>
+  </div>
+</div>
+
   );
 }
 
 export default TablaListadoFacturacion;
+
 
