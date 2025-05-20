@@ -27,10 +27,10 @@ const obtenerListado = async (codEmpresa, codSucursal, codTipoDoc, fechaInicio, 
     FROM dbo.TblEmpresas
     WHERE CodEmpresa = @CodEmpresa;
 
-    -- Obtener IdSucursal vinculado a la empresa
+    -- Obtener IdSucursal
     SELECT @IdSucursal = IdSucursal
     FROM dbo.TblSucursales
-    WHERE CodSucursal = @CodSucursal AND IdEmpresa = @IdEmpresa;
+    WHERE CodSucursal = @CodSucursal;
 
     -- Obtener IdTipoDoc
     SELECT @IdTipoDoc = IdTipoDoc
@@ -44,7 +44,8 @@ const obtenerListado = async (codEmpresa, codSucursal, codTipoDoc, fechaInicio, 
         s.CodSucursal,
         e.CodEmpresa,
         v.Fecha,
-        STUFF(v.NDocumento, 1, 1, '') AS NDocumento,
+        -- Elimina cualquier carácter que no sea número
+        REPLACE(TRANSLATE(v.NDocumento, '@/NCHP-ABCDEFJIKLMOQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', REPLICATE(' ', LEN('@/NCHP-ABCDEFJIKLMOQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'))), ' ', '') AS NDocumento,
         v.TipoCambioBCV,
         v.MontoBase,
         v.MontoIVA,
