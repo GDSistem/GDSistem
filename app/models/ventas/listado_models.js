@@ -27,10 +27,10 @@ const obtenerListado = async (codEmpresa, codSucursal, codTipoDoc, fechaInicio, 
     FROM dbo.TblEmpresas
     WHERE CodEmpresa = @CodEmpresa;
 
-    -- Obtener IdSucursal
+    -- Obtener IdSucursal usando tanto el IdEmpresa como el codSucursal
     SELECT @IdSucursal = IdSucursal
     FROM dbo.TblSucursales
-    WHERE CodSucursal = @CodSucursal;
+    WHERE CodSucursal = @CodSucursal AND IdEmpresa = @IdEmpresa;
 
     -- Obtener IdTipoDoc
     SELECT @IdTipoDoc = IdTipoDoc
