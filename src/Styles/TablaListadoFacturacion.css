@@ -1,0 +1,69 @@
+/* Styles/FacturaTable.css */
+.factura-table-container {
+    margin-top: 30px;
+    overflow-x: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    background-color: #fff;
+  }
+  
+  .factura-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 13px;
+  }
+  
+  .factura-table thead {
+    background-color: #444595;
+    color: white;
+  }
+  
+  .factura-table th, .factura-table td {
+    padding: 15px 16px;
+    text-align: center;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+  .factura-table tbody tr:hover {
+    background-color: #f1f3f4;
+    transition: background-color 0.3s;
+  }
+  .clickable-row {
+    cursor: pointer;
+  }
+  
+  .clickable-row:hover {
+    background-color: #f9f9f9;
+  }
+  
+  .cliente-info, .despacho-info {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+    
+  }
+  
+  .factura-table-body-scroll {
+    max-height: calc( 7.2* 48px); /* Altura estimada de 5 filas */
+    overflow-y: auto;
+  }
+  
+  .factura-table thead {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+  }
+  
+  .factura-table-body-scroll table {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+  }
+  
+  .selected-row {
+    background-color: #cacae4 !important;
+  }
+  

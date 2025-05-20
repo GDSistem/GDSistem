@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import '../../Styles/FacturacionVentas.css';
 import MenuPage from '../../Components/MenuPage';
-import AccordionSection from '../../Components/AccordionSection';
+import TablaListadoFcaturacion from '../../Components/TablaListadoFcaturacion';
+// import AccordionSection from '../../Components/AccordionSection';
+import InfoClienteDespacho from '../../Components/InfoClienteDespacho';
+
 
 
 
@@ -16,69 +19,149 @@ function Facturacion() {
   const [codSeleccionado, setCodSeleccionado] = useState('');
   const [nomTipoDoc, setNomTipoDoc] = useState('');
   const [numeroDocumento, setNumeroDocumento] = useState('');
+  const [simboloMoneda, setSimboloMoneda] = useState('');
+  const [facturaSeleccionada, setFacturaSeleccionada] = useState(null);
+  const [resultados, setResultados] = useState([]); 
+  const [mostrarModalError, setMostrarModalError] = useState(false);
+  const [mensajeError, setMensajeError] = useState('');
 
-const [simboloMoneda, setSimboloMoneda] = useState('');
+
+function obtenerHora12Horas(isoString) {
+  const fecha = new Date(isoString);
+  const opciones = {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+    timeZone: 'UTC', // o tu zona horaria, como 'America/Caracas'
+  };
+  return fecha.toLocaleTimeString('es-VE', opciones);
+}
+
+
+const fetchClienteInfo = async (numeroDocumento) => {
+  try {
+    const response = await fetch("http://localhost:3000/api/ventas/factura/cliente", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ nDocumento: numeroDocumento })
+    });
+
+    if (!response.ok) {
+      throw new Error("Error al consultar información del cliente");
+    }
+
+    const data = await response.json();
+    return data.success ? data.data : null;
+  } catch (error) {
+    console.error("Error al obtener cliente:", error);
+    return null;
+  }
+};
+
+const handleRowSelect = async (itemSeleccionado) => {
+  const clienteData = await fetchClienteInfo(itemSeleccionado.numeroDocumento);
+
+  if (clienteData) {
+    // Combina la info del item original (factura) con la del cliente
+    const facturaConCliente = {
+      ...itemSeleccionado,
+      clienteData: clienteData
+    };
+
+    setFacturaSeleccionada(facturaConCliente);
+  }
+};
 
 
 
-  // const handleTipoDocChange = async (e) => {
-  //   const tipoDoc = e.target.value;  // Obtienes el tipo de documento seleccionado
-  //   setCodSeleccionado(tipoDoc);  // Actualizas el estado del tipo de documento seleccionado
-  
-  //   // Validar que el tipo de documento esté seleccionado para obtener su nombre
-  //   if (tipoDoc) {
-  //     try {
-  //       // Realizas la solicitud al servidor solo para obtener el nombre del documento
-  //       const response = await fetch('http://localhost:3000/api/documento/codDocumento', {
-  //         method: 'POST',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //         },
-  //         body: JSON.stringify({ codDocumento: tipoDoc }),  // Envío solo el tipo de documento
-  //       });
-  
-  //       const json = await response.json();
-  
-  //       if (json.success && json.data) {
-  //         // Actualizas los estados con el nombre del documento
-  //         setNomTipoDoc(json.data.NomTipoDoc);
-  //       } else {
-  //         setNomTipoDoc('No encontrado');
-  //       }
-  //     } catch (error) {
-  //       console.error('Error al obtener el nombre del documento:', error);
-  //     }
-  //   }
+const handleConsultar = async () => {
+  const payload = {
+    codEmpresa: codigoEmpresa,
+    codSucursal: codigoSucursal,
+    codTipoDoc: codSeleccionado,
+    fechaInicio: "2016-01-01", // Puedes permitir que el usuario seleccione fechas
+    fechaFin: "2016-01-01",
+  };
 
-  //   if (empresaData && codigoSucursal && tipoDoc) {
-  //     const sucursal = empresaData.Sucursales.find(
-  //       (suc) => suc.CodSucursal.toLowerCase() === codigoSucursal.toLowerCase()
-  //     );
-  
-  //     if (sucursal) {
-  //       const documento = sucursal.Documentos.find(
-  //         (doc) => doc.CodTipoDoc === tipoDoc
-  //       );
-  
-  //       if (documento) {
-  //         setNumeroDocumento(documento.NDocumento);
-  //       } else {
-  //         setNumeroDocumento('No encontrado');
-  //       }
-  //     } else {
-  //       setNumeroDocumento('No hay');
-  //     }
-  //   } else {
-  //     setNumeroDocumento('');
-  //   }
+  console.log("Payload enviado:", payload);
 
-  // };
-  
+  try {
+    const response = await fetch("http://localhost:3000/api/ventas/factura/listado", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+    if (!response.ok) {
+      if (response.status === 404) {
+        setMensajeError('No se encontraron resultados para la consulta.');
+        setMostrarModalError(true);
+      } else {
+        setMensajeError('Ocurrió un error al consultar los datos.');
+        setMostrarModalError(true);
+      }
+      setResultados([]); // Limpiar resultados
+      return;
+    }
+
+    const data = await response.json();
+
+if (data.success && Array.isArray(data.data)) {
+  const resultadosTransformados = data.data.map((item) => ({
+    
+    tipoDocumento: item.CodTipoDoc,
+    codigoSucursal: item.CodSucursal,
+    fecha: item.Fecha?.split("T")[0],
+    hora: obtenerHora12Horas(item.Fecha),
+
+    numeroDocumento: item.NDocumento,
+    codigoCliente: item.CodCliente,
+    cliente: item.NomCliente,
+    tasa: item.TipoCambioBCV ?? 0,
+    // tasa: item.TipoCambioBCV != null ? item.TipoCambioBCV : 0,
+    monto: item.MontoBase,
+    montoIVA: item.MontoIVA,
+    igtf: item.IGTF,
+    total: item.MontoTotal,
+    nula: item.Nula,
+  }));
+
+
+
+  setResultados(resultadosTransformados);
+  console.log("Datos recibidos:", resultados);
+
+} else {
+  console.error("Respuesta no esperada:", data);
+}
+
+
+  } catch (error) {
+    console.error("Error al consultar:", error);
+  }
+};
+
+
   
  
   const handleEmpresaInput = (e) => {
     setCodigoEmpresa(e.target.value);
   };
+
+  // const extraerHora = (fechaISO) => {
+  //   if (!fechaISO) return '';
+  //   const hora = new Date(fechaISO).toLocaleTimeString('es-VE', {
+  //     hour: '2-digit',
+  //     minute: '2-digit',
+  //     second: '2-digit',
+  //     hour12: false // puedes cambiar a true si prefieres AM/PM
+  //   });
+  //   return hora;
+  // };
+  
 
   const buscarDatos = async (empresa, sucursal, tipoDoc) => {
     // Limpiar estado antes de buscar
@@ -136,22 +219,9 @@ const [simboloMoneda, setSimboloMoneda] = useState('');
   
         const json = await response.json();
   
-        if (json.success && json.data.CodEmpresa === empresa) {
-          setNombreEmpresa(json.data.NomEmpresa);
-          setEmpresaData(json.data);
-  
-          const suc = json.data.Sucursal;
-          if (suc) {
-            setNombreSucursal(suc.NomSucursal || '');
-            const doc = suc.Documentos?.find((d) => d.CodTipoDoc === tipoDoc);
-            if (doc) {
-              setNomTipoDoc(doc.NomTipoDoc);
-              setNumeroDocumento(doc.NDocumento);
-            } else {
-              setNomTipoDoc('No encontrado');
-              setNumeroDocumento('No encontrado');
-            }
-          }
+          if (json.success && json.data.CodEmpresa === codigoEmpresa) {
+            setNombreEmpresa(json.data.NomEmpresa);
+            setEmpresaData(json.data);
   
           const simbolo = json.data.Simbolo;
           const simboloToMoneda = { 'Bs.': 'BS', '$': 'USD', 'USD': 'USD' };
@@ -212,64 +282,6 @@ const [simboloMoneda, setSimboloMoneda] = useState('');
       setNumeroDocumento('No encontrado');
     }
   };
-  
-  
-  
-  
-  
-  
-
-  // const handleEmpresaKeyDown = async (e) => {
-  //   if (e.key === 'Enter') {
-  //     e.preventDefault();
-
-  //     setNombreEmpresa('');
-  //     setCodigoSucursal('');
-  //     setNombreSucursal('');
-  //     setSucursales([]);
-  //     setMoneda('');
-  //     setMoneda('');
-  //     setSimboloMoneda('');
-      
-
-  //     if (codigoEmpresa.length > 0) {
-  //       try {
-  //         const response = await fetch('http://localhost:3000/api/empresa/codEmpresa', {
-  //           method: 'POST',
-  //           headers: {
-  //             'Content-Type': 'application/json',
-  //           },
-  //           body: JSON.stringify({ codEmpresa: codigoEmpresa }),
-  //         });
-
-  //         const json = await response.json();
-
-  //         if (json.success && json.data.CodEmpresa === codigoEmpresa) {
-  //           setNombreEmpresa(json.data.NomEmpresa);
-  //           setSucursales(json.data.Sucursales);
-  //           setEmpresaData(json.data);
-  //           const simbolo = json.data.Simbolo;
-
-  //         // Mapear símbolo a moneda interna
-  //           const simboloToMoneda = {
-  //           'Bs.': 'BS',
-  //           '$': 'USD',
-  //           'USD': 'USD',
-  //         };
-  //         const monedaDetectada = simboloToMoneda[simbolo] || '';
-  //         setMoneda(monedaDetectada);
-  //         setSimboloMoneda(simbolo); // si lo necesitas para mostrarlo
-  //       } else {
-  //         setNombreEmpresa('No encontrada');
-  //         setMoneda('Seleccione');
-  //       }
-
-  //       } catch (error) {
-  //         console.error('Error al buscar empresa:', error);
-  //       }
-  //     }
-  //   }
-  // };
 
   const handleSucursalKeyDown = (e) => {
     if (e.key === 'Enter') {
@@ -302,7 +314,10 @@ const [simboloMoneda, setSimboloMoneda] = useState('');
   return (
     <div className='bill'>
       <div className='Buscador'>
-      <MenuPage/>
+      <MenuPage onConsultar={handleConsultar}
+      onModificar={() => alert('Modificar clicked!')}
+      onNuevo={() => alert('Nuevo clicked!')}
+      onAnular={() => alert('Anular clicked!')}/>
 
       </div>
 
@@ -383,18 +398,6 @@ const [simboloMoneda, setSimboloMoneda] = useState('');
                 <label># Control:</label>
                 <input type="text" value={nombreSucursal} readOnly  className="input-small"/>
               </div>
-              {/* <div className="form-group">
-                <label># Doc. Origen:</label>
-                <input
-                  type="text"
-                  className="input-small"
-                  value={codigoSucursal}
-                  onChange={(e) => setCodigoSucursal(e.target.value)}
-                  onKeyDown={handleSucursalKeyDown}
-                  placeholder="Ej: A"
-                  disabled={!nombreEmpresa}
-                />
-              </div> */}
               <div className="form-group">
                 <label>Moneda:</label>
                 <select
@@ -415,200 +418,20 @@ const [simboloMoneda, setSimboloMoneda] = useState('');
       
       </div>
       <div>
-      <AccordionSection 
-      sections={[
-        {
-          title: 'Datos del Cliente',
-          content: (
-            <div className='huge-container'>
-              <div className='acordeon-container'>
-              <div className="formulario-acordeon">
-              <label>Empresa:</label>
-              <input type="text" value={nombreEmpresa} readOnly />
-              {/* <label>Empresa Seleccionada:</label> */}
-              <input type="text" value={nombreEmpresa} readOnly />
-              </div>
-              <div className="formulario-acordeon">
-              <label>Sucursal:</label>
-              <input type="text" value={nombreSucursal} readOnly />
-              <input type="text" value={nombreSucursal} readOnly />
+        {/* <TablaListadoFcaturacion  data={resultados}/> */}
+        {/* <TablaListadoFcaturacion resultados={resultados} onRowSelect={setFacturaSeleccionada} /> */}
+        <TablaListadoFcaturacion
+          resultados={resultados}
+          onRowSelect={handleRowSelect}
+        />
 
-              </div>
-              <div className="formulario-acordeon">
-              <label>Fecha Documento</label>
-              <input type="text" value={nombreSucursal} readOnly />
-              <label>Fecha Contabilizada</label>
-              <input type="text" value={nombreSucursal} readOnly />
-
-              </div>
-              <div className="formulario-acordeon">
-              <label>Tipo Persona:</label>
-              <input type="text" value={nombreSucursal} readOnly />
-              <input type="text" value={nombreSucursal} readOnly />
-
-              </div>
-              <div className="formulario-acordeon">
-              <label>Lista Precios:</label>
-              <input type="text" value={nombreSucursal} readOnly />
-              <input type="text" value={nombreSucursal} readOnly />
-
-              </div>
-              <div className="formulario-acordeon">
-              <label>Vendedor Interno:</label>
-              <input type="text" value={nombreSucursal} readOnly />
-              <input type="text" value={nombreSucursal} readOnly />
-
-              </div>
-
-              <div className="formulario-acordeon">
-              <label>Vendedor Externo:</label>
-              <input type="text" value={nombreSucursal} readOnly />
-              <input type="text" value={nombreSucursal} readOnly />
-
-              </div>
-
-              <div className="formulario-acordeon">
-              <label>Días Credito</label>
-              <input type="text" value={nombreSucursal} readOnly />
-              <label>Fecha Vencimiento</label>
-              <input type="text" value={nombreSucursal} readOnly />
-
-              </div>
-
-              <div className="formulario-acordeon">
-              <label>Días Adicionales</label>
-              <input type="text" value={nombreSucursal} readOnly />
-              <label>% Contado</label>
-              <input type="text" value={nombreSucursal} readOnly />
-
-              </div>
-
-              <div className="formulario-acordeon">
-              <label>Monto Credito</label>
-              <input type="text" value={nombreSucursal} readOnly />
-              <label>Credito Grupo</label>
-              <input type="text" value={nombreSucursal} readOnly />
-
-              </div>
-              <div className="formulario-acordeon">
-              <label>Plazo entrega</label>
-              <input type="text" value={nombreSucursal} readOnly />
-              <label>Fecha Compromiso</label>
-              <input type="text" value={nombreSucursal} readOnly />
-
-              </div>
-
-              <div className="formulario-acordeon">
-              <label>Exportación</label>
-              <input type="text" value={nombreSucursal} readOnly />
-              <label>Retención Iva</label>
-              <input type="text" value={nombreSucursal} readOnly />
-
-              </div>
-
-              <div className="formulario-acordeon">
-              <label>Fecha</label>
-              <input type="text" value={nombreSucursal} readOnly />
-              <label>Fecha Nula</label>
-              <input type="text" value={nombreSucursal} readOnly />
-
-              </div>
-
-              <div className="formulario-acordeon">
-              <label>Equipo </label>
-              <input type="text" value={nombreSucursal} readOnly />
-              <label>Equipo Nula</label>
-              <input type="text" value={nombreSucursal} readOnly />
-
-              </div>
-
-              <div className="formulario-acordeon">
-              <label>Usuario </label>
-              <input type="text" value={nombreSucursal} readOnly />
-              <label>Usuario Nula</label>
-              <input type="text" value={nombreSucursal} readOnly />
-
-              </div>
-              
-            </div>
-
-            {/* Contenedor Derecho */}
-            <div className='acordeon-container'>
-              <div className="formulario-acordeon">
-              <label>Rif:</label>
-              <input type="text" value={nombreEmpresa} readOnly />
-              <label>Nit:</label>
-              <input type="text" value={nombreEmpresa} readOnly />
-              
-              </div>
-              <div className="formulario-acordeon">
-              <label>Dirección:</label>
-              <input type="text" value={nombreSucursal} readOnly />
-              </div>
-              <div className="formulario-acordeon">
-              <label>Ciudad:</label>
-              <input type="text" value={nombreSucursal} readOnly />
-              </div>
-              <div className="formulario-acordeon">
-              <label>Estado:</label>
-              <input type="text" value={nombreSucursal} readOnly />
-              </div>
-              <div className="formulario-acordeon">
-              <label>País:</label>
-              <input type="text" value={nombreSucursal} readOnly />
-              </div>
-              <div className="formulario-acordeon">
-              <label>Teléfono 1:</label>
-              <input type="text" value={nombreSucursal} readOnly />
-              </div>
-              <div className="formulario-acordeon">
-              <label>Teléfono 2:</label>
-              <input type="text" value={nombreSucursal} readOnly />
-              </div>
-              <div className="formulario-acordeon">
-              <label>Fax:</label>
-              <input type="text" value={nombreSucursal} readOnly />
-              </div>
-              <div className="formulario-acordeon">
-              <label>E-mail:</label>
-              <input type="text" value={nombreSucursal} readOnly />
-              </div>
-              <div className="formulario-acordeon">
-              <label>Comentario Doc:</label>
-              <input type="text" value={nombreSucursal} readOnly />
-              </div>
-
-              <div className="formulario-acordeon">
-              <label>Comentario Nula:</label>
-              <input type="text" value={nombreSucursal} readOnly />
-              </div>
-
-            </div>
-
-            </div>
-            
-            
-
-            
-            
-          ),
-        },
-        {
-          title: 'Detalles del Documento',
-          content: (
-            <div className="formulario-acordeon">
-              <label>Tipo Documento:</label>
-              <input type="text" value={moneda} readOnly />
-    
-              <label>Moneda:</label>
-              <input type="text" value={moneda} readOnly />
-            </div>
-          ),
-        },
-        // puedes agregar más secciones aquí
-      ]}/>
       
     
+      </div>
+      <div>
+      {facturaSeleccionada && (
+  <InfoClienteDespacho item={facturaSeleccionada} />
+)}
       </div>
       
     </div>

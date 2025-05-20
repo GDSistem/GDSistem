@@ -1,11 +1,11 @@
-.container-menu {
+/* .container-menu {
     display: flex;
     flex-direction: row;
-    align-items: flex-end; /* 🔽 Esto alinea los elementos hijos al fondo */
+    align-items: flex-end; 
     justify-content: left; 
     
     
-}
+} */
 
 .consultar {
     display: flex;
@@ -55,3 +55,55 @@
     color: #444595;
 
 }
+
+.container-menu {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: left;
+    gap: 15px; /* Espacio entre botones */
+  }
+  
+  button.consultar,
+  button.modificar,
+  button.nuevo,
+  button.anular {
+    all: unset; /* Quita estilos por defecto del botón */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  button.consultar:hover,
+  button.modificar:hover,
+  button.nuevo:hover,
+  button.anular:hover {
+    background-color: #444595;
+    transform: scale(1.1);
+  }
+  
+button.consultar:hover .icon1,
+button.consultar:active .icon1,
+button.consultar:hover .tittle,
+button.consultar:active .tittle,
+button.modificar:hover .icon2,
+button.modificar:active .icon2,
+button.modificar:hover .tittle,
+button.modificar:active .tittle,
+button.nuevo:hover .icon3,
+button.nuevo:active .icon3,
+button.nuevo:hover .tittle,
+button.nuevo:active .tittle,
+button.anular:hover .icon4,
+button.anular:active .icon4,
+button.anular:hover .tittle,
+button.anular:active .tittle {
+  color: white;
+}
+  /* Resto de estilos como iconos y títulos igual */
+  
