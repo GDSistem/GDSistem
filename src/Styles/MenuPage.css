@@ -61,7 +61,7 @@
     flex-direction: row;
     align-items: flex-end;
     justify-content: left;
-    gap: 10px; /* Espacio entre botones */
+    gap: 15px; /* Espacio entre botones */
   }
   
   button.consultar,
@@ -83,9 +83,27 @@
   button.modificar:hover,
   button.nuevo:hover,
   button.anular:hover {
-    background-color: #ddd;
+    background-color: #444595;
     transform: scale(1.1);
   }
   
+button.consultar:hover .icon1,
+button.consultar:active .icon1,
+button.consultar:hover .tittle,
+button.consultar:active .tittle,
+button.modificar:hover .icon2,
+button.modificar:active .icon2,
+button.modificar:hover .tittle,
+button.modificar:active .tittle,
+button.nuevo:hover .icon3,
+button.nuevo:active .icon3,
+button.nuevo:hover .tittle,
+button.nuevo:active .tittle,
+button.anular:hover .icon4,
+button.anular:active .icon4,
+button.anular:hover .tittle,
+button.anular:active .tittle {
+  color: white;
+}
   /* Resto de estilos como iconos y títulos igual */
   
