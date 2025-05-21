@@ -4,6 +4,7 @@ import MenuPage from '../../Components/MenuPage';
 import TablaListadoFcaturacion from '../../Components/TablaListadoFcaturacion';
 // import AccordionSection from '../../Components/AccordionSection';
 import InfoClienteDespacho from '../../Components/InfoClienteDespacho';
+import FiltrosBusquedaListadoFact from '../../Components/FiltrosBusquedaListadoFact';
 
 
 
@@ -24,6 +25,31 @@ function Facturacion() {
   const [resultados, setResultados] = useState([]); 
   const [mostrarModalError, setMostrarModalError] = useState(false);
   const [mensajeError, setMensajeError] = useState('');
+  const [mostrarFiltros, setMostrarFiltros] = useState(false);
+  const [filtros, setFiltros] = useState({
+    nombreSucursal: '',
+    nombreCliente: '',
+    tipoDocumento: '',
+    numeroDocumento: '',
+    fechaDesde: '',
+    fechaHasta: ''
+  });
+
+  const resultadosFiltrados = resultados.filter((item) => {
+    const fechaValida =
+      (!filtros.fechaDesde || item.fecha >= filtros.fechaDesde) &&
+      (!filtros.fechaHasta || item.fecha <= filtros.fechaHasta);
+  
+    return (
+      item.codigoSucursal?.toLowerCase().includes(filtros.nombreSucursal.toLowerCase()) &&
+      item.cliente?.toLowerCase().includes(filtros.nombreCliente.toLowerCase()) &&
+      item.tipoDocumento?.toLowerCase().includes(filtros.tipoDocumento.toLowerCase()) &&
+      item.numeroDocumento?.toLowerCase().includes(filtros.numeroDocumento.toLowerCase()) &&
+      fechaValida
+    );
+  });
+  
+
 
 
 function obtenerHora12Horas(isoString) {
@@ -110,18 +136,32 @@ const handleConsultar = async () => {
     const data = await response.json();
 
 if (data.success && Array.isArray(data.data)) {
-  const resultadosTransformados = data.data.map((item) => ({
+  // const resultadosTransformados = data.data.map((item) => ({
     
+  //   tipoDocumento: item.CodTipoDoc,
+  //   codigoSucursal: item.CodSucursal,
+  //   fecha: item.Fecha?.split("T")[0],
+  //   hora: obtenerHora12Horas(item.Fecha),
+
+  //   numeroDocumento: item.NDocumento,
+  //   codigoCliente: item.CodCliente,
+  //   cliente: item.NomCliente,
+  //   tasa: item.TipoCambioBCV ?? 0,
+  //   monto: item.MontoBase,
+  //   montoIVA: item.MontoIVA,
+  //   igtf: item.IGTF,
+  //   total: item.MontoTotal,
+  //   nula: item.Nula,
+  // }));
+  const resultadosTransformados = data.data.map((item) => ({
     tipoDocumento: item.CodTipoDoc,
     codigoSucursal: item.CodSucursal,
     fecha: item.Fecha?.split("T")[0],
     hora: obtenerHora12Horas(item.Fecha),
-
     numeroDocumento: item.NDocumento,
     codigoCliente: item.CodCliente,
     cliente: item.NomCliente,
     tasa: item.TipoCambioBCV ?? 0,
-    // tasa: item.TipoCambioBCV != null ? item.TipoCambioBCV : 0,
     monto: item.MontoBase,
     montoIVA: item.MontoIVA,
     igtf: item.IGTF,
@@ -132,6 +172,7 @@ if (data.success && Array.isArray(data.data)) {
 
 
   setResultados(resultadosTransformados);
+  setMostrarFiltros(true); // 👈 Activa los filtros
   console.log("Datos recibidos:", resultados);
 
 } else {
@@ -420,8 +461,11 @@ if (data.success && Array.isArray(data.data)) {
       <div>
         {/* <TablaListadoFcaturacion  data={resultados}/> */}
         {/* <TablaListadoFcaturacion resultados={resultados} onRowSelect={setFacturaSeleccionada} /> */}
+        {mostrarFiltros && (
+          <FiltrosBusquedaListadoFact filtros={filtros} setFiltros={setFiltros} />
+        )}
         <TablaListadoFcaturacion
-          resultados={resultados}
+          resultados={resultadosFiltrados}
           onRowSelect={handleRowSelect}
         />
 
