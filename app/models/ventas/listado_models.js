@@ -44,7 +44,7 @@ const obtenerListado = async (codEmpresa, codSucursal, codTipoDoc, fechaInicio, 
 
     IF @IdSucursal IS NOT NULL AND @IdTipoDoc IS NOT NULL
     BEGIN
-      SELECT
+      SELECT TOP 5
         v.NomCliente,
         v.Fecha,
         v.NDocumento,
