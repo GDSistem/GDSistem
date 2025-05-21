@@ -45,9 +45,23 @@ const obtenerListado = async (codEmpresa, codSucursal, codTipoDoc, fechaInicio, 
 
     IF @IdSucursal IS NOT NULL AND @IdTipoDoc IS NOT NULL
     BEGIN
-    --Obtengo todo 
-      SELECT *
+      SELECT TOP 5
+        td.CodTipoDoc,
+        s.CodSucursal,
+        e.CodEmpresa,
+        v.Fecha,
+        -- Elimina cualquier carácter que no sea número
+        REPLACE(TRANSLATE(v.NDocumento, '@/NCHP-ABCDEFJIKLMOQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', REPLICATE(' ', LEN('@/NCHP-ABCDEFJIKLMOQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'))), ' ', '') AS NDocumento,
+        v.TipoCambioBCV,
+        v.MontoBase,
+        v.MontoIVA,
+        v.IGTF,
+        v.Nula,
+        v.MontoBase + v.MontoIVA AS MontoTotal
       FROM dbo.TblVentas v
+      INNER JOIN dbo.TblTipoDoc td ON td.IdTipoDoc = v.IdTipoDoc
+      INNER JOIN dbo.TblSucursales s ON s.IdSucursal = v.IdSucursal
+      INNER JOIN dbo.TblEmpresas e ON e.IdEmpresa = s.IdEmpresa
       WHERE v.IdSucursal = @IdSucursal
         AND v.IdTipoDoc = @IdTipoDoc
         AND (@FechaInicio IS NULL OR CONVERT(date, v.Fecha) >= @FechaInicio)
@@ -59,7 +73,7 @@ const obtenerListado = async (codEmpresa, codSucursal, codTipoDoc, fechaInicio, 
     END
   `);
 
-  return result.recordset;
+  return result.recordset.filter(row => row.CodTipoDoc !== null);
 };
 
 module.exports = { obtenerListado };
