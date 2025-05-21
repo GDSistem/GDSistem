@@ -173,7 +173,8 @@ if (data.success && Array.isArray(data.data)) {
 
   setResultados(resultadosTransformados);
   setMostrarFiltros(true); // 👈 Activa los filtros
-  console.log("Datos recibidos:", resultados);
+  console.log("Datos recibidos:", resultadosTransformados);
+  console.log("Datos Resultados:", resultados);
 
 } else {
   console.error("Respuesta no esperada:", data);
@@ -465,7 +466,7 @@ if (data.success && Array.isArray(data.data)) {
           <FiltrosBusquedaListadoFact filtros={filtros} setFiltros={setFiltros} />
         )}
         <TablaListadoFcaturacion
-          resultados={resultadosFiltrados}
+          resultados={resultados}
           onRowSelect={handleRowSelect}
         />
 
