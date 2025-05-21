@@ -14,8 +14,14 @@ const obtenerListado = async (codEmpresa, codSucursal, codTipoDoc, fechaInicio, 
   request.input('CodEmpresa', codEmpresa);
   request.input('CodSucursal', codSucursal);
   request.input('CodTipoDoc', codTipoDoc);
-  request.input('FechaInicio', fechaInicio);
-  request.input('FechaFin', fechaFin);
+  
+  // Solo agregar las fechas si están definidas
+  if (fechaInicio) {
+    request.input('FechaInicio', fechaInicio);
+  }
+  if (fechaFin) {
+    request.input('FechaFin', fechaFin);
+  }
 
   const result = await request.query(`
     DECLARE @IdEmpresa INT;
@@ -27,7 +33,7 @@ const obtenerListado = async (codEmpresa, codSucursal, codTipoDoc, fechaInicio, 
     FROM dbo.TblEmpresas
     WHERE CodEmpresa = @CodEmpresa;
 
-    -- Obtener IdSucursal usando tanto el IdEmpresa como el codSucursal
+    -- Obtener IdSucursal usando el IdEmpresa y el codSucursal
     SELECT @IdSucursal = IdSucursal
     FROM dbo.TblSucursales
     WHERE CodSucursal = @CodSucursal AND IdEmpresa = @IdEmpresa;
@@ -37,32 +43,16 @@ const obtenerListado = async (codEmpresa, codSucursal, codTipoDoc, fechaInicio, 
     FROM dbo.TblTipoDoc
     WHERE CodTipoDoc = @CodTipoDoc;
 
-    IF @IdEmpresa IS NOT NULL AND @IdSucursal IS NOT NULL AND @IdTipoDoc IS NOT NULL
+    IF @IdSucursal IS NOT NULL AND @IdTipoDoc IS NOT NULL
     BEGIN
-      SELECT
-        td.CodTipoDoc,
-        s.CodSucursal,
-        e.CodEmpresa,
-        v.Fecha,
-        -- Elimina cualquier carácter que no sea número
-        REPLACE(TRANSLATE(v.NDocumento, '@/NCHP-ABCDEFJIKLMOQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', REPLICATE(' ', LEN('@/NCHP-ABCDEFJIKLMOQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'))), ' ', '') AS NDocumento,
-        v.TipoCambioBCV,
-        v.MontoBase,
-        v.MontoIVA,
-        v.IGTF,
-        v.Nula,
-        v.MontoBase + v.MontoIVA AS MontoTotal,
-        c.CodCliente,
-        c.NomCliente
+    --Obtengo todo 
+    SELECT 
+      SELECT *
       FROM dbo.TblVentas v
-      INNER JOIN dbo.TblTipoDoc td ON td.IdTipoDoc = v.IdTipoDoc
-      INNER JOIN dbo.TblSucursales s ON s.IdSucursal = v.IdSucursal
-      INNER JOIN dbo.TblEmpresas e ON e.IdEmpresa = s.IdEmpresa
-      LEFT JOIN dbo.TblClientes c ON c.IdCliente = v.IdCliente
       WHERE v.IdSucursal = @IdSucursal
         AND v.IdTipoDoc = @IdTipoDoc
-        AND s.IdEmpresa = @IdEmpresa
-        AND CONVERT(date, v.Fecha) BETWEEN @FechaInicio AND @FechaFin
+        AND (@FechaInicio IS NULL OR CONVERT(date, v.Fecha) >= @FechaInicio)
+        AND (@FechaFin IS NULL OR CONVERT(date, v.Fecha) <= @FechaFin)
     END
     ELSE
     BEGIN
@@ -70,7 +60,7 @@ const obtenerListado = async (codEmpresa, codSucursal, codTipoDoc, fechaInicio, 
     END
   `);
 
-  return result.recordset.filter(row => row.CodTipoDoc !== null);
+  return result.recordset;
 };
 
 module.exports = { obtenerListado };
