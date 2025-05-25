@@ -35,18 +35,25 @@ function Facturacion() {
     fechaHasta: ''
   });
 
+
+  
   const resultadosFiltrados = resultados.filter((item) => {
-    const fechaValida =
+    const coincideSucursal = !filtros.nombreSucursal || item.codigoSucursal?.toLowerCase().includes(filtros.nombreSucursal.toLowerCase());
+  
+    const coincideCliente =
+      !filtros.nombreCliente || item.cliente?.toLowerCase().includes(filtros.nombreCliente.toLowerCase());
+  
+    const coincideTipoDoc =
+      !filtros.tipoDocumento || item.tipoDocumento?.toLowerCase().includes(filtros.tipoDocumento.toLowerCase());
+  
+    const coincideNumeroDoc =
+      !filtros.numeroDocumento || item.numeroDocumento?.toLowerCase().includes(filtros.numeroDocumento.toLowerCase());
+  
+    const coincideFecha =
       (!filtros.fechaDesde || item.fecha >= filtros.fechaDesde) &&
       (!filtros.fechaHasta || item.fecha <= filtros.fechaHasta);
   
-    return (
-      item.codigoSucursal?.toLowerCase().includes(filtros.nombreSucursal.toLowerCase()) &&
-      item.cliente?.toLowerCase().includes(filtros.nombreCliente.toLowerCase()) &&
-      item.tipoDocumento?.toLowerCase().includes(filtros.tipoDocumento.toLowerCase()) &&
-      item.numeroDocumento?.toLowerCase().includes(filtros.numeroDocumento.toLowerCase()) &&
-      fechaValida
-    );
+    return coincideSucursal && coincideCliente && coincideTipoDoc && coincideNumeroDoc && coincideFecha;
   });
   
 
@@ -101,14 +108,62 @@ const handleRowSelect = async (itemSeleccionado) => {
 };
 
 
-
 const handleConsultar = async () => {
+  // Obtener los valores desde los filtros
+  const {
+    nombreSucursal,
+    nombreCliente,
+    tipoDocumento,
+    numeroDocumento,
+    fechaDesde,
+    fechaHasta
+  } = filtros;
+
+  // Si el filtro de sucursal tiene valor, lo usamos como codSucursal
+  // const codSucursalFinal = nombreSucursal
+  //   ? sucursales.find((s) =>
+  //       s.Nombre.toLowerCase().includes(nombreSucursal.toLowerCase())
+  //     )?.Codigo || codigoSucursal
+  //   : codigoSucursal;
+
+  const normalizar = (txt) => txt?.trim().toLowerCase();
+
+// const codSucursalFinal = nombreSucursal
+//   ? (
+//       sucursales.find((s) => {
+//         const entrada = normalizarTexto(nombreSucursal);
+//         const nombreSucursalDB = normalizarTexto(s.NomSucursal);
+//         const codigoSucursalDB = normalizarTexto(s.CodSucursal);
+
+//         // Coincide si el usuario escribe el nombre o el código
+//         return nombreSucursalDB.includes(entrada) || codigoSucursalDB === entrada;
+//       })?.codigoSucursal || codigoSucursal
+//     )
+//   : codigoSucursal;
+
+const codSucursalFinal = nombreSucursal
+    ? (
+        sucursales.find(s => {
+          const entrada = normalizar(nombreSucursal);
+          const nomDB = normalizar(s.NomSucursal);
+          const codDB = normalizar(s.CodSucursal);
+          // Coincide si el usuario escribe parte del nombre o el código exacto
+          return nomDB.includes(entrada) || codDB === entrada;
+        })?.CodSucursal  // devolvemos el CodSucursal del objeto encontrado
+       ) || codigoSucursal  // o bien el código actual si no se encontró
+    : codigoSucursal;
+
+
+  const codTipoDocFinal = tipoDocumento || codSeleccionado;
+  const fechaInicioFinal = fechaDesde || "2016-01-01";
+  const fechaFinFinal = fechaHasta || "2016-01-01";
+
   const payload = {
     codEmpresa: codigoEmpresa,
-    codSucursal: codigoSucursal,
-    codTipoDoc: codSeleccionado,
-    fechaInicio: "2016-01-01", // Puedes permitir que el usuario seleccione fechas
-    fechaFin: "2016-01-01",
+    codSucursal: codSucursalFinal,
+    codTipoDoc: codTipoDocFinal,
+    fechaInicio: fechaInicioFinal,
+    fechaFin: fechaFinFinal,
   };
 
   console.log("Payload enviado:", payload);
@@ -121,6 +176,7 @@ const handleConsultar = async () => {
       },
       body: JSON.stringify(payload)
     });
+
     if (!response.ok) {
       if (response.status === 404) {
         setMensajeError('No se encontraron resultados para la consulta.');
@@ -129,62 +185,62 @@ const handleConsultar = async () => {
         setMensajeError('Ocurrió un error al consultar los datos.');
         setMostrarModalError(true);
       }
-      setResultados([]); // Limpiar resultados
+      setResultados([]);
       return;
     }
 
     const data = await response.json();
 
-if (data.success && Array.isArray(data.data)) {
-  // const resultadosTransformados = data.data.map((item) => ({
-    
-  //   tipoDocumento: item.CodTipoDoc,
-  //   codigoSucursal: item.CodSucursal,
-  //   fecha: item.Fecha?.split("T")[0],
-  //   hora: obtenerHora12Horas(item.Fecha),
+    if (data.success && Array.isArray(data.data)) {
+      const resultadosTransformados = data.data.map((item) => ({
+        tipoDocumento: item.CodTipoDoc,
+        codigoSucursal: item.CodSucursal,
+        fecha: item.Fecha?.split("T")[0],
+        hora: obtenerHora12Horas(item.Fecha),
+        numeroDocumento: item.NDocumento,
+        codigoCliente: item.CodCliente,
+        cliente: item.NomCliente,
+        tasa: item.TipoCambioBCV ?? 0,
+        monto: item.MontoBase,
+        montoIVA: item.MontoIVA,
+        igtf: item.IGTF,
+        total: item.MontoTotal,
+        nula: item.Nula,
+      }));
 
-  //   numeroDocumento: item.NDocumento,
-  //   codigoCliente: item.CodCliente,
-  //   cliente: item.NomCliente,
-  //   tasa: item.TipoCambioBCV ?? 0,
-  //   monto: item.MontoBase,
-  //   montoIVA: item.MontoIVA,
-  //   igtf: item.IGTF,
-  //   total: item.MontoTotal,
-  //   nula: item.Nula,
-  // }));
-  const resultadosTransformados = data.data.map((item) => ({
-    tipoDocumento: item.CodTipoDoc,
-    codigoSucursal: item.CodSucursal,
-    fecha: item.Fecha?.split("T")[0],
-    hora: obtenerHora12Horas(item.Fecha),
-    numeroDocumento: item.NDocumento,
-    codigoCliente: item.CodCliente,
-    cliente: item.NomCliente,
-    tasa: item.TipoCambioBCV ?? 0,
-    monto: item.MontoBase,
-    montoIVA: item.MontoIVA,
-    igtf: item.IGTF,
-    total: item.MontoTotal,
-    nula: item.Nula,
-  }));
+      // Aplicar filtros adicionales por nombreCliente y numeroDocumento exactos
+      const filtradosFinal = resultadosTransformados.filter((item) => {
+        const coincideCliente =
+          !nombreCliente || item.cliente?.toLowerCase() === nombreCliente.toLowerCase();
+        const coincideNumeroDoc =
+          !numeroDocumento || item.numeroDocumento?.toLowerCase() === numeroDocumento.toLowerCase();
+        return coincideCliente && coincideNumeroDoc;
+      });
 
+      // Actualizar también el número de documento en el input y el tipo doc si vinieron por filtro
+      if (numeroDocumento) {
+        setNumeroDocumento(numeroDocumento); // Esto actualiza el input #Documento
+      }
 
+      if (tipoDocumento) {
+        setCodSeleccionado(tipoDocumento); // Esto actualiza el select de tipo doc
+      }
 
-  setResultados(resultadosTransformados);
-  setMostrarFiltros(true); // 👈 Activa los filtros
-  console.log("Datos recibidos:", resultadosTransformados);
-  console.log("Datos Resultados:", resultados);
+      if (nombreSucursal && codSucursalFinal !== codigoSucursal) {
+        setCodigoSucursal(codSucursalFinal); // Actualiza el input con el código correspondiente
+      }
 
-} else {
-  console.error("Respuesta no esperada:", data);
-}
-
-
+      setResultados(filtradosFinal);
+      setMostrarFiltros(true);
+      console.log("Datos recibidos filtrados:", filtradosFinal);
+    } else {
+      console.error("Respuesta no esperada:", data);
+    }
   } catch (error) {
     console.error("Error al consultar:", error);
   }
 };
+
 
 
   
@@ -192,18 +248,6 @@ if (data.success && Array.isArray(data.data)) {
   const handleEmpresaInput = (e) => {
     setCodigoEmpresa(e.target.value);
   };
-
-  // const extraerHora = (fechaISO) => {
-  //   if (!fechaISO) return '';
-  //   const hora = new Date(fechaISO).toLocaleTimeString('es-VE', {
-  //     hour: '2-digit',
-  //     minute: '2-digit',
-  //     second: '2-digit',
-  //     hour12: false // puedes cambiar a true si prefieres AM/PM
-  //   });
-  //   return hora;
-  // };
-  
 
   const buscarDatos = async (empresa, sucursal, tipoDoc) => {
     // Limpiar estado antes de buscar
@@ -352,6 +396,8 @@ if (data.success && Array.isArray(data.data)) {
       }
     }
   };
+  console.log("Sucursales:", sucursales);
+
 
   return (
     <div className='bill'>
@@ -466,7 +512,8 @@ if (data.success && Array.isArray(data.data)) {
           <FiltrosBusquedaListadoFact filtros={filtros} setFiltros={setFiltros} />
         )}
         <TablaListadoFcaturacion
-          resultados={resultados}
+          // resultados={resultados}
+          resultados={mostrarFiltros ? resultadosFiltrados : resultados}
           onRowSelect={handleRowSelect}
         />
 

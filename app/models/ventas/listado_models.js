@@ -14,8 +14,7 @@ const obtenerListado = async (codEmpresa, codSucursal, codTipoDoc, fechaInicio, 
   request.input('CodEmpresa', codEmpresa);
   request.input('CodSucursal', codSucursal);
   request.input('CodTipoDoc', codTipoDoc);
-  
-  // Solo agregar las fechas si están definidas
+
   if (fechaInicio) {
     request.input('FechaInicio', fechaInicio);
   }
@@ -33,7 +32,7 @@ const obtenerListado = async (codEmpresa, codSucursal, codTipoDoc, fechaInicio, 
     FROM dbo.TblEmpresas
     WHERE CodEmpresa = @CodEmpresa;
 
-    -- Obtener IdSucursal usando el IdEmpresa y el codSucursal
+    -- Obtener IdSucursal con IdEmpresa y CodSucursal
     SELECT @IdSucursal = IdSucursal
     FROM dbo.TblSucursales
     WHERE CodSucursal = @CodSucursal AND IdEmpresa = @IdEmpresa;
@@ -45,23 +44,19 @@ const obtenerListado = async (codEmpresa, codSucursal, codTipoDoc, fechaInicio, 
 
     IF @IdSucursal IS NOT NULL AND @IdTipoDoc IS NOT NULL
     BEGIN
-      SELECT TOP 5
-        td.CodTipoDoc,
-        s.CodSucursal,
-        e.CodEmpresa,
+      SELECT
+        v.NomCliente,
         v.Fecha,
-        -- Elimina cualquier carácter que no sea número
-        REPLACE(TRANSLATE(v.NDocumento, '@/NCHP-ABCDEFJIKLMOQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', REPLICATE(' ', LEN('@/NCHP-ABCDEFJIKLMOQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'))), ' ', '') AS NDocumento,
+        v.NDocumento,
         v.TipoCambioBCV,
         v.MontoBase,
         v.MontoIVA,
         v.IGTF,
         v.Nula,
-        v.MontoBase + v.MontoIVA AS MontoTotal
+        v.MontoBase + v.MontoIVA AS MontoTotal,
+        c.CodCliente
       FROM dbo.TblVentas v
-      INNER JOIN dbo.TblTipoDoc td ON td.IdTipoDoc = v.IdTipoDoc
-      INNER JOIN dbo.TblSucursales s ON s.IdSucursal = v.IdSucursal
-      INNER JOIN dbo.TblEmpresas e ON e.IdEmpresa = s.IdEmpresa
+      LEFT JOIN dbo.TblClientes c ON c.IdCliente = v.IdCliente
       WHERE v.IdSucursal = @IdSucursal
         AND v.IdTipoDoc = @IdTipoDoc
         AND (@FechaInicio IS NULL OR CONVERT(date, v.Fecha) >= @FechaInicio)
@@ -73,6 +68,7 @@ const obtenerListado = async (codEmpresa, codSucursal, codTipoDoc, fechaInicio, 
     END
   `);
 
+  // Retornar registros válidos
   return result.recordset.filter(row => row.CodTipoDoc !== null);
 };
 
