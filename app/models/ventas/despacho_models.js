@@ -20,44 +20,38 @@ const obtenerDespacho = async (codEmpresa, codSucursal, codTipoDoc, nDocumento) 
     DECLARE @IdEmpresa INT;
     DECLARE @IdSucursal INT;
     DECLARE @IdTipoDoc INT;
-    DECLARE @IdVenta INT;
 
-    -- 1. Obtener IdEmpresa
+    -- Paso 1: Obtener IdEmpresa
     SELECT @IdEmpresa = IdEmpresa
     FROM dbo.TblEmpresas
     WHERE CodEmpresa = @CodEmpresa;
 
-    -- 2. Obtener IdSucursal
+    -- Paso 2: Obtener IdSucursal usando IdEmpresa y CodSucursal
     SELECT @IdSucursal = IdSucursal
     FROM dbo.TblSucursales
     WHERE CodSucursal = @CodSucursal AND IdEmpresa = @IdEmpresa;
 
-    -- 3. Obtener IdTipoDoc
+    -- Paso 3: Obtener IdTipoDoc
     SELECT @IdTipoDoc = IdTipoDoc
     FROM dbo.TblTipoDoc
     WHERE CodTipoDoc = @CodTipoDoc;
 
-    -- 4. Obtener IdVenta
-    SELECT @IdVenta = v.IdVenta
-    FROM dbo.TblVentas v
-    WHERE v.IdSucursal = @IdSucursal
-      AND v.IdTipoDoc = @IdTipoDoc
-      AND v.NDocumento = @NDocumento;
-
-    -- 5. Buscar en TblNEVentas por IdVenta y NDocumento
-    IF @IdVenta IS NOT NULL
+    -- Paso 4: Buscar en TblNEVentas usando IdSucursal, IdTipoDoc y NDocumento
+    IF @IdSucursal IS NOT NULL AND @IdTipoDoc IS NOT NULL
     BEGIN
       SELECT ne.*
       FROM dbo.TblNEVentas ne
-      WHERE ne.IdVenta = @IdVenta
-        AND ne.NDocumento = @NDocumento
+      WHERE ne.IdSucursal = @IdSucursal
+        AND ne.IdTipoDoc = @IdTipoDoc
+        AND ne.NDocumento = @NDocumento;
     END
     ELSE
     BEGIN
-      SELECT NULL AS IdVenta
+      SELECT NULL AS IdVenta;
     END
   `);
 
+  // Filtra resultados válidos
   return result.recordset.filter(row => row.IdVenta !== null);
 };
 
