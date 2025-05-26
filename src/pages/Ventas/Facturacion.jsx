@@ -37,24 +37,36 @@ function Facturacion() {
 
 
   
+  // const resultadosFiltrados = resultados.filter((item) => {
+  //   const coincideSucursal = !filtros.nombreSucursal || item.codigoSucursal?.toLowerCase().includes(filtros.nombreSucursal.toLowerCase());
+  
+  //   const coincideCliente =
+  //     !filtros.nombreCliente || item.cliente?.toLowerCase().includes(filtros.nombreCliente.toLowerCase());
+  
+  //   const coincideTipoDoc =
+  //     !filtros.tipoDocumento || item.tipoDocumento?.toLowerCase().includes(filtros.tipoDocumento.toLowerCase());
+  
+  //   const coincideNumeroDoc =
+  //     !filtros.numeroDocumento || item.numeroDocumento?.toLowerCase().includes(filtros.numeroDocumento.toLowerCase());
+  
+  //   const coincideFecha =
+  //     (!filtros.fechaDesde || item.fecha >= filtros.fechaDesde) &&
+  //     (!filtros.fechaHasta || item.fecha <= filtros.fechaHasta);
+  
+  //   return coincideSucursal && coincideCliente && coincideTipoDoc && coincideNumeroDoc && coincideFecha;
+  // });
   const resultadosFiltrados = resultados.filter((item) => {
     const coincideSucursal = !filtros.nombreSucursal || item.codigoSucursal?.toLowerCase().includes(filtros.nombreSucursal.toLowerCase());
-  
-    const coincideCliente =
-      !filtros.nombreCliente || item.cliente?.toLowerCase().includes(filtros.nombreCliente.toLowerCase());
-  
-    const coincideTipoDoc =
-      !filtros.tipoDocumento || item.tipoDocumento?.toLowerCase().includes(filtros.tipoDocumento.toLowerCase());
-  
-    const coincideNumeroDoc =
-      !filtros.numeroDocumento || item.numeroDocumento?.toLowerCase().includes(filtros.numeroDocumento.toLowerCase());
-  
-    const coincideFecha =
-      (!filtros.fechaDesde || item.fecha >= filtros.fechaDesde) &&
-      (!filtros.fechaHasta || item.fecha <= filtros.fechaHasta);
+    const coincideCliente = !filtros.nombreCliente || item.cliente?.toLowerCase().includes(filtros.nombreCliente.toLowerCase());
+    // const coincideTipoDoc = !filtros.tipoDocumento || item.tipoDocumento?.toLowerCase().includes(filtros.tipoDocumento.toLowerCase());
+    const coincideTipoDoc = !filtros.tipoDocumento || item.tipoDocumento === filtros.tipoDocumento;
+    const coincideNumeroDoc = !filtros.numeroDocumento || item.numeroDocumento?.toLowerCase().includes(filtros.numeroDocumento.toLowerCase());
+    const coincideFecha = (!filtros.fechaDesde || item.fecha >= filtros.fechaDesde) &&
+                         (!filtros.fechaHasta || item.fecha <= filtros.fechaHasta);
   
     return coincideSucursal && coincideCliente && coincideTipoDoc && coincideNumeroDoc && coincideFecha;
   });
+  
   
 
 
@@ -107,6 +119,13 @@ const handleRowSelect = async (itemSeleccionado) => {
   }
 };
 
+useEffect(() => {
+  if (filtros.tipoDocumento) {
+    setCodSeleccionado(filtros.tipoDocumento);
+  }
+}, [filtros.tipoDocumento]);
+
+
 
 const handleConsultar = async () => {
   // Obtener los valores desde los filtros
@@ -119,27 +138,11 @@ const handleConsultar = async () => {
     fechaHasta
   } = filtros;
 
-  // Si el filtro de sucursal tiene valor, lo usamos como codSucursal
-  // const codSucursalFinal = nombreSucursal
-  //   ? sucursales.find((s) =>
-  //       s.Nombre.toLowerCase().includes(nombreSucursal.toLowerCase())
-  //     )?.Codigo || codigoSucursal
-  //   : codigoSucursal;
+
 
   const normalizar = (txt) => txt?.trim().toLowerCase();
 
-// const codSucursalFinal = nombreSucursal
-//   ? (
-//       sucursales.find((s) => {
-//         const entrada = normalizarTexto(nombreSucursal);
-//         const nombreSucursalDB = normalizarTexto(s.NomSucursal);
-//         const codigoSucursalDB = normalizarTexto(s.CodSucursal);
 
-//         // Coincide si el usuario escribe el nombre o el código
-//         return nombreSucursalDB.includes(entrada) || codigoSucursalDB === entrada;
-//       })?.codigoSucursal || codigoSucursal
-//     )
-//   : codigoSucursal;
 
 const codSucursalFinal = nombreSucursal
     ? (
@@ -176,6 +179,21 @@ const codSucursalFinal = nombreSucursal
       },
       body: JSON.stringify(payload)
     });
+    // Actualiza filtros con el tipoDocumento usado para filtrar
+setFiltros(prev => ({
+  ...prev,
+  tipoDocumento: codTipoDocFinal,
+}));
+
+
+    setFiltros({
+      nombreSucursal,
+      nombreCliente,
+      tipoDocumento,
+      numeroDocumento,
+      fechaDesde,
+      fechaHasta
+    });
 
     if (!response.ok) {
       if (response.status === 404) {
@@ -208,38 +226,43 @@ const codSucursalFinal = nombreSucursal
         nula: item.Nula,
       }));
 
-      // Aplicar filtros adicionales por nombreCliente y numeroDocumento exactos
+      
       const filtradosFinal = resultadosTransformados.filter((item) => {
         const coincideCliente =
-          !nombreCliente || item.cliente?.toLowerCase() === nombreCliente.toLowerCase();
+          !nombreCliente || item.cliente?.toLowerCase().includes(nombreCliente.toLowerCase());
         const coincideNumeroDoc =
-          !numeroDocumento || item.numeroDocumento?.toLowerCase() === numeroDocumento.toLowerCase();
+          !numeroDocumento || item.numeroDocumento?.toLowerCase().includes(numeroDocumento.toLowerCase());
         return coincideCliente && coincideNumeroDoc;
       });
+      
 
       // Actualizar también el número de documento en el input y el tipo doc si vinieron por filtro
       if (numeroDocumento) {
         setNumeroDocumento(numeroDocumento); // Esto actualiza el input #Documento
       }
 
-      if (tipoDocumento) {
-        setCodSeleccionado(tipoDocumento); // Esto actualiza el select de tipo doc
-      }
-
+      
       if (nombreSucursal && codSucursalFinal !== codigoSucursal) {
         setCodigoSucursal(codSucursalFinal); // Actualiza el input con el código correspondiente
       }
 
-      setResultados(filtradosFinal);
+      // setResultados(filtradosFinal);
+      setResultados(resultadosTransformados);
+
+      
+      // setResultados(resultadosTransformados);
       setMostrarFiltros(true);
-      console.log("Datos recibidos filtrados:", filtradosFinal);
+
     } else {
       console.error("Respuesta no esperada:", data);
     }
+    console.log("Filtrados final antes de setResultados:", filtradosFinal);
+
   } catch (error) {
     console.error("Error al consultar:", error);
   }
 };
+
 
 
 
@@ -397,6 +420,7 @@ const codSucursalFinal = nombreSucursal
     }
   };
   console.log("Sucursales:", sucursales);
+  console.log(mostrarFiltros ? resultadosFiltrados : resultados);
 
 
   return (
@@ -506,16 +530,16 @@ const codSucursalFinal = nombreSucursal
       
       </div>
       <div>
-        {/* <TablaListadoFcaturacion  data={resultados}/> */}
-        {/* <TablaListadoFcaturacion resultados={resultados} onRowSelect={setFacturaSeleccionada} /> */}
+    
         {mostrarFiltros && (
           <FiltrosBusquedaListadoFact filtros={filtros} setFiltros={setFiltros} />
         )}
+        
         <TablaListadoFcaturacion
-          // resultados={resultados}
-          resultados={mostrarFiltros ? resultadosFiltrados : resultados}
+          datos={mostrarFiltros ? resultadosFiltrados : resultados}
           onRowSelect={handleRowSelect}
         />
+       
 
       
     

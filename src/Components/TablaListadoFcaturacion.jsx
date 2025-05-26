@@ -157,7 +157,8 @@
 import React, { useState } from 'react';
 import "../Styles/TablaListadoFacturacion.css";
 
-function TablaListadoFacturacion({ resultados, onRowSelect }) {
+function TablaListadoFacturacion({ datos, onRowSelect }) {
+    console.log("Datos recibidos", datos);
 
     const [selectedIndex, setSelectedIndex] = useState(null);
 
@@ -165,6 +166,9 @@ function TablaListadoFacturacion({ resultados, onRowSelect }) {
     setSelectedIndex(index);
     onRowSelect(item);
   };
+
+
+
   return (
    
     <div className="factura-table-container">
@@ -189,11 +193,12 @@ function TablaListadoFacturacion({ resultados, onRowSelect }) {
   </table>
   <div className="factura-table-body-scroll">
     <table className="factura-table">
+    {console.log("Renderizando tabla con:", datos)}
       <tbody>
-        {resultados.length === 0 ? (
+        {datos.length === 0 ? (
           <tr><td colSpan="13" style={{ textAlign: 'center' }}>Sin resultados</td></tr>
         ) : (
-          resultados.map((item, index) => (
+            datos.map((item, index) => (
             <tr key={index} onClick={() => handleRowClick(item, index)}  className={`clickable-row ${selectedIndex === index ? 'selected-row' : ''}`}>
               <td>{item.tipoDocumento}</td>
               <td>{item.codigoSucursal}</td>

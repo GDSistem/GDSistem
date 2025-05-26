@@ -1,5 +1,14 @@
 const { obtenerListado } = require('../../models/ventas/listado_models.js'); // Asegúrate de que la ruta sea correcta
 
+
+//Payload que espera recibir 
+// {
+//   "codEmpresa": "01",
+//   "codSucursal": "A",
+//   "codTipoDoc": "NC",
+//   "fechaInicio": "2016-01-01",  // opcional
+//   "fechaFin": "2016-01-01"      // opcional
+//   }
 // Función para validar que una cadena sea fecha válida en formato YYYY-MM-DD
 const esFechaValida = (fechaStr) => {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(fechaStr)) return false;
