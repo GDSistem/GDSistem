@@ -73,6 +73,7 @@ p {
   .ContenedorGrande {
     margin-top: 30px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    width: 90%;
   }
   
   .clien-big {

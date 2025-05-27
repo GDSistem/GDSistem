@@ -68,8 +68,14 @@ const obtenerListado = async (codEmpresa, codSucursal, codTipoDoc, fechaInicio, 
     END
   `);
 
-  // Retornar registros válidos
-  return result.recordset.filter(row => row.CodTipoDoc !== null);
+  // Añadir codSucursal y codTipoDoc a cada fila
+  return result.recordset
+    .filter(row => row.CodTipoDoc !== null)
+    .map(row => ({
+      ...row,
+      codSucursal,
+      codTipoDoc
+    }));
 };
 
 module.exports = { obtenerListado };
