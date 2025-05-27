@@ -10,13 +10,20 @@ const obtenerCliente = async (nDocumento) => {
     const result = await pool.request()
       .input('nDocumento', sql.VarChar, nDocumento)
       .query(`
-        -- Obtener todos los datos desde TblVentas junto con el vendedor
+        -- Obtener todos los datos desde TblVentas junto con el vendedor, tipo de persona y lista de precios
         SELECT 
           v.*,
           ven.CodVendedor,
-          ven.NomVendedor
+          ven.NomVendedor,
+          tp.CodTipoPersona,
+          tp.NomTipoPersona,
+          lp.CodListaPrecios,
+          lp.NomListaPrecios
         FROM dbo.TblVentas v
         LEFT JOIN dbo.TblVendedores ven ON v.IdVendedorInt = ven.IdVendedor
+        LEFT JOIN dbo.TblTipoPersonas tp ON v.IdTipoPersona = tp.IdTipoPersona
+        LEFT JOIN dbo.TblVentasDet vd ON vd.IdVenta = v.IdVenta
+        LEFT JOIN dbo.TblListaPrecios lp ON vd.IdListaPrecios = lp.IdListaPrecios
         WHERE v.NDocumento = @nDocumento;
       `);
 
