@@ -78,7 +78,7 @@ function InfoClienteDespacho({ item }) {
         </div>
         <div className="info-bloque">
           <p><strong>Plazo Entrega:</strong> {cliente?.PaisD}</p>
-          <p><strong>Fecha Compromiso:</strong> {cliente?.PaisD}</p>
+          <p><strong>Fecha Compromiso:</strong> {cliente?.FechaPromesa}</p>
         </div>
         <div className="info-bloque">
           <label>

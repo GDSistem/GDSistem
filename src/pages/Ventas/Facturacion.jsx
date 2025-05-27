@@ -47,9 +47,9 @@ function Facturacion() {
       // Construimos el payload según los datos de la fila
       const payload = {
         codEmpresa: String(codigoEmpresa),
-        codSucursal: String(itemSeleccionado.codigoSucursal || itemSeleccionado.CodSucursal || 'A'),
-        codTipoDoc: String(itemSeleccionado.codTipoDoc || itemSeleccionado.CodTipoDoc || 'F'),
-        codCliente: String(itemSeleccionado.codCliente || itemSeleccionado.CodCliente || 'V999-1'),
+        codSucursal: String(itemSeleccionado.codigoSucursal || itemSeleccionado.CodSucursal),
+        codTipoDoc: String(itemSeleccionado.codTipoDoc || itemSeleccionado.tipoDocumento),
+        codCliente: String(itemSeleccionado.codCliente || itemSeleccionado.codigoCliente),
       };
 
       console.log("Payload enviado:", payload);
@@ -353,8 +353,8 @@ setFiltros(prev => ({
 
     if (data.success && Array.isArray(data.data)) {
       const resultadosTransformados = data.data.map((item) => ({
-        tipoDocumento: item.CodTipoDoc,
-        codigoSucursal: item.CodSucursal,
+        tipoDocumento: item.codTipoDoc,
+        codigoSucursal: item.codSucursal,
         fecha: item.Fecha?.split("T")[0],
         hora: obtenerHora12Horas(item.Fecha),
         numeroDocumento: item.NDocumento,

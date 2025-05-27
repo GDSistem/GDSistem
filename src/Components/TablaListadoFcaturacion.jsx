@@ -44,11 +44,11 @@ function TablaListadoFacturacion({ datos, onRowSelect }) {
         ) : (
             datos.map((item, index) => (
             <tr key={index} onClick={() => handleRowClick(item, index)}  className={`clickable-row ${selectedIndex === index ? 'selected-row' : ''}`}>
-              <td>{item.tipoDocumento}</td>
-              <td>{item.codigoSucursal}</td>
+              <td>{item.tipoDocumento.toUpperCase()}</td>
+              <td>{item.codigoSucursal.toUpperCase()}</td>
               <td>{item.fecha}</td>
               <td>{item.hora}</td>
-              <td>{item.numeroDocumento}</td>
+              <td>{item.numeroDocumento.replace(/\D/g, '')}</td>
               <td>{item.codigoCliente}</td>
               <td>{item.cliente}</td>
               <td>{item.tasa}</td>
