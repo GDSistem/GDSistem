@@ -16,7 +16,7 @@
     overflow-x: auto;
     margin-top: 1rem;
     width: 100vw; /* Asegura que el ancho no se pase */
-    max-width: 90%;
+    max-width: 100%;
     box-sizing: border-box;
   }
   
@@ -91,7 +91,7 @@
     text-align: center;
     margin-bottom: 2rem;
     width: 100%;
-    max-width: 90%;
+    max-width: 100%;
     box-sizing: border-box;
   }
   

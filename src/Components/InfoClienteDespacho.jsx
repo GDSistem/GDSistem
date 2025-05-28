@@ -47,12 +47,12 @@ function InfoClienteDespacho({ item }) {
           <p><strong>Fecha Contabilizada:</strong> {formatearFecha(cliente?.FechaContabilizada)}</p>
         </div>
         <div className="info-bloque">
-          <p><strong>Tipo Personas:</strong> {cliente?.IdTipoPersona}</p>
-          <p><strong></strong> {cliente?.PaisD}</p>
+          <p><strong>Tipo Personas:</strong> {cliente?.CodTipoPersona}</p>
+          <p><strong></strong> {cliente?.NomTipoPersona}</p>
         </div>
         <div className="info-bloque">
-          <p><strong>Lista Precios:</strong> {cliente?.PaisD}</p>
-          <p><strong></strong> {cliente?.PaisD}</p>
+          <p><strong>Lista Precios:</strong> {cliente?.CodListaPrecios}</p>
+          <p><strong></strong> {cliente?.NomListaPrecios}</p>
         </div>
         <div className="info-bloque">
           <p><strong>Vendedor Interno:</strong> {cliente?.IdVendedorInt}</p>
@@ -69,7 +69,7 @@ function InfoClienteDespacho({ item }) {
           <p><strong>Fecha Vencimiento:</strong> {formatearFecha(cliente?.Fecha)}</p>
         </div>
         <div className="info-bloque">
-          <p><strong>Días Adicionales:</strong> {cliente?.PaisD}</p>
+          <p><strong>Días Adicionales:</strong> {cliente?.DiasAdicionales}</p>
           <p><strong>% contado:</strong> {cliente?.PorcentajeIGTF}</p>
         </div>
         <div className="info-bloque">

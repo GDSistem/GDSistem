@@ -14,16 +14,6 @@ const App = () => {
   const [user, setUser] = useState(null);
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
- 
-
-  // // Si ya está logueado (localStorage), actualiza estado
-  // useEffect(() => {
-  //   const user = localStorage.getItem('user');
-  //   if (user) {
-  //     setIsAuthenticated(true);
-      
-  //   }
-  // }, []);
 
   const handleMenuSeleccionado = (menu) => {
     setMenuSeleccionado(menu);
@@ -34,12 +24,6 @@ const App = () => {
     setSidebarVisible(false);  // Cerrar el sidebar cuando se haga clic en una opción
   };
   
-  // const handleLogin = (username) => {
-  //   // Aquí luego llamarás a tu API real
-  //   localStorage.setItem('user', username); 
-  //   setIsAuthenticated(true);
-   
-  // };
 
   const handleLogin = (usuario) => {
     localStorage.setItem('user', JSON.stringify(usuario)); 
@@ -47,12 +31,6 @@ const App = () => {
   setIsAuthenticated(true);
    
   };
-
-  // const handleLogout = () => {
-  //   localStorage.removeItem('user');
-  //   setIsAuthenticated(false);
-   
-  // };
 
   const handleLogout = () => {
     localStorage.removeItem('user');
@@ -63,7 +41,6 @@ const App = () => {
   if (!isAuthenticated) {
     return <Login onLogin={handleLogin} />;
   }
-
 
 
   return (

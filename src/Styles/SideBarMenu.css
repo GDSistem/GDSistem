@@ -1,17 +1,28 @@
-.sideBar{
+/* .sideBar{
     height: 100%;
     width: 160px;
     background-color: #444595;
-    /* padding: 20px; */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; 
+    align-items: center; 
+    position: relative;
+} */
+
+.sideBar {
+    height: 100vh; /* toda la altura visible de la pantalla */
+    width: 160px;
+    background-color: #444595;
 
     display: flex;
     flex-direction: column;
-    justify-content: flex-start; /* Para que los elementos se alineen desde arriba */
-    align-items: center; 
-    position: relative;
-   
-    
-    
+    justify-content: flex-start;
+    align-items: center;
+
+    position: fixed; /* se queda fijo al hacer scroll */
+    top: 0;
+    left: 0;
+    z-index: 1000; /* para que quede por encima de otros elementos */
 }
 
 .logo img {

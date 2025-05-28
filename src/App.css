@@ -3,14 +3,16 @@
   height: 100vh;
   display: flex;
   flex-direction: row;
+  overflow-x: hidden;
 }
 
 .dashboard {
   display: flex;
   flex-direction: column;
-  height: 100vh;  /* Asegura que ocupe toda la altura de la ventana */
-  width: 100%;    /* Ocupará todo el ancho disponible */
-  position: relative;
+  height: 100vh;
+  width: calc(100vw - 160px); /* resta el ancho del sidebar */
+  margin-left: 160px; /* deja espacio para el sidebar */
+  overflow-x: hidden; /* evita scroll horizontal */
 }
 
 
