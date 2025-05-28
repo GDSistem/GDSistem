@@ -21,29 +21,14 @@ const obtenerProductos = async (codEmpresa, codSucursal, codTipoDoc, codCliente)
     DECLARE @IdTipoDoc INT;
     DECLARE @IdCliente INT;
 
-    -- Obtener IdEmpresa
-    SELECT @IdEmpresa = IdEmpresa
-    FROM dbo.TblEmpresas
-    WHERE CodEmpresa = @CodEmpresa;
-
-    -- Obtener IdSucursal vinculado a la empresa
-    SELECT @IdSucursal = IdSucursal
-    FROM dbo.TblSucursales
-    WHERE CodSucursal = @CodSucursal AND IdEmpresa = @IdEmpresa;
-
-    -- Obtener IdTipoDoc
-    SELECT @IdTipoDoc = IdTipoDoc
-    FROM dbo.TblTipoDoc
-    WHERE CodTipoDoc = @CodTipoDoc;
-
-    -- Obtener IdCliente
-    SELECT @IdCliente = IdCliente
-    FROM dbo.TblClientes
-    WHERE CodCliente = @CodCliente;
+    SELECT @IdEmpresa = IdEmpresa FROM dbo.TblEmpresas WHERE CodEmpresa = @CodEmpresa;
+    SELECT @IdSucursal = IdSucursal FROM dbo.TblSucursales WHERE CodSucursal = @CodSucursal AND IdEmpresa = @IdEmpresa;
+    SELECT @IdTipoDoc = IdTipoDoc FROM dbo.TblTipoDoc WHERE CodTipoDoc = @CodTipoDoc;
+    SELECT @IdCliente = IdCliente FROM dbo.TblClientes WHERE CodCliente = @CodCliente;
 
     IF @IdEmpresa IS NOT NULL AND @IdSucursal IS NOT NULL AND @IdTipoDoc IS NOT NULL AND @IdCliente IS NOT NULL
     BEGIN
-      SELECT TOP 10
+      SELECT
         td.CodTipoDoc,
         s.CodSucursal,
         e.CodEmpresa,
@@ -69,7 +54,6 @@ const obtenerProductos = async (codEmpresa, codSucursal, codTipoDoc, codCliente)
   `);
 
   const ventas = result.recordset.filter(row => row.CodTipoDoc !== null);
-
   if (ventas.length === 0) return [];
 
   const detallesPorVenta = {};
@@ -80,19 +64,35 @@ const obtenerProductos = async (codEmpresa, codSucursal, codTipoDoc, codCliente)
     const detalleResult = await detalleRequest.query(`
       SELECT
         d.IdVentaDet,
+        d.IdVenta,
         d.NomProducto,
         d.NomSubProducto,
         d.Cantidad,
         d.Precio,
+        d.Descuento,
         d.Alto,
         d.Ancho,
         d.Largo,
+        d.Redondea5,
         d.TasaIva,
+        d.TasaPatente,
+        d.OrdenCompra,
+        d.Pendiente,
+        d.PendProducir,
+        d.DescuentoA,
+        d.Desperdicio,
         d.TotalBase,
         d.TotalIva,
-        d.DescuentoA,
-        d.TasaPatente
+        d.Item,
+        p.CodProducto,
+        lp.CodListaPrecios,
+        um.NomUnidadMedida,
+        tp.CodTipoPatente
       FROM dbo.TblVentasDet d
+      LEFT JOIN dbo.TblProductos p ON d.IdProducto = p.IdProducto
+      LEFT JOIN dbo.TblListaPrecios lp ON d.IdListaPrecios = lp.IdListaPrecios
+      LEFT JOIN dbo.TblUnidadesMedidas um ON d.IdUnidadMedida = um.IdUnidadMedida
+      LEFT JOIN dbo.TblTiposPatente tp ON d.IdTipoPatente = tp.IdTipoPatente
       WHERE d.IdVenta = @IdVenta
     `);
 
