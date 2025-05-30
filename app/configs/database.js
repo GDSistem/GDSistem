@@ -11,7 +11,12 @@ const config = {
   options: {
     encrypt: process.env.DB_ENCRYPT === 'true', // convertir string a boolean
     trustServerCertificate: process.env.DB_TRUST_SERVER_CERTIFICATE === 'true'
-  }
+  },
+  pool: {
+    max: 10,
+    min: 0,
+    idleTimeoutMillis: 30000
+  },
 };
 
 const poolPromise = new sql.ConnectionPool(config)
