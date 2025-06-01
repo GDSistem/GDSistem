@@ -68,3 +68,7 @@
     background-color: #cacae4 !important;
   }
   
+  .nula-row {
+  color: red;
+  font-weight: bold; /* Opcional, para más énfasis */
+}

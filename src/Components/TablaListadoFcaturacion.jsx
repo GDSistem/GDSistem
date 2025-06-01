@@ -43,7 +43,13 @@ function TablaListadoFacturacion({ datos, onRowSelect }) {
           <tr><td colSpan="13" style={{ textAlign: 'center' }}>Sin resultados</td></tr>
         ) : (
             datos.map((item, index) => (
-            <tr key={index} onClick={() => handleRowClick(item, index)}  className={`clickable-row ${selectedIndex === index ? 'selected-row' : ''}`}>
+            // <tr key={index} onClick={() => handleRowClick(item, index)}  className={`clickable-row ${selectedIndex === index ? 'selected-row' : ''}`}>
+            <tr
+            key={index}
+            onClick={() => handleRowClick(item, index)}
+            className={`clickable-row ${selectedIndex === index ? 'selected-row' : ''} ${item.nula ? 'nula-row' : ''}`}
+          >
+
               <td>{item.tipoDocumento.toUpperCase()}</td>
               <td>{item.codigoSucursal.toUpperCase()}</td>
               <td>{item.fecha}</td>
