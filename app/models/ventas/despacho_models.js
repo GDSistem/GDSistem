@@ -1,58 +1,96 @@
 const { poolPromise } = require('../../configs/database.js');
 
-const obtenerDespacho = async (codEmpresa, codSucursal, codTipoDoc, nDocumento) => {
-  console.log('Parámetros recibidos en obtenerDespacho:');
-  console.log('codEmpresa:', codEmpresa);
-  console.log('codSucursal:', codSucursal);
-  console.log('codTipoDoc:', codTipoDoc);
-  console.log('nDocumento:', nDocumento);
+const obtenerVentaDetalle = async (codEmpresa, codSucursal, idVenta) => {
+  console.log('📥 codEmpresa recibido:', codEmpresa);
+  console.log('📥 codSucursal recibido:', codSucursal);
+  console.log('📥 idVenta recibido:', idVenta);
 
   const pool = await poolPromise;
   const request = pool.request();
 
-  // Parámetros requeridos
   request.input('CodEmpresa', codEmpresa);
   request.input('CodSucursal', codSucursal);
-  request.input('CodTipoDoc', codTipoDoc);
-  request.input('NDocumento', nDocumento);
+  request.input('IdVenta', idVenta);
 
   const result = await request.query(`
-    DECLARE @IdEmpresa INT;
-    DECLARE @IdSucursal INT;
-    DECLARE @IdTipoDoc INT;
-
-    -- Paso 1: Obtener IdEmpresa
-    SELECT @IdEmpresa = IdEmpresa
-    FROM dbo.TblEmpresas
-    WHERE CodEmpresa = @CodEmpresa;
-
-    -- Paso 2: Obtener IdSucursal usando IdEmpresa y CodSucursal
-    SELECT @IdSucursal = IdSucursal
-    FROM dbo.TblSucursales
-    WHERE CodSucursal = @CodSucursal AND IdEmpresa = @IdEmpresa;
-
-    -- Paso 3: Obtener IdTipoDoc
-    SELECT @IdTipoDoc = IdTipoDoc
-    FROM dbo.TblTipoDoc
-    WHERE CodTipoDoc = @CodTipoDoc;
-
-    -- Paso 4: Buscar en TblNEVentas usando IdSucursal, IdTipoDoc y NDocumento
-    IF @IdSucursal IS NOT NULL AND @IdTipoDoc IS NOT NULL
-    BEGIN
-      SELECT ne.*
-      FROM dbo.TblNEVentas ne
-      WHERE ne.IdSucursal = @IdSucursal
-        AND ne.IdTipoDoc = @IdTipoDoc
-        AND ne.NDocumento = @NDocumento;
-    END
-    ELSE
-    BEGIN
-      SELECT NULL AS IdVenta;
-    END
+SELECT TOP (1000) [IdVenta]
+      ,[IdEmpresa]
+      ,[CodEmpresa]
+      ,[NomEmpresa]
+      ,[IdSucursal]
+      ,[CodSucursal]
+      ,[NomSucursal]
+      ,[IdTipoDoc]
+      ,[CodTipoDoc]
+      ,[NomTipoDoc]
+      ,[Naturaleza]
+      ,[NDocumento]
+      ,[NControl]
+      ,[IdCliente]
+      ,[CodCliente]
+      ,[NomCliente]
+      ,[IdGrupoCliente]
+      ,[CodGrupoCliente]
+      ,[NomGrupoCliente]
+      ,[Exportacion]
+      ,[IdTipoPersona]
+      ,[CodTipoPersona]
+      ,[NomTipoPersona]
+      ,[Rif]
+      ,[Nit]
+      ,[Direccion]
+      ,[Pais]
+      ,[Estado]
+      ,[Ciudad]
+      ,[Telefono1]
+      ,[Telefono2]
+      ,[Fax]
+      ,[EMail]
+      ,[Comentario]
+      ,[RetencionIva]
+      ,[FechaDoc]
+      ,[DiasCredito]
+      ,[FechaPromesa]
+      ,[IdVendedorInt]
+      ,[CodVendedorInt]
+      ,[NomVendedorInt]
+      ,[IdVendedorExt]
+      ,[CodVendedorExt]
+      ,[NomVendedorExt]
+      ,[DireccionD]
+      ,[PaisD]
+      ,[EstadoD]
+      ,[CiudadD]
+      ,[Telefono1D]
+      ,[Telefono2D]
+      ,[MontoBase]
+      ,[MontoIva]
+      ,[MontoTotal]
+      ,[TotalPeso]
+      ,[FechaContabilizada]
+      ,[Fecha]
+      ,[Usuario]
+      ,[Equipo]
+      ,[Nula]
+      ,[FechaNula]
+      ,[UsuarioNula]
+      ,[EquipoNula]
+      ,[ComentarioNula]
+      ,[Seguridad]
+      ,[TipoCambio]
+      ,[TipoCambioBCV]
+      ,[IGTF]
+      ,[USD]
+      ,[IdVentaAnt]
+      ,[PorcentajeIGTF]
+      ,[IGTFUS]
+    FROM [SIGD].[dbo].[VwVentas]
+    WHERE CodEmpresa = @CodEmpresa
+      AND CodSucursal = @CodSucursal
+      AND IdVenta = @IdVenta;
   `);
 
-  // Filtra resultados válidos
-  return result.recordset.filter(row => row.IdVenta !== null);
+  return result.recordset;
 };
 
-module.exports = { obtenerDespacho };
+module.exports = { obtenerVentaDetalle };

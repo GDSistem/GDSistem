@@ -12,7 +12,7 @@ const getProductos = async (req, res) => {
   const { idVenta, nDocumento } = req.body;
 
   // ── Validación ───────────────────────────────────────────────────────────
-  if (!idVenta || typeof idVenta !== 'number') {
+  if (!idVenta || typeof idVenta !== 'string') {
     return res.status(400).json({
       success: false,
       message: 'El campo idVenta es requerido y debe ser un número.'
