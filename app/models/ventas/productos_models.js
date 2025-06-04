@@ -177,4 +177,45 @@ const obtenerProductos = async (idVenta, nDocumento) => {
   };
 };
 
+//Modelo para buscar la informacion de los productos
+const obtenerProductoPorCodigo = async (codProducto) => {
+  const pool = await poolPromise;
+  const request = pool.request();
+
+  request.input('CodProducto', codProducto);
+
+  const result = await request.query(`
+    SELECT
+      [IdClase],
+      [IdProducto],
+      [IdTipoMedida],
+      [IdUnidadMedida],
+      [IdMoneda],
+      [IdColor],
+      [IdTipoProducto],
+      [IdUsoProducto],
+      [CodProducto],
+      [NomProducto],
+      [Espesor],
+      [Peso],
+      [Diametro],
+      [Dificultad],
+      [Desarrollo],
+      [ProductoEditable],
+      [EsAjuste],
+      [Comentario],
+      [DirecDibujo],
+      [Det],
+      [SubDet],
+      [Fecha],
+      [Usuario],
+      [Equipo],
+      [Dibujo]
+    FROM [SIGD].[dbo].[TblProductos]
+    WHERE CodProducto = @CodProducto
+  `);
+
+  return result.recordset;
+};
+
 module.exports = { obtenerProductos };

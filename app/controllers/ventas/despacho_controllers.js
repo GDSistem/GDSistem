@@ -1,4 +1,4 @@
-const { obtenerVentaDetalle } = require('../../models/ventas/despacho_models.js');
+const { obtenerVentaDetalle, obtenerSucursalDespacho } = require('../../models/ventas/despacho_models.js');
 
 // Payload esperado:
 // {
@@ -34,4 +34,30 @@ const getDespacho = async (req, res) => {
   }
 };
 
-module.exports = { getDespacho };
+//Controlador para obtener el detalle de un despacho
+const getSucursalDespacho = async (req, res) => {
+  const { codSucursal, nomSucursal } = req.body;
+
+  // Validación básica
+  if (!codSucursal || !nomSucursal) {
+    return res.status(400).json({
+      error: 'Se requieren los parámetros codSucursal y nomSucursal.'
+    });
+  }
+
+  try {
+    const resultado = await obtenerSucursalDespacho(nomSucursal, codSucursal);
+
+    if (resultado.length === 0) {
+      return res.status(404).json({ message: 'Sucursal no encontrada.' });
+    }
+
+    return res.status(200).json(resultado[0]); // Retorna solo el primer resultado
+  } catch (error) {
+    console.error('Error al obtener la sucursal:', error);
+    return res.status(500).json({ error: 'Error interno del servidor.' });
+  }
+};
+
+
+module.exports = { getDespacho, getSucursalDespacho };

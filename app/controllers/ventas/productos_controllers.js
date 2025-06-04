@@ -49,4 +49,32 @@ const getProductos = async (req, res) => {
   }
 };
 
-module.exports = { getProductos };
+// ════════════════════════════════════════════════════════════════════════════
+//  Payload esperado:
+//  {
+//    "codProducto": "ABC123"   // ejemplo de string
+//  }
+// ════════════════════════════════════════════════════════════════════════════
+
+const getProducto = async (req, res) => {
+  const { codProducto } = req.body;
+
+  if (!codProducto) {
+    return res.status(400).json({ error: 'El parámetro codProducto es obligatorio.' });
+  }
+
+  try {
+    const resultado = await obtenerProductoPorCodigo(codProducto);
+
+    if (resultado.length === 0) {
+      return res.status(404).json({ message: 'Producto no encontrado.' });
+    }
+
+    return res.status(200).json(resultado[0]); // Retorna el primer (y único) resultado
+  } catch (error) {
+    console.error('Error al obtener el producto:', error);
+    return res.status(500).json({ error: 'Error interno del servidor.' });
+  }
+};
+
+module.exports = { getProductos, getProducto };

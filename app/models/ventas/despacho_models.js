@@ -13,7 +13,8 @@ const obtenerVentaDetalle = async (codEmpresa, codSucursal, idVenta) => {
   request.input('IdVenta', idVenta);
 
   const result = await request.query(`
-SELECT TOP (1000) [IdVenta]
+    SELECT 
+      [IdVenta]
       ,[IdEmpresa]
       ,[CodEmpresa]
       ,[NomEmpresa]
@@ -93,4 +94,42 @@ SELECT TOP (1000) [IdVenta]
   return result.recordset;
 };
 
-module.exports = { obtenerVentaDetalle };
+//Modelo para obtener los detalles de una sucursal para el despacho
+const obtenerSucursalDespacho = async (nomSucursal, codSucursal) => {
+  const pool = await poolPromise;
+  const request = pool.request();
+
+  request.input('NomSucursal', nomSucursal);
+  request.input('CodSucursal', codSucursal);
+
+  const result = await request.query(`
+    SELECT 
+      [IdEmpresa], 
+      [IdSucursal],
+      [CodSucursal],
+      [NomSucursal],
+      [Rif],
+      [Nit],
+      [Direccion],
+      [Pais],
+      [Estado],
+      [Ciudad],
+      [Telefono1],
+      [Telefono2],
+      [Fax],
+      [Email],
+      [Actividad],
+      [Impresora],
+      [Fecha],
+      [Usuario],
+      [Equipo]
+    FROM [SIGD].[dbo].[TblSucursales]
+    WHERE CodSucursal = @CodSucursal AND NomSucursal = @NomSucursal
+  `);
+
+  return result.recordset;
+};
+
+
+
+module.exports = { obtenerVentaDetalle, obtenerSucursalDespacho };
