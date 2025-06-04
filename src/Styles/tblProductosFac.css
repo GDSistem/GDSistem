@@ -42,12 +42,12 @@
   
   } 
   
-  .product-table input[type="checkbox"] {
-    /* z-index: -1; */
+  /* .product-table input[type="checkbox"] {
+   
     transform: scale(1.7);
     cursor: default;
     z-index: -1;
-}
+} */
 
   .table-container {
   overflow-x: auto; 
@@ -157,6 +157,58 @@
     margin: 0;
     z-index: 4;
   }
+
+  .column-toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 16px 0;
+  padding: 2px;
+  /* align-items: center; */
+  /* background-color: #f5f7fa;
+  border: 1px solid #d0d7de; */
+  /* border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1); */
+}
+
+.column-toggles label {
+  /* display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #4b4b4b;
+  background-color: #fff;
+  padding: 6px 10px;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+  cursor: pointer; */
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.column-toggles label:hover {
+  background-color: #e8efff;
+}
+
+.column-toggles input[type="checkbox"] {
+  margin-right: 6px;
+  accent-color: #444595; /* Azul moderno para checkboxes */
+}
+.product-table input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #007bff; /* color azul moderno */
+  cursor: default;
+}
+
+
 
   @media (max-width: 600px) {
     .product-table th,

@@ -1,46 +1,71 @@
 const sql = require('mssql');
 const { poolPromise } = require('../../configs/database.js');
 
-const obtenerCliente = async (nDocumento) => {
+const obtenerCliente = async (codCliente) => {
   try {
-    console.log('🔍 Buscando datos desde TblVentas con NDocumento:', nDocumento);
+    console.log('🔍 Buscando cliente desde VwClientes con CodCliente:', codCliente);
 
     const pool = await poolPromise;
 
     const result = await pool.request()
-      .input('nDocumento', sql.VarChar, nDocumento)
+      .input('CodCliente', sql.VarChar, codCliente)
       .query(`
-        -- Obtener todos los datos desde TblVentas junto con el vendedor, tipo de persona, lista de precios y cliente
-        SELECT 
-          v.*,
-          ven.CodVendedor,
-          ven.NomVendedor,
-          tp.CodTipoPersona,
-          tp.NomTipoPersona,
-          lp.CodListaPrecios,
-          lp.NomListaPrecios,
-          c.DiasAdicionales
-        FROM dbo.TblVentas v
-        LEFT JOIN dbo.TblVendedores ven ON v.IdVendedorInt = ven.IdVendedor
-        LEFT JOIN dbo.TblTipoPersonas tp ON v.IdTipoPersona = tp.IdTipoPersona
-        LEFT JOIN dbo.TblVentasDet vd ON vd.IdVenta = v.IdVenta
-        LEFT JOIN dbo.TblListaPrecios lp ON vd.IdListaPrecios = lp.IdListaPrecios
-        LEFT JOIN dbo.TblClientes c ON v.IdCliente = c.IdCliente
-        WHERE v.NDocumento = @nDocumento;
+        SELECT
+          IdCliente,
+          CodCliente,
+          NomCliente,
+          IdGrupoCliente,
+          CodGrupoCliente,
+          NomGrupoCliente,
+          IdTipoPersona,
+          CodTipoPersona,
+          NomTipoPersona,
+          Rif,
+          Nit,
+          Direccion,
+          Pais,
+          Estado,
+          Ciudad,
+          Telefono1,
+          Telefono2,
+          Fax,
+          Email,
+          Actividad,
+          Observaciones,
+          DiasCredito,
+          DiasAdicionales,
+          MontoCredito,
+          PorcentajeContado,
+          IdListaPrecios,
+          CodListaPrecios,
+          NomListaPrecios,
+          RetencionIva,
+          Exportacion,
+          IdVendedorInt,
+          CodVendedorInt,
+          NomVendedorInt,
+          IdVendedorExt,
+          CodVendedorExt,
+          NomVendedorExt,
+          FechaCliente,
+          Fecha,
+          Usuario,
+          Equipo
+        FROM SIGD.dbo.VwClientes
+        WHERE CodCliente = @CodCliente
       `);
 
-    const records = result.recordset;
-    console.log('📄 Registros encontrados:', records.length);
+    const cliente = result.recordset[0];
 
-    if (records.length === 0) {
-      console.log('⚠️ No se encontró ningún resultado para ese NDocumento');
+    if (!cliente) {
+      console.log('⚠️ No se encontró cliente con ese código');
       return null;
     }
 
-    console.log('✅ Datos encontrados:', records);
-    return records;
+    console.log('✅ Cliente encontrado:', cliente);
+    return cliente;
   } catch (error) {
-    console.error('❌ Error al obtener datos desde TblVentas:', error);
+    console.error('❌ Error al obtener cliente desde VwClientes:', error);
     throw error;
   }
 };

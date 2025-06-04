@@ -1,18 +1,27 @@
 /* Styles/FacturaTable.css */
 .factura-table-container {
-    margin-top: 30px;
+    margin-top: 10px;
     overflow-x: auto;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    /* box-shadow: 12px 12px 12px  rgba(0,0,0,0.1); */
     background-color: #fff;
     width: 100%;
+    border: 1px solid rgba(0,0,0,0.1); /* Bordes internos negros */
+    border-radius: 12px;
+  }
+
+  .Container-listado{
+    margin-top: 50px;
+    overflow-x: auto;
+    width: 100%;
+
   }
   
   .factura-table {
     width: 100%;
     border-collapse: collapse;
     font-family: 'Segoe UI', sans-serif;
-    font-size: 13px;
+    font-size: 10px;
+    
   }
   
   .factura-table thead {
@@ -24,7 +33,29 @@
     padding: 15px 16px;
     text-align: center;
     border-bottom: 1px solid #e0e0e0;
+    
   }
+
+  th .sort-arrow {
+  margin-left: 6px;
+  font-size: 10px;
+  color: #fff; /* o usa #000 si tienes fondo blanco */
+  transition: transform 0.2s ease;
+}
+.sort-arrows {
+  display: inline-flex;
+  flex-direction: column;
+  margin-left: 4px;
+  font-size: 10px;
+  line-height: 10px;
+  color: #aaa; /* flechas inactivas */
+}
+
+.arrow.active {
+  color: #000; /* flecha activa (resaltada) */
+  font-weight: bold;
+}
+
   
   .factura-table tbody tr:hover {
     background-color: #f1f3f4;
@@ -38,14 +69,14 @@
     background-color: #f9f9f9;
   }
   
-  .cliente-info, .despacho-info {
+  /* .cliente-info, .despacho-info {
     margin-top: 20px;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 6px;
     background-color: #f9f9f9;
     
-  }
+  } */
   
   .factura-table-body-scroll {
     max-height: calc( 7.2* 48px); /* Altura estimada de 5 filas */
@@ -71,4 +102,36 @@
   .nula-row {
   color: red;
   font-weight: bold; /* Opcional, para más énfasis */
+}
+
+.column-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin-bottom: 6px;
+  padding: 12px 20px;
+  /* background-color: #f1f3f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08); */
+}
+
+.column-controls label {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.column-controls label:hover {
+  background-color: #e6eaff;
+}
+
+.column-controls input[type="checkbox"] {
+  margin-right: 6px;
+  accent-color: #444595;
 }

@@ -3,70 +3,48 @@ const { obtenerProductos } = require('../../models/ventas/productos_models.js');
 // ════════════════════════════════════════════════════════════════════════════
 //  Payload esperado:
 //  {
-//    "codEmpresa": "01",
-//    "codSucursal": "A",
-//    "codTipoDoc": "F",
-//    "codCliente": "C0001"
+//    "idVenta": 456,
+//    "nDocumento": "ABC123"   // ejemplo de string para NDocumento
 //  }
 // ════════════════════════════════════════════════════════════════════════════
 
 const getProductos = async (req, res) => {
-  const { codEmpresa, codSucursal, codTipoDoc, codCliente } = req.body;
+  const { idVenta, nDocumento } = req.body;
 
-  /* ── Validaciones ───────────────────────────────────────────────────────── */
-  if (!codEmpresa || typeof codEmpresa !== 'string') {
+  // ── Validación ───────────────────────────────────────────────────────────
+  if (!idVenta || typeof idVenta !== 'number') {
     return res.status(400).json({
       success: false,
-      message: 'El campo codEmpresa es requerido y debe ser una cadena.'
+      message: 'El campo idVenta es requerido y debe ser un número.'
     });
   }
 
-  if (!codSucursal || typeof codSucursal !== 'string') {
+  if (!nDocumento || typeof nDocumento !== 'string') {
     return res.status(400).json({
       success: false,
-      message: 'El campo codSucursal es requerido y debe ser una cadena.'
+      message: 'El campo nDocumento es requerido y debe ser una cadena de texto.'
     });
   }
-
-  if (!codTipoDoc || typeof codTipoDoc !== 'string') {
-    return res.status(400).json({
-      success: false,
-      message: 'El campo codTipoDoc es requerido y debe ser una cadena.'
-    });
-  }
-
-  if (!codCliente || typeof codCliente !== 'string') {
-    return res.status(400).json({
-      success: false,
-      message: 'El campo codCliente es requerido y debe ser una cadena.'
-    });
-  }
-  /* ───────────────────────────────────────────────────────────────────────── */
 
   try {
-    const ventas = await obtenerProductos(
-      codEmpresa,
-      codSucursal,
-      codTipoDoc,
-      codCliente
-    );
+    const productos = await obtenerProductos(idVenta, nDocumento);
 
-    if (!ventas || ventas.length === 0) {
+    if (!productos || productos.length === 0) {
       return res.status(404).json({
         success: false,
-        message: 'No se encontraron ventas para los criterios proporcionados.'
+        message: 'No se encontraron productos para el IdVenta y NDocumento proporcionados.'
       });
     }
 
     return res.status(200).json({
       success: true,
-      data: ventas
+      data: productos
     });
   } catch (error) {
-    console.error('Error en getProductos:', error);
+    console.error('❌ Error en getProductos:', error.message);
     return res.status(500).json({
       success: false,
-      message: 'Error interno del servidor al obtener los datos.'
+      message: 'Error interno del servidor al obtener los productos.'
     });
   }
 };

@@ -1,27 +1,27 @@
-const { obtenerCliente } = require('../../models/ventas/clientes_models'); // Asegúrate de que la ruta sea correcta
+const { obtenerCliente } = require('../../models/ventas/clientes_models'); // Ruta correcta
 
 // ✅ Ejemplo de payload esperado:
 // {
-//   "nDocumento": "0003238"
+//   "codCliente": "CLI0001"
 // }
 
 const getCliente = async (req, res) => {
-  const { nDocumento } = req.body;
+  const { codCliente } = req.body;
 
-  if (!nDocumento || typeof nDocumento !== 'string') {
+  if (!codCliente || typeof codCliente !== 'string') {
     return res.status(400).json({
       success: false,
-      message: 'El campo codDocumento es requerido y debe ser una cadena de texto.'
+      message: 'El campo codCliente es requerido y debe ser una cadena de texto.'
     });
   }
 
   try {
-    const data = await obtenerCliente(nDocumento);
+    const data = await obtenerCliente(codCliente);
 
     if (!data) {
       return res.status(404).json({
         success: false,
-        message: 'No se encontró ningún documento con el código proporcionado.'
+        message: 'No se encontró ningún cliente con el código proporcionado.'
       });
     }
 
@@ -30,10 +30,10 @@ const getCliente = async (req, res) => {
       data
     });
   } catch (error) {
-    console.error('Error al obtener documento:', error);
+    console.error('❌ Error al obtener cliente:', error);
     res.status(500).json({
       success: false,
-      message: 'Error interno del servidor al obtener el documento.'
+      message: 'Error interno del servidor al obtener el cliente.'
     });
   }
 };

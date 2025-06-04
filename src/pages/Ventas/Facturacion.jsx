@@ -38,110 +38,44 @@ function Facturacion() {
   });
 
   const [productos, setProductos] = useState([]);
+  const [selectedIndex, setSelectedIndex] = useState(null);
 
-  // console.log("Payload fetchProductos:", JSON.stringify(payload, null, 2));
+const fetchProductos = async (itemSeleccionado) => {
+  try {
+    const payload = {
+      idVenta: itemSeleccionado.IdVenta || itemSeleccionado.idVenta,
+      nDocumento: itemSeleccionado.numeroDocumento || itemSeleccionado.NDocumento
+    };
 
+    console.log("Payload enviado:", payload);
 
-  const fetchProductos = async (itemSeleccionado) => {
-    try {
-      // Construimos el payload según los datos de la fila
-      const payload = {
-        codEmpresa: String(codigoEmpresa),
-        codSucursal: String(itemSeleccionado.codigoSucursal || itemSeleccionado.CodSucursal),
-        codTipoDoc: String(itemSeleccionado.codTipoDoc || itemSeleccionado.tipoDocumento),
-        codCliente: String(itemSeleccionado.codCliente || itemSeleccionado.codigoCliente),
-      };
+    const response = await fetch("http://localhost:3000/api/ventas/factura/productos", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
 
-      console.log("Payload enviado:", payload);
-      console.log("itemSeleccionado.codigoEmpresa:", itemSeleccionado.codigoEmpresa);
-
-
-      const response = await fetch("http://localhost:3000/api/ventas/factura/productos", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        throw new Error("Error al obtener productos");
-      }
-
-      const data = await response.json();
-
-      if (data.success) {
-        // Filtramos los productos cuyo NDocumento coincida con el numeroDocumento de la fila
-        const nDocumentoFila = itemSeleccionado.numeroDocumento || itemSeleccionado.NDocumento;
-        // const nDocumentoFila = (itemSeleccionado.numeroDocumento || itemSeleccionado.NDocumento || '').replace(/\D/g, '');
-        console.log("nDocumentoFila:", itemSeleccionado.numeroDocumento);
-        // // console.log("Todos los NDocumento recibidos:", data.data.map(f => f.NDocumento));
-        // console.log("Fila:", f.NDocumento);
-
-
-        const facturaEncontrada = data.data.find(
-          (factura) => factura.NDocumento === nDocumentoFila
-        );
-
-        // Actualizamos estado con los productos (Detalles) si encontramos la factura correcta
-        setProductos(facturaEncontrada ? facturaEncontrada.Detalles : []);
-        if (facturaEncontrada) {
-          console.log("Detalles de factura:", facturaEncontrada.Detalles);
-        } else {
-          console.log("No se encontró la factura con NDocumento:", nDocumentoFila);
-        }
-        
-      } else {
-        setProductos([]);
-        
-      }
-    } catch (error) {
-      console.error(error);
-      setProductos([]);
-     
+    if (!response.ok) {
+      throw new Error("Error al obtener productos");
     }
-  };
 
-  // const fetchProductos = async (itemSeleccionado) => {
-  //   try {
-  //     console.log("itemSeleccionado recibido:", itemSeleccionado);
-  
-  //     const codEmpresa = itemSeleccionado.codigoEmpresa ?? itemSeleccionado.CodEmpresa ?? null;
-  
-  //     if (!codigoEmpresa) {
-  //       console.error("ERROR: codEmpresa es requerido y no está definido en itemSeleccionado");
-  //       return;
-  //     }
-  
-  //     const payload = {
-  //       codEmpresa: String(codigoEmpresa),
-  //       codSucursal: String(itemSeleccionado.codigoSucursal || itemSeleccionado.CodSucursal || ''),
-  //       codTipoDoc: String(itemSeleccionado.codTipoDoc || itemSeleccionado.CodTipoDoc || ''),
-  //       codCliente: String(itemSeleccionado.codCliente || itemSeleccionado.CodCliente || ''),
-  //     };
-  
-  //     console.log("Payload enviado:", payload);
-  
-  //     const response = await fetch("http://localhost:3000/api/ventas/factura/productos", {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify(payload),
-  //     });
-  
-  //     if (!response.ok) {
-  //       throw new Error("Error al obtener productos");
-  //     }
-  
-  //     const data = await response.json();
-  
-  //     if (data.success) {
-  //       // Tu lógica para filtrar y setear productos
-  //     } else {
-  //       setProductos([]);
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //     setProductos([]);
-  //   }
-  // };
+    const data = await response.json();
+    console.log("Respuesta del backend:", data);
+
+    if (data.success && Array.isArray(data.data)) {
+      setProductos(data.data);
+      console.log("Productos recibidos:", data.data);
+    } else {
+      console.warn("No se recibieron productos válidos.");
+      setProductos([]);
+    }
+  } catch (error) {
+    console.error("Error al obtener productos:", error);
+    setProductos([]);
+  }
+};
+
+
   
 
   const resultadosFiltrados = resultados.filter((item) => {
@@ -172,14 +106,14 @@ function obtenerHora12Horas(isoString) {
 }
 
 
-const fetchClienteInfo = async (numeroDocumento) => {
+const fetchClienteInfo = async (codigoCliente) => {
   try {
     const response = await fetch("http://localhost:3000/api/ventas/factura/cliente", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ nDocumento: numeroDocumento })
+      body: JSON.stringify({ codCliente: codigoCliente })
     });
 
     if (!response.ok) {
@@ -194,42 +128,12 @@ const fetchClienteInfo = async (numeroDocumento) => {
   }
 };
 
-// const handleRowSelect = async (itemSeleccionado) => {
-//   const clienteData = await fetchClienteInfo(itemSeleccionado.numeroDocumento);
 
-//   if (clienteData) {
-//     // Combina la info del item original (factura) con la del cliente
-//     const facturaConCliente = {
-//       ...itemSeleccionado,
-//       clienteData: clienteData
-//     };
-
-//     setFacturaSeleccionada(facturaConCliente);
-//   }
-// };
-// const handleRowSelect = async (itemSeleccionado) => {
-//   // Puedes mantener la llamada a fetchClienteInfo si la necesitas
-//   const clienteData = await fetchClienteInfo(itemSeleccionado.numeroDocumento);
-
-//   if (clienteData) {
-//     const facturaConCliente = {
-//       ...itemSeleccionado,
-//       clienteData: clienteData,
-//     };
-//     setFacturaSeleccionada(facturaConCliente);
-//   } else {
-//     setFacturaSeleccionada(itemSeleccionado);
-//   }
-
-//   // Llamar a fetchProductos con el item seleccionado
-//   await fetchProductos(itemSeleccionado);
-  
-// };
-
-const handleRowSelect = async (itemSeleccionado) => {
+const handleRowSelect = async (itemSeleccionado, index = null) => {
   // Obtener la info del cliente primero
-  const clienteData = await fetchClienteInfo(itemSeleccionado.numeroDocumento);
+  const clienteData = await fetchClienteInfo(itemSeleccionado.codigoCliente);
   console.log("itemSeleccionado recibido:", itemSeleccionado);
+   if (index !== null) setSelectedIndex(index);
 
   // Combinar la info del cliente con el item seleccionado
   const facturaConCliente = clienteData
@@ -243,22 +147,21 @@ const handleRowSelect = async (itemSeleccionado) => {
   await fetchProductos(facturaConCliente);
 };
 
-// const handleRowSelect = async (itemSeleccionado) => {
-//   const clienteData = await fetchClienteInfo(itemSeleccionado.numeroDocumento);
+const handleAnterior = () => {
+    if (selectedIndex > 0) {
+      const nuevoIndex = selectedIndex - 1;
+      setSelectedIndex(nuevoIndex);
+      handleRowSelect(resultadosFiltrados[nuevoIndex], nuevoIndex);
+    }
+  };
 
-//   let facturaCompleta;
-
-//   if (clienteData) {
-//     facturaCompleta = { ...itemSeleccionado, clienteData };
-//     setFacturaSeleccionada(facturaCompleta);
-//   } else {
-//     facturaCompleta = itemSeleccionado;
-//     setFacturaSeleccionada(facturaCompleta);
-//   }
-
-//   await fetchProductos(facturaCompleta); // Aquí uso el objeto completo
-// };
-
+   const handleSiguiente = () => {
+    if (selectedIndex < resultadosFiltrados.length - 1) {
+      const nuevoIndex = selectedIndex + 1;
+      setSelectedIndex(nuevoIndex);
+      handleRowSelect(resultadosFiltrados[nuevoIndex], nuevoIndex);
+    }
+  };
 
 
 useEffect(() => {
@@ -362,10 +265,11 @@ setFiltros(prev => ({
         cliente: item.NomCliente,
         tasa: item.TipoCambioBCV ?? 0,
         monto: item.MontoBase,
-        montoIVA: item.MontoIVA,
+        montoIVA: item.MontoIva,
         igtf: item.IGTF,
         total: item.MontoTotal,
         nula: item.Nula,
+        idVenta: item.IdVenta,
       }));
 
       
@@ -671,15 +575,21 @@ setFiltros(prev => ({
 
       
       </div>
+      
       <div>
     
         {mostrarFiltros && (
           <FiltrosBusquedaListadoFact filtros={filtros} setFiltros={setFiltros} />
         )}
+       
         
         <TablaListadoFcaturacion
+          // datos={mostrarFiltros ? resultadosFiltrados : resultados}
+          // onRowSelect={handleRowSelect}
           datos={mostrarFiltros ? resultadosFiltrados : resultados}
           onRowSelect={handleRowSelect}
+          selectedIndex={selectedIndex}
+          setSelectedIndex={setSelectedIndex}
         />
        
 
@@ -687,6 +597,15 @@ setFiltros(prev => ({
     
       </div>
       <div>
+         <div className="nav-buttons">
+        <button onClick={handleAnterior} disabled={selectedIndex === null || selectedIndex === 0}>
+          Anterior
+        </button>
+        <button onClick={handleSiguiente} disabled={selectedIndex === null || selectedIndex === resultadosFiltrados.length - 1}>
+          Siguiente
+        </button>
+      </div>
+
       {facturaSeleccionada && (
   <InfoClienteDespacho item={facturaSeleccionada} />
 )}
