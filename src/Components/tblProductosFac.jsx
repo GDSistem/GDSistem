@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../Styles/tblProductosFac.css';
 
-function TblProductosFac({ productos}) {
+function TblProductosFac({ productos, subdetalles }) {
   const [expandedRows, setExpandedRows] = useState([]);
   const [columnas, setColumnas] = useState([
   { key: "Item", label: "Item", visible: true },
@@ -35,44 +35,17 @@ function TblProductosFac({ productos}) {
   { key: "NomTipoPatente", label: "Tipo Patente", visible: true },
   { key: "TotalPatente", label: "Total Patente", visible: true },
 
-  //  <th>Item</th>
-  //             <th>Codigo</th>
-  //             <th>Producto</th>
-  //             <th>Corte</th>
-  //             <th>Subproducto</th>
-  //             <th>Lista</th>
-  //             <th>Cantidad</th>
-  //             <th>Pendiente</th>
-  //             <th>Prend. Producir</th>
-  //             <th>Disponible</th>
-  //             <th>Unidad</th>
-  //             <th>Ancho</th>
-  //             <th>Alto</th>
-  //             <th>Largo</th>
-  //             <th>Total Medida</th>
-  //             <th>Precio</th>
-  //             <th>Descuento</th>
-  //             <th>Dscto Adicional</th>
-  //             <th>Desperdicio</th>
-  //             <th>Riesgo</th>
-  //             <th>Total Base</th>
-  //             <th>Tasa Iva</th>
-  //             <th>Total Iva</th>
-  //             <th>Forma</th>
-  //             <th>Orden Compra</th>
-  //             <th>Peso</th>
-  //             <th>Total Peso</th>
-  //             <th>Redondea5</th>
-  //             <th>Tipo Iva</th>
-  //             <th>Tipo Patente</th>
-  //             <th>Tasa Patente</th>
-  //             <th>Total Patente</th>
-  // ... agrega las demás columnas que necesites
 ]);
+
+const hasSubdetalles = (idVentaDet) => {
+  return subdetalles.some(sub => sub.IdVentaDet === idVentaDet);
+};
+
 
   console.log("Productos recibidos:", productos);
 
   const toggleRow = (id) => {
+    if (!hasSubdetalles(id)) return;
     setExpandedRows((prev) =>
       prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
     );
@@ -116,61 +89,31 @@ function TblProductosFac({ productos}) {
               <th key={col.key}>{col.label}</th>
             ))}
         </tr>
-            {/* <tr>
-              <th></th>
-              <th>Item</th>
-              <th>Codigo</th>
-              <th>Producto</th>
-              <th>Corte</th>
-              <th>Subproducto</th>
-              <th>Lista</th>
-              <th>Cantidad</th>
-              <th>Pendiente</th>
-              <th>Prend. Producir</th>
-              <th>Disponible</th>
-              <th>Unidad</th>
-              <th>Ancho</th>
-              <th>Alto</th>
-              <th>Largo</th>
-              <th>Total Medida</th>
-              <th>Precio</th>
-              <th>Descuento</th>
-              <th>Dscto Adicional</th>
-              <th>Desperdicio</th>
-              <th>Riesgo</th>
-              <th>Total Base</th>
-              <th>Tasa Iva</th>
-              <th>Total Iva</th>
-              <th>Forma</th>
-              <th>Orden Compra</th>
-              <th>Peso</th>
-              <th>Total Peso</th>
-              <th>Redondea5</th>
-              <th>Tipo Iva</th>
-              <th>Tipo Patente</th>
-              <th>Tasa Patente</th>
-              <th>Total Patente</th>
-            </tr> */}
           </thead>
           <tbody>
             {productos.map(producto => (
             <React.Fragment key={producto.IdVentaDet}>
               <tr>
                 <td>
-                  <button
+                  {hasSubdetalles(producto.IdVentaDet) && (
+                    <button
+                      className={`expand-btn ${expandedRows.includes(producto.IdVentaDet) ? 'rotate' : ''}`}
+                      onClick={() => toggleRow(producto.IdVentaDet)}
+                    >
+                      ▶
+                    </button>
+                  )}
+                  {/* <button
                     className={`expand-btn ${expandedRows.includes(producto.IdVentaDet) ? 'rotate' : ''}`}
                     onClick={() => toggleRow(producto.IdVentaDet)}
                   >
                     ▶
-                  </button>
+                  </button> */}
                 </td>
                 {columnas
                   .filter(col => col.visible)
                   .map(col => (
                     <td key={col.key}>
-                      {/* {col.key === "TotalBase" || col.key === "TotalIva"
-                        ? Number(producto[col.key] || 0).toFixed(2)
-                        : producto[col.key]} */}
                         {col.key === "TotalBase" || col.key === "TotalIva" ? (
                         Number(producto[col.key] || 0).toFixed(2)
                       ) : col.key === "Redondea5" ? (
@@ -182,74 +125,107 @@ function TblProductosFac({ productos}) {
                     </td>
                   ))}
               </tr>
+            {expandedRows.includes(producto.IdVentaDet) && (
+              <tr className="details-row">
+                <td colSpan={columnas.filter(c => c.visible).length + 1}>
+                  {/* <strong>Subdetalles del producto:</strong> */}
+                  {subdetalles.filter(sub => sub.IdVentaDet === producto.IdVentaDet).length > 0 ? (
+                    <table className="subdetalle-table">
+                      <thead>
+                        <tr>
+                          
+                          <th>Item</th>
+                          <th>Codigo</th>
+                          <th>Producto</th>
+                          <th>Cod Subproducto</th>
+                          <th>Subproducto</th>
+                          <th>Lista</th>
+                          <th>Cantidad</th>
+                          <th>CantidadDisponible</th>
+                          <th>Unidad M</th>
+                          <th>LAncho</th>
+                          <th>Ancho</th>
+                          <th>LAlto</th>
+                          <th>Alto</th>
+                          <th>Largo</th>
+                          <th>Total Medida</th>
+                          <th>Precio</th>
+                          <th>Descuento</th>
+                          <th>Dscto Adicional</th>
+                          <th>Desperdicio</th>
+                          <th>Riesgo</th>
+                          <th>Total Base</th>
+                          <th>Tasa Iva</th>
+                          <th>Total Iva</th>
+                          <th>Forma</th>
+                          <th>Orden Compra</th>
+                          <th>Peso</th>
+                          <th>Total Peso</th>
+                          <th>Redondea5</th>
+                          <th>Tipo Iva</th>
+                          <th>Tipo Patente</th>
+                          <th>Tasa Patente</th>
+                          <th>Total Patente</th>
+                          
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {subdetalles
+                          .filter(sub => sub.IdVentaDet === producto.IdVentaDet)
+                          .map((sub, idx) => (
+                            <tr key={idx}>
+                              
+                              <td>{sub.Item}</td>
+                              <td>{sub.CodProducto}</td>
+                              <td>{sub.NomProducto}</td>
+                              <td>{sub.CodSubProducto}</td>
+                              <td>{sub.NomSubProducto}</td>
+                              <td>{sub.CodListaPrecios}</td>
+                              <td>{sub.CantidadFisica}</td>
+                              <td>{sub.CantidadDisponible}</td>  
+                              <td>{sub.CodUnidadMedida}</td>  
+                              <td>{sub.LAncho}</td>
+                              <td>{sub.Ancho}</td>
+                              <td>{sub.LAlto}</td>
+                              <td>{sub.Alto}</td>
+                              <td>{sub.Largo}</td>  
+                              <td>{sub.TotalMedida}</td>
+                              <td>{"Precio calculado"}</td>  
+                              <td>{sub.Descuento}</td>
+                              <td>{sub.DescuentoA}</td>  
+                              <td>{sub.Desperdicio}</td>  
+                              <td>{"Riesgo"}</td>
+                              <td>{Number(sub.TotalBase).toFixed(2)}</td> 
+                              <td>{Number(sub.TasaIva).toFixed(2)}</td> 
+                              <td>{Number(sub.TotalIva).toFixed(2)}</td>
+                              <td>{sub.CodForma}</td>
+                              <td>{sub.OrdenCompra}</td>
+                              <td>{sub.Peso}</td>
+                              <td>{sub.TotalPeso}</td>
+                               <td>
+                              <input type="checkbox" checked={sub.Redondea5} disabled />
+                              </td>
+                              <td>{sub.CodTipoIva}</td>
+                              <td>{sub.CodTipoPatente}</td>
+                              <td>{sub.TasaPatente}</td>
+                              <td>{sub.TotalPatente ? sub.TotalPatente.substring(0, 3) + '...' : ''}</td>
 
-              {expandedRows.includes(producto.IdVentaDet) && (
-                <tr className="details-row">
-                  <td colSpan={columnas.filter(c => c.visible).length + 1}>
-                    Detalles extra del producto...
-                  </td>
-                </tr>
-              )}
+                              {/* <td>{sub.TotalPatente}</td> */}
+                            </tr>
+                          ))}
+                      </tbody>
+                    </table>
+                  ) : (
+                    <p>No hay subdetalles para este producto.</p>
+                  )}
+                </td>
+              </tr>
+            )}
+
+
             </React.Fragment>
           ))}
-            {/* {productos.map((producto) => (
-              <React.Fragment key={producto.IdVentaDet}>
-                <tr className="product-row">
-                  <td>
-                    <button
-                      className={`expand-btn ${expandedRows.includes(producto.IdVentaDet) ? 'rotate' : ''}`}
-                      onClick={() => toggleRow(producto.IdVentaDet)}
-                    >
-                      ▶
-                    </button>
-                  </td>
-                  <td>{producto.Item}</td>
-                  <td>{producto.CodProducto}</td>
-                  <td>{producto.NomProducto}</td>
-                  <td>{"NH Corte"}</td>
-                  <td>{producto.NomSubProducto}</td>
-                  <td>{producto.CodListaPrecios}</td>
-                  <td>{producto.Cantidad}</td>
-                  <td>{producto.Pendiente}</td>
-                  <td>{producto.PendProducir}</td>
-                  <td>{"NH Disponible"}</td>
-                  <td>{producto.NomUnidadMedida}</td>
-                  <td>{producto.Ancho}</td>
-                  <td>{producto.Alto}</td>
-                  <td>{producto.Largo}</td>
-                  <td>{"Total Medida"}</td>
-                  <td>{producto.Precio}</td>
-                  <td>{producto.Descuento}</td>
-                  <td>{producto.DescuentoA}</td>
-                  <td>{producto.Desperdicio}</td>
-                  <td>{"Riesgo"}</td>
-                  <td>{Number(producto.TotalBase).toFixed(2)}</td>
-                  <td>{producto.TasaIva}</td>
-                  <td>{Number(producto.TotalIva).toFixed(2)}</td>
             
-                  <td>{"Forma"}</td>
-                  <td>{producto.OrdenCompra}</td>
-                  <td>{"Peso"}</td>
-                  <td>{"Total Peso"}</td>
-                 
-                  <td>
-                  <input type="checkbox" checked={producto.Redondea5} disabled />
-                </td>
-
-                  <td>{"Tipo IVA"}</td>
-                  <td>{producto.CodTipoPatente}</td>
-                  <td>{producto.TasaPatente}</td>
-                  <td>{"Total patente"}</td>
-                </tr>
-                {expandedRows.includes(producto.IdVentaDet) && (
-                  <tr className="details-row">
-                    <td colSpan="33">
-                      Detalles extra del producto...
-                    </td>
-                  </tr>
-                )}
-              </React.Fragment>
-            ))} */}
           </tbody>
         </table>
         </div>

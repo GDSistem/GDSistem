@@ -1,36 +1,63 @@
-const { obtenerDespacho } = require('../../models/ventas/despacho_models.js');
+const { obtenerVentaDetalle, obtenerSucursalDespacho } = require('../../models/ventas/despacho_models.js');
 
 // Payload esperado:
 // {
 //   "codEmpresa": "01",
 //   "codSucursal": "A",
-//   "codTipoDoc": "NC",
-//   "nDocumento": "00001"
+//   "idVenta": 12345
 // }
 
 const getDespacho = async (req, res) => {
   try {
-    const { codEmpresa, codSucursal, codTipoDoc, nDocumento } = req.body;
+    const { codEmpresa, codSucursal, idVenta } = req.body;
 
     // Validación de parámetros
-    if (!codEmpresa || !codSucursal || !codTipoDoc || !nDocumento) {
-      return res.status(400).json({ error: 'Faltan parámetros requeridos: codEmpresa, codSucursal, codTipoDoc o nDocumento' });
+    if (!codEmpresa || !codSucursal || !idVenta) {
+      return res.status(400).json({
+        error: 'Faltan parámetros requeridos: codEmpresa, codSucursal o idVenta'
+      });
     }
 
-    // Llamar al modelo
-    const datos = await obtenerDespacho(codEmpresa, codSucursal, codTipoDoc, nDocumento);
+    // Consultar en la base de datos
+    const datos = await obtenerVentaDetalle(codEmpresa, codSucursal, idVenta);
 
-    // Validar respuesta
-    if (datos.length === 0) {
-      return res.status(404).json({ mensaje: 'No se encontraron registros' });
+    // Validar si se encontró información
+    if (!datos || datos.length === 0) {
+      return res.status(404).json({ mensaje: 'No se encontraron registros para los parámetros proporcionados' });
     }
 
-    // Éxito
+    // Retornar la información
     return res.status(200).json(datos);
   } catch (error) {
-    console.error('Error en getDespacho:', error);
+    console.error('❌ Error en getDespacho:', error);
     return res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
 
-module.exports = { getDespacho };
+//Controlador para obtener el detalle de un despacho
+const getSucursalDespacho = async (req, res) => {
+  const { codSucursal, nomSucursal } = req.body;
+
+  // Validación básica
+  if (!codSucursal || !nomSucursal) {
+    return res.status(400).json({
+      error: 'Se requieren los parámetros codSucursal y nomSucursal.'
+    });
+  }
+
+  try {
+    const resultado = await obtenerSucursalDespacho(nomSucursal, codSucursal);
+
+    if (resultado.length === 0) {
+      return res.status(404).json({ message: 'Sucursal no encontrada.' });
+    }
+
+    return res.status(200).json(resultado[0]); // Retorna solo el primer resultado
+  } catch (error) {
+    console.error('Error al obtener la sucursal:', error);
+    return res.status(500).json({ error: 'Error interno del servidor.' });
+  }
+};
+
+
+module.exports = { getDespacho, getSucursalDespacho };

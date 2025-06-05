@@ -90,19 +90,7 @@ const sortedDatos = [...datos].sort((a, b) => {
          {/* {sortConfig.key === col.key ? (sortConfig.direction === 'asc' ? '▲' : '▼') : ''} */}
       </th>
     ))}
-        {/* <th>Tipo Doc</th>
-        <th>Sucursal</th>
-        <th>Fecha</th>
-        <th>Hora</th>
-        <th># Documento</th>
-        <th>Cód Cliente</th>
-        <th>Cliente</th>
-        <th>Tasa</th>
-        <th>Monto</th>
-        <th>IVA</th>
-        <th>IGTF</th>
-        <th>Total</th>
-        <th>Nula</th> */}
+        
       </tr>
     </thead>
   </table>
@@ -129,20 +117,6 @@ const sortedDatos = [...datos].sort((a, b) => {
              }
           </td>
         ))}
-
-              {/* <td>{item.tipoDocumento.toUpperCase()}</td>
-              <td>{item.codigoSucursal.toUpperCase()}</td>
-              <td>{item.fecha}</td>
-              <td>{item.hora}</td>
-              <td>{item.numeroDocumento.replace(/\D/g, '')}</td>
-              <td>{item.codigoCliente}</td>
-              <td>{item.cliente}</td>
-              <td>{item.tasa}</td>
-              <td>{item.monto}</td>
-              <td>{item.montoIVA}</td>
-              <td>{item.igtf}</td>
-              <td>{item.total}</td>
-              <td>{item.nula ? 'Sí' : 'No'}</td> */}
             </tr>
           ))
         )}

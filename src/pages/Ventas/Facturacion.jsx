@@ -5,6 +5,7 @@ import TablaListadoFcaturacion from '../../Components/TablaListadoFcaturacion';
 import InfoClienteDespacho from '../../Components/InfoClienteDespacho';
 import FiltrosBusquedaListadoFact from '../../Components/FiltrosBusquedaListadoFact';
 import TblProductosFac from '../../Components/tblProductosFac';
+import InfoDespachoVentas from '../../Components/InfoDespachoVentas';
 
 
 
@@ -38,13 +39,78 @@ function Facturacion() {
   });
 
   const [productos, setProductos] = useState([]);
+  const [subdetalles, setSubdetalles] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(null);
+  const [infoDespacho, setInfoDespacho] = useState(null);
 
-const fetchProductos = async (itemSeleccionado) => {
+const fetchDespacho = async (itemSeleccionado) => {
   try {
     const payload = {
       idVenta: itemSeleccionado.IdVenta || itemSeleccionado.idVenta,
-      nDocumento: itemSeleccionado.numeroDocumento || itemSeleccionado.NDocumento
+      codEmpresa: codigoEmpresa,
+      codSucursal: itemSeleccionado.codigoSucursal || itemSeleccionado.codSucursal,
+    };
+
+    console.log("Payload despacho:", payload);
+
+    const response = await fetch("http://localhost:3000/api/ventas/factura/despacho", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) throw new Error("Error al obtener despacho");
+
+    const data = await response.json();
+    console.log("Respuesta despacho:", data);
+
+    return data.length > 0 ? data[0] : null;
+  } catch (error) {
+    console.error("Error al obtener despacho:", error);
+    return null;
+  }
+};
+
+
+// const fetchProductos = async (itemSeleccionado) => {
+//   try {
+//     const payload = {
+//       idVenta: String(itemSeleccionado.IdVenta || itemSeleccionado.idVenta),
+//       nDocumento: itemSeleccionado.numeroDocumento || itemSeleccionado.NDocumento
+//     };
+
+//     console.log("Payload enviado:", payload);
+
+//     const response = await fetch("http://localhost:3000/api/ventas/factura/productos", {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify(payload),
+//     });
+
+//     if (!response.ok) {
+//       throw new Error("Error al obtener productos");
+//     }
+
+//     const data = await response.json();
+//     console.log("Respuesta del backend:", data);
+
+//     if (data.success && Array.isArray(data.data)) {
+//       setProductos(data.data);
+//       console.log("Productos recibidos:", data.data);
+//     } else {
+//       console.warn("No se recibieron productos válidos.");
+//       setProductos([]);
+//     }
+//   } catch (error) {
+//     console.error("Error al obtener productos:", error);
+//     setProductos([]);
+//   }
+// };
+const fetchProductos = async (itemSeleccionado) => {
+  try {
+    const payload = {
+      idVenta: String(itemSeleccionado.IdVenta || itemSeleccionado.idVenta),
+      nDocumento: itemSeleccionado.numeroDocumento || itemSeleccionado.NDocumento,
     };
 
     console.log("Payload enviado:", payload);
@@ -62,18 +128,27 @@ const fetchProductos = async (itemSeleccionado) => {
     const data = await response.json();
     console.log("Respuesta del backend:", data);
 
-    if (data.success && Array.isArray(data.data)) {
-      setProductos(data.data);
-      console.log("Productos recibidos:", data.data);
+    if (data.success && data.data) {
+      const productos = Array.isArray(data.data.productos) ? data.data.productos : [];
+      const subdetalles = Array.isArray(data.data.subdetalles) ? data.data.subdetalles : [];
+
+      setProductos(productos);       // Lista principal para la tabla
+      setSubdetalles(subdetalles);   // Sublista que se usa cuando se expande un producto
+
+      console.log("Productos recibidos:", productos);
+      console.log("Subdetalles recibidos:", subdetalles);
     } else {
-      console.warn("No se recibieron productos válidos.");
+      console.warn("Respuesta sin datos válidos.");
       setProductos([]);
+      setSubdetalles([]);
     }
   } catch (error) {
     console.error("Error al obtener productos:", error);
     setProductos([]);
+    setSubdetalles([]);
   }
 };
+
 
 
   
@@ -132,7 +207,7 @@ const fetchClienteInfo = async (codigoCliente) => {
 const handleRowSelect = async (itemSeleccionado, index = null) => {
   // Obtener la info del cliente primero
   const clienteData = await fetchClienteInfo(itemSeleccionado.codigoCliente);
-  console.log("itemSeleccionado recibido:", itemSeleccionado);
+  
    if (index !== null) setSelectedIndex(index);
 
   // Combinar la info del cliente con el item seleccionado
@@ -145,6 +220,8 @@ const handleRowSelect = async (itemSeleccionado, index = null) => {
 
   // Luego llamar a fetchProductos pasando la factura con cliente para asegurar que el fetch use la data correcta
   await fetchProductos(facturaConCliente);
+  const despachoData = await fetchDespacho(facturaConCliente);
+  setInfoDespacho(despachoData);
 };
 
 const handleAnterior = () => {
@@ -203,8 +280,8 @@ const codSucursalFinal = nombreSucursal
 
 
   const codTipoDocFinal = tipoDocumento || codSeleccionado;
-  const fechaInicioFinal = fechaDesde || "2016-01-01";
-  const fechaFinFinal = fechaHasta || "2016-01-01";
+  const fechaInicioFinal = fechaDesde || "2024-01-01";
+  const fechaFinFinal = fechaHasta || "2025-01-01";
 
   const payload = {
     codEmpresa: codigoEmpresa,
@@ -596,8 +673,8 @@ setFiltros(prev => ({
       
     
       </div>
-      <div>
-         <div className="nav-buttons">
+      {/* <div className='contenedor-grande-tres'>
+        <div className="nav-buttons">
         <button onClick={handleAnterior} disabled={selectedIndex === null || selectedIndex === 0}>
           Anterior
         </button>
@@ -605,19 +682,77 @@ setFiltros(prev => ({
           Siguiente
         </button>
       </div>
+      <div className='Info-cliente-despacho'>
+        {facturaSeleccionada && (
+        <InfoClienteDespacho item={facturaSeleccionada} />
+      )}
+      
+      {infoDespacho && ( <InfoDespachoVentas despacho={infoDespacho}/>)}
+      </div>
+
+      
+
+      <div className='TblProductos'>
+      <TblProductosFac productos={productos} subdetalles={subdetalles} />
+
+    </div>
+
+      </div> */}
 
       {facturaSeleccionada && (
-  <InfoClienteDespacho item={facturaSeleccionada} />
-)}
+  <div className='contenedor-grande-tres'>
+    {/* <div className="nav-buttons">
+      <button onClick={handleAnterior} disabled={selectedIndex === null || selectedIndex === 0}>
+        Anterior
+      </button>
+      <button onClick={handleSiguiente} disabled={selectedIndex === null || selectedIndex === resultadosFiltrados.length - 1}>
+        Siguiente
+      </button>
+    </div> */}
+    <div className="nav-buttons" >
+      <div className="subnav-buttons">
+        <button onClick={handleAnterior} disabled={selectedIndex === null || selectedIndex === 0}>
+        Anterior
+      </button>
+      <button onClick={handleSiguiente} disabled={selectedIndex === null || selectedIndex === resultadosFiltrados.length - 1}>
+        Siguiente
+      </button>
       </div>
       
-      <div>
-      {/* <TblProductosFac /> */}
-      <TblProductosFac productos={productos} />
-      {/* {productos.length > 0 && (
-        <TblProductosFac productos={productos} />
-      )} */}
+
+      {/* Indicador ANULADA */}
+      {facturaSeleccionada.nula && (
+        <div className="anulada">
+          <span>ANULADA</span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="35"
+            height="35"
+            fill="red"
+            viewBox="0 0 24 24"
+          >
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10
+              10-4.48 10-10S17.52 2 12 2zm5 13l-1.41 1.41L12 13.41
+              8.41 16.99 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59
+              15.59 7 17 8.41 13.41 12 17 15.59z" />
+          </svg>
+        </div>
+      )}
     </div>
+
+    <div className='Info-cliente-despacho'>
+      <InfoClienteDespacho item={facturaSeleccionada} />
+      {infoDespacho && <InfoDespachoVentas despacho={infoDespacho} />}
+    </div>
+
+    <div className='TblProductos'>
+      <TblProductosFac productos={productos} subdetalles={subdetalles} />
+    </div>
+  </div>
+)}
+
+      
+      
 
 
 
