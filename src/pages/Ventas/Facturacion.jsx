@@ -42,6 +42,8 @@ function Facturacion() {
   const [subdetalles, setSubdetalles] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [infoDespacho, setInfoDespacho] = useState(null);
+  const [tasa, setTasa] = useState(0);
+
 
 const fetchDespacho = async (itemSeleccionado) => {
   try {
@@ -131,12 +133,15 @@ const fetchProductos = async (itemSeleccionado) => {
     if (data.success && data.data) {
       const productos = Array.isArray(data.data.productos) ? data.data.productos : [];
       const subdetalles = Array.isArray(data.data.subdetalles) ? data.data.subdetalles : [];
+      const tasaExtraida = Number(data.data.tasa || 0);
 
       setProductos(productos);       // Lista principal para la tabla
       setSubdetalles(subdetalles);   // Sublista que se usa cuando se expande un producto
+      setTasa(tasaExtraida);
 
       console.log("Productos recibidos:", productos);
       console.log("Subdetalles recibidos:", subdetalles);
+      console.log("Tasa recibida:", tasaExtraida); 
     } else {
       console.warn("Respuesta sin datos válidos.");
       setProductos([]);
@@ -746,7 +751,7 @@ setFiltros(prev => ({
     </div>
 
     <div className='TblProductos'>
-      <TblProductosFac productos={productos} subdetalles={subdetalles} />
+      <TblProductosFac productos={productos} subdetalles={subdetalles} tasa={tasa} />
     </div>
   </div>
 )}

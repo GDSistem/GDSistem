@@ -1,4 +1,5 @@
-import React from 'react'
+// import React from 'react'
+import React, { useState, useEffect } from 'react'
 import '../Styles/SideBarMenu.css';
 import { FaChartBar } from 'react-icons/fa';
 import { FaClipboardList } from "react-icons/fa";
@@ -9,10 +10,17 @@ import { FaChartSimple } from "react-icons/fa6";
 import { FaFileLines } from "react-icons/fa6";
 import { BiSolidBank } from "react-icons/bi";
 import { MdOutlineInventory } from "react-icons/md";
+import { BsBoxArrowInRight } from "react-icons/bs";
+import { BsBoxArrowInLeft } from "react-icons/bs";
+
+
+
+
+
 import Logo from '../assets/img/images.png'
 
 
-function SideMenu({setMenuSeleccionado}) {
+function SideMenu({setMenuSeleccionado, expandido, setExpandido}) {
     
       const menus = [
         { name: 'ventas', icon: <FaChartBar /> }, // Agregamos un ícono a cada menú
@@ -28,23 +36,32 @@ function SideMenu({setMenuSeleccionado}) {
 
     
   return (
-    <div className='sideBar'>
+    <div className={`sideBar ${expandido ? 'expandido' : 'contraido'}`}>
+      <div className="toggle-btn" onClick={() => setExpandido(!expandido)}>
+        {expandido ? <BsBoxArrowInLeft /> : <BsBoxArrowInRight />}
+      </div>
+
+      {expandido && (
         <div className="logo">
-                
-                <img src={Logo} alt="Logo de la empresa" className="logo-img" />
+          <img src={Logo} alt="Logo de la empresa" className="logo-img" />
         </div>
-        
-         {menus.map((menu, index) => (
+      )}
+      {!expandido && (
+      <div className="logo">
+        <img src={Logo} alt="Logo de la empresa" className="logo-img" />
+      </div>
+    )}
+
+      {menus.map((menu, index) => (
         <button 
           key={index} 
           className="sidebar-button"
           onClick={() => setMenuSeleccionado(menu.name)}
         >
-          {menu.icon} {/* Aquí insertamos el ícono */}
-          {menu.name} {/* El nombre del menú */}
+          {menu.icon}
+          {expandido && <span className="menu-text">{menu.name}</span>}
         </button>
       ))}
-
     </div>
   )
 }

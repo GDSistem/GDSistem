@@ -1,7 +1,7 @@
 .sidebar-secundario {
     position: absolute; /* o absolute, dependiendo de tu estructura */
     top: 0;
-    left: 145px;
+    /* left: 145px; */
     width: 200px; /* o lo que quieras */
     height: 97.5vh; /* altura total de la pantalla */
     background-color: rgb(248, 248, 251); /* o el color que uses */

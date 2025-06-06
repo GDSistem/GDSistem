@@ -10,8 +10,8 @@ const obtenerProductos = async (idVenta, nDocumento) => {
   request.input('IdVenta', idVenta);
   request.input('NDocumento', nDocumento);
 
-  // Query principal: productos
-  const productosResult = await request.query(`
+   // Query principal: productos
+   const productosResult = await request.query(`
     SELECT
       IdVenta,
       IdVentaDet,
@@ -94,7 +94,7 @@ const obtenerProductos = async (idVenta, nDocumento) => {
     ORDER BY Fecha DESC;
   `);
 
-  // Subquery: subdetalles con campos exactos
+  // Subquery: subdetalles
   const subdetallesResult = await request.query(`
     SELECT
       IdVenta,
@@ -171,9 +171,19 @@ const obtenerProductos = async (idVenta, nDocumento) => {
     ORDER BY Fecha DESC;
   `);
 
+  // Consulta adicional: obtener TipoCambio
+  const tasaResult = await request.query(`
+    SELECT TOP 1 TipoCambio
+    FROM SIGD.dbo.TblVentas
+    WHERE IdVenta = @IdVenta AND NDocumento = @NDocumento
+  `);
+
+  const tasa = tasaResult.recordset[0]?.TipoCambio || null;
+
   return {
     productos: productosResult.recordset,
-    subdetalles: subdetallesResult.recordset
+    subdetalles: subdetallesResult.recordset,
+    tasa: tasa
   };
 };
 

@@ -12,7 +12,7 @@ const App = () => {
   const [menuSeleccionado, setMenuSeleccionado] = useState('');
   const [sidebarVisible, setSidebarVisible] = useState(false); // Estado para mostrar/ocultar el SideBarSecundario
   const [user, setUser] = useState(null);
-
+  const [expandido, setExpandido] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const handleMenuSeleccionado = (menu) => {
@@ -46,9 +46,10 @@ const App = () => {
   return (
     <Router>
       <div className='App'>
-        <SideBar setMenuSeleccionado={handleMenuSeleccionado} />
-        {sidebarVisible && <SidebarSecundario menu={menuSeleccionado} closeSideSecundario={closeSidebar} className={sidebarVisible ? 'visible' : ''}  />}
-        <div className='dashboard'>
+        <SideBar setMenuSeleccionado={handleMenuSeleccionado} expandido={expandido}
+          setExpandido={setExpandido} />
+        {sidebarVisible && <SidebarSecundario menu={menuSeleccionado} closeSideSecundario={closeSidebar} expandido={expandido} className={sidebarVisible ? 'visible' : ''}  />}
+        <div className={`dashboard ${expandido ? 'expandido' : 'contraido'}`}>
           <ContentHeader  user={user} onLogout={handleLogout}  />
           
           <Content />

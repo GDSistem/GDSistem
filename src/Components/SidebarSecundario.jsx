@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import '../Styles/SidebarSecundario.css';
 import { FaUsers } from "react-icons/fa6";
@@ -16,7 +16,24 @@ import { FaChartBar } from 'react-icons/fa';
 
 
 
-function SidebarSecundario({ menu, closeSideSecundario}) {
+function SidebarSecundario({ menu, closeSideSecundario, expandido}) {
+
+  const sidebarRef = useRef();
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      console.log("Click en:", event.target);
+      if (expandido && sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+  if (typeof closeSideSecundario === 'function') {
+  closeSideSecundario();
+}
+
+}
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
     const subMenus = {
         ventas: [
@@ -179,7 +196,9 @@ function SidebarSecundario({ menu, closeSideSecundario}) {
     
   return (
 
-    <div className="sidebar-secundario">
+    <div ref={sidebarRef}
+  className="sidebar-secundario"
+  style={{ left: expandido ? '175px' : '75px' }}>
   {opciones.length > 0 ? (
     opciones.map((grupo, index) => (
       <div key={index} className="sidebar-grupo">
@@ -198,20 +217,7 @@ function SidebarSecundario({ menu, closeSideSecundario}) {
     <p className="sidebar-no-opciones">No hay opciones disponibles</p>
   )}
 </div>
-//     <div className="sidebar-secundario">
-//     {opciones.length > 0 ? (
-//       opciones.map((opcion, index) => (
-//         <div key={index} className="sidebar-opcion">
-//           <Link to={opcion.path} className="sidebar-link" onClick={closeSideSecundario}> 
-//           {opcion.icon && <span className="sidebar-icon">{opcion.icon}</span>}
-//             {opcion.nombre}
-//           </Link>
-//         </div>
-//       ))
-//     ) : (
-//       <p className="sidebar-no-opciones">No hay opciones disponibles</p>
-//     )}
-//   </div>
+
   )
 }
 

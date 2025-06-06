@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import '../Styles/tblProductosFac.css';
+import ResumenCalculosProducto from './ResumenCalculosProducto';
 
-function TblProductosFac({ productos, subdetalles }) {
+function TblProductosFac({ productos, subdetalles, tasa }) {
   const [expandedRows, setExpandedRows] = useState([]);
   const [columnas, setColumnas] = useState([
   { key: "Item", label: "Item", visible: true },
   { key: "CodProducto", label: "Código", visible: true },
   { key: "NomProducto", label: "Producto", visible: true },
-  { key: "Corte", label: "Corte", visible: true },
+  { key: "CodSubProducto", label: "Corte", visible: true },
   { key: "NomSubProducto", label: "Subproducto", visible: true },
   { key: "CodListaPrecios", label: "Lista", visible: true },
   { key: "Cantidad", label: "Cantidad", visible: true },
@@ -36,6 +37,9 @@ function TblProductosFac({ productos, subdetalles }) {
   { key: "TotalPatente", label: "Total Patente", visible: true },
 
 ]);
+
+const [productoSeleccionado, setProductoSeleccionado] = useState(null);
+
 
 const hasSubdetalles = (idVentaDet) => {
   return subdetalles.some(sub => sub.IdVentaDet === idVentaDet);
@@ -93,7 +97,7 @@ const hasSubdetalles = (idVentaDet) => {
           <tbody>
             {productos.map(producto => (
             <React.Fragment key={producto.IdVentaDet}>
-              <tr>
+              <tr onClick={() => setProductoSeleccionado(producto)}>
                 <td>
                   {hasSubdetalles(producto.IdVentaDet) && (
                     <button
@@ -182,7 +186,7 @@ const hasSubdetalles = (idVentaDet) => {
                               <td>{sub.NomSubProducto}</td>
                               <td>{sub.CodListaPrecios}</td>
                               <td>{sub.CantidadFisica}</td>
-                              <td>{sub.CantidadDisponible}</td>  
+                              <td>{Number(sub.CantidadDisponible).toFixed(2)}</td>  
                               <td>{sub.CodUnidadMedida}</td>  
                               <td>{sub.LAncho}</td>
                               <td>{sub.Ancho}</td>
@@ -231,6 +235,13 @@ const hasSubdetalles = (idVentaDet) => {
         </div>
         </div>
       </div>
+      <ResumenCalculosProducto
+  productoSeleccionado={productoSeleccionado}
+  todosProductos={productos}
+  subdetalles={subdetalles}
+  tasa={tasa}
+/>
+
     </div>
   );
 }
