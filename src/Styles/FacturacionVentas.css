@@ -11,7 +11,6 @@
   }
   
   .gran-container{
-
     /* display: flex;
     flex-direction: row; */
     display: flex;
@@ -22,9 +21,7 @@
     
   }
   .files {
-    /* background-color: rgb(255, 255, 255);
-    padding-top: 30px;
-    padding-bottom: 30px; */
+   
     width: 100%;
   }
   
@@ -147,6 +144,15 @@
   margin-right: 30px;
 }
 
+.Buscador {
+  position: sticky;
+  top: 0;
+  background-color: white; /* para que no se vea transparente al hacer scroll */
+  z-index: 1000; /* para que quede por encima del resto */
+  padding-bottom: 10px;
+}
+
+
 
 
 
@@ -166,34 +172,6 @@
   margin-top: 4%;
 }
 
-/* Botones de navegación */
-/* .nav-buttons {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-} */
-
-/* .nav-buttons button {
-  padding: 0.5rem 1.2rem;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.nav-buttons button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-
-.nav-buttons button:hover:not(:disabled) {
-  background-color: #0056b3;
-} */
-
-/* Contenedor de info cliente y despacho */
 .Info-cliente-despacho {
   display: flex;
   flex-direction: row;
@@ -213,37 +191,3 @@
   overflow-x: auto;
 }
 
-
-/* .product-table, .subdetalle-table {
-  width: 100%;
-  border-collapse: collapse;
-} */
-
-/* .product-table th, .product-table td,
-.subdetalle-table th, .subdetalle-table td {
-  padding: 0.6rem;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-
-.product-table thead, .subdetalle-table thead {
-  background-color: #f0f4f8;
-}
-
-.details-row {
-  background-color: #fefefe;
-}
-
-
-.expand-btn {
-  background: none;
-  border: none;
-  font-size: 1rem;
-  cursor: pointer;
-  transform: rotate(0deg);
-  transition: transform 0.2s ease;
-}
-
-.expand-btn.rotate {
-  transform: rotate(90deg);
-} */

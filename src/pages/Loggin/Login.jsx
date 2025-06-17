@@ -2,11 +2,15 @@ import React, { useState } from 'react';
 
 import '../../Styles/Login.css';
 import Logo from '../../assets/img/images.png';
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+
 
 function Login({ onLogin }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+
 
 
   // ✅ handleSubmit ahora es async
@@ -69,12 +73,39 @@ function Login({ onLogin }) {
           />
 
           <label htmlFor="password">Contraseña</label>
-          <input
-            type="password"
-            placeholder="Contraseña"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <div className="password-input-container">
+             <input
+          type={showPassword ? "text" : "password"}
+          placeholder="Contraseña"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+         <span
+        className="password-toggle-icon"
+        onClick={() => setShowPassword(!showPassword)}
+      >
+        {showPassword ? <FaEyeSlash /> : <FaEye />}
+      </span>
+
+          </div>
+         
+
+        {/* <button
+          type="button"
+          onClick={() => setShowPassword(!showPassword)}
+          style={{
+            marginBottom: "20px",
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            color: "#444595",
+            fontSize: "14px"
+          }}
+        >
+          {showPassword ? "Ocultar" : "Mostrar"} contraseña
+        </button> */}
+
+
 
           <button type="submit">Ingresar</button>
         </form>

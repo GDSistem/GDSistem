@@ -224,6 +224,12 @@
   background-color: #e5eaf28d;
 }
 
+.selected-rowProduct{
+  background-color: #cacae4 !important; /* Azul claro */
+  font-weight: 500;
+  
+}
+
 
 
 

@@ -10,17 +10,17 @@ function FiltrosBusquedaListadoFact({ filtros, setFiltros }) {
 
   return (
     <div className="contenedor-filtros">
-      <input name="nombreSucursal" value={filtros.nombreSucursal} onChange={handleChange} placeholder="Nombre de Sucursal" />
+      {/* <input name="nombreSucursal" value={filtros.nombreSucursal} onChange={handleChange} placeholder="Nombre de Sucursal" /> */}
       <input name="nombreCliente" value={filtros.nombreCliente} onChange={handleChange} placeholder="Nombre del Cliente" />
      
-        <label>Tipo Documento:</label>
+        {/* <label>Tipo Documento:</label> */}
         <select
           name="tipoDocumento"
         //   className="desplegable"
           value={filtros.tipoDocumento}
           onChange={handleChange}
         >
-          <option value="">-- Selecciona --</option>
+          <option value="">Tipo Documento</option>
           <option value="F">F</option>
           <option value="P">P</option>
           <option value="NC">NC</option>

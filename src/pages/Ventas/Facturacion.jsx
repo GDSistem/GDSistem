@@ -43,6 +43,41 @@ function Facturacion() {
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [infoDespacho, setInfoDespacho] = useState(null);
   const [tasa, setTasa] = useState(0);
+  const [infoSucursal, setInfoSucursal] = useState(null);
+
+  useEffect(() => {
+  console.log("✅ infoSucursal lista:", infoSucursal);
+}, [infoSucursal]);
+
+
+
+const fetchSucursalInfo = async (codigoSucursal, nombreSucursal) => {
+  try {
+    const payload = {
+      codSucursal: codigoSucursal,
+      nomSucursal: nombreSucursal,
+    };
+
+    console.log("Payload sucursal:", payload);
+
+    const response = await fetch("http://localhost:3000/api/ventas/factura/sucursal", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) throw new Error("Error al obtener información de sucursal");
+
+    const data = await response.json();
+    console.log("Respuesta sucursal:", data);
+
+    return data.length > 0 ? data[0] : null;
+  } catch (error) {
+    console.error("Error al obtener sucursal:", error);
+    return null;
+  }
+};
+
 
 
 const fetchDespacho = async (itemSeleccionado) => {
@@ -74,40 +109,6 @@ const fetchDespacho = async (itemSeleccionado) => {
 };
 
 
-// const fetchProductos = async (itemSeleccionado) => {
-//   try {
-//     const payload = {
-//       idVenta: String(itemSeleccionado.IdVenta || itemSeleccionado.idVenta),
-//       nDocumento: itemSeleccionado.numeroDocumento || itemSeleccionado.NDocumento
-//     };
-
-//     console.log("Payload enviado:", payload);
-
-//     const response = await fetch("http://localhost:3000/api/ventas/factura/productos", {
-//       method: "POST",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify(payload),
-//     });
-
-//     if (!response.ok) {
-//       throw new Error("Error al obtener productos");
-//     }
-
-//     const data = await response.json();
-//     console.log("Respuesta del backend:", data);
-
-//     if (data.success && Array.isArray(data.data)) {
-//       setProductos(data.data);
-//       console.log("Productos recibidos:", data.data);
-//     } else {
-//       console.warn("No se recibieron productos válidos.");
-//       setProductos([]);
-//     }
-//   } catch (error) {
-//     console.error("Error al obtener productos:", error);
-//     setProductos([]);
-//   }
-// };
 const fetchProductos = async (itemSeleccionado) => {
   try {
     const payload = {
@@ -222,12 +223,25 @@ const handleRowSelect = async (itemSeleccionado, index = null) => {
 
   // Guardar la factura seleccionada (con cliente si existe)
   setFacturaSeleccionada(facturaConCliente);
+  setNumeroDocumento(itemSeleccionado.numeroDocumento);
+
 
   // Luego llamar a fetchProductos pasando la factura con cliente para asegurar que el fetch use la data correcta
   await fetchProductos(facturaConCliente);
   const despachoData = await fetchDespacho(facturaConCliente);
+  // const sucursalData = await fetchSucursalInfo();
+  const sucursalData = await fetchSucursalInfo(
+  itemSeleccionado.codigoSucursal || itemSeleccionado.codSucursal,
+  itemSeleccionado.nombreSucursal || itemSeleccionado.nomSucursal
+);
+
   setInfoDespacho(despachoData);
+  setInfoSucursal(sucursalData);
+
 };
+
+
+
 
 const handleAnterior = () => {
     if (selectedIndex > 0) {
@@ -256,7 +270,11 @@ useEffect(() => {
 
 const handleConsultar = async () => {
   // Obtener los valores desde los filtros
+
+
+
   const {
+    
     nombreSucursal,
     nombreCliente,
     tipoDocumento,
@@ -264,6 +282,9 @@ const handleConsultar = async () => {
     fechaDesde,
     fechaHasta
   } = filtros;
+
+   
+
 
 
 
@@ -352,6 +373,7 @@ setFiltros(prev => ({
         total: item.MontoTotal,
         nula: item.Nula,
         idVenta: item.IdVenta,
+        nomSucursal: item.NomSucursal,
       }));
 
       
@@ -373,6 +395,9 @@ setFiltros(prev => ({
       if (nombreSucursal && codSucursalFinal !== codigoSucursal) {
         setCodigoSucursal(codSucursalFinal); // Actualiza el input con el código correspondiente
       }
+
+
+
 
       // setResultados(filtradosFinal);
       setResultados(resultadosTransformados);
@@ -549,6 +574,7 @@ setFiltros(prev => ({
   };
   console.log("Sucursales:", sucursales);
   console.log(mostrarFiltros ? resultadosFiltrados : resultados);
+  console.log('informacion sucursar despacho', infoSucursal )
 
 
   return (
@@ -558,9 +584,6 @@ setFiltros(prev => ({
       onModificar={() => alert('Modificar clicked!')}
       onNuevo={() => alert('Nuevo clicked!')}
       onAnular={() => alert('Anular clicked!')}/>
-
-      </div>
-
       <div className='gran-container'>
 
 
@@ -636,7 +659,7 @@ setFiltros(prev => ({
               </div>
               <div className="form-group">
                 <label># Control:</label>
-                <input type="text" value={nombreSucursal} readOnly  className="input-small"/>
+                <input type="text" value={""} readOnly  className="input-small"/>
               </div>
               <div className="form-group">
                 <label>Moneda:</label>
@@ -663,57 +686,130 @@ setFiltros(prev => ({
         {mostrarFiltros && (
           <FiltrosBusquedaListadoFact filtros={filtros} setFiltros={setFiltros} />
         )}
-       
-        
-        <TablaListadoFcaturacion
+        {/* <TablaListadoFcaturacion
           // datos={mostrarFiltros ? resultadosFiltrados : resultados}
           // onRowSelect={handleRowSelect}
           datos={mostrarFiltros ? resultadosFiltrados : resultados}
           onRowSelect={handleRowSelect}
           selectedIndex={selectedIndex}
           setSelectedIndex={setSelectedIndex}
-        />
-       
-
-      
+        /> */}
+ 
     
       </div>
-      {/* <div className='contenedor-grande-tres'>
-        <div className="nav-buttons">
-        <button onClick={handleAnterior} disabled={selectedIndex === null || selectedIndex === 0}>
-          Anterior
-        </button>
-        <button onClick={handleSiguiente} disabled={selectedIndex === null || selectedIndex === resultadosFiltrados.length - 1}>
-          Siguiente
-        </button>
-      </div>
-      <div className='Info-cliente-despacho'>
-        {facturaSeleccionada && (
-        <InfoClienteDespacho item={facturaSeleccionada} />
-      )}
-      
-      {infoDespacho && ( <InfoDespachoVentas despacho={infoDespacho}/>)}
+
       </div>
 
+      {/* <div className='gran-container'>
+
+
+       
+        <div className='files'>
+          <form>
+            <div className="form-row">
+            
+              <div className="form-group">
+                <label>Código Empresa:</label>
+                <input
+                  type="text"
+                  className="input-small"
+                  value={codigoEmpresa}
+                  onChange={handleEmpresaInput}
+                  onKeyDown={handleEmpresaKeyDown}
+                  placeholder="Ej: 01"
+                />
+              </div>
+              <div className="form-group">
+                <label>Empresa:</label>
+                <input type="text" value={nombreEmpresa} readOnly className='input-big' />
+              </div>
+              <div className="form-group">
+                <label> Tipo Documento:</label>
+                <select
+                  className="desplegable"
+                  value={codSeleccionado}
+                  onChange={(handleTipoDocChange) }>
+                    <option value="">-- Selecciona --</option>
+                    <option value="F">F</option>
+                    <option value="P">P</option>
+                    <option value="NC">NC</option>
+                    <option value="ND">ND</option>
+                    <option value="OI">OI</option>
+                   
+                </select>
+              </div>
+              <div className="form-group">
+                <label>Nombre Documento:</label>
+                <input type="text" value={nomTipoDoc} readOnly  className='input-big' />
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label>Código Sucursal:</label>
+                <input
+                  type="text"
+                  className="input-small"
+                  value={codigoSucursal}
+                  onChange={(e) => setCodigoSucursal(e.target.value)}
+                  onKeyDown={handleSucursalKeyDown}
+                  placeholder="Ej: A"
+                  disabled={!nombreEmpresa}
+                />
+              </div>
+              <div className="form-group">
+                <label>Sucursal:</label>
+                <input type="text" value={nombreSucursal} readOnly  className='input-big'/>
+              </div>
+              <div className="form-group">
+                <label># Documento:</label>
+                <input
+                  type="text"
+                  className="input-small"
+                  value={numeroDocumento}
+                  onChange={(e) => setCodigoSucursal(e.target.value)}
+                  onKeyDown={handleSucursalKeyDown}
+                  placeholder="Ej: A"
+             
+                />
+              </div>
+              <div className="form-group">
+                <label># Control:</label>
+                <input type="text" value={""} readOnly  className="input-small"/>
+              </div>
+              <div className="form-group">
+                <label>Moneda:</label>
+                <select
+                  className="desplegable"
+                  value={moneda}
+                  onChange={(e) => setMoneda(e.target.value)}
+                  
+                >
+                  <option value="">Seleccione</option>
+                  <option value="USD">USD</option>
+                  <option value="BS">BS</option>
+                </select>
+              </div>
+            </div>
+          </form>
+        </div>
+
       
-
-      <div className='TblProductos'>
-      <TblProductosFac productos={productos} subdetalles={subdetalles} />
-
-    </div>
-
+      </div>
+      
+      <div>
+    
+        {mostrarFiltros && (
+          <FiltrosBusquedaListadoFact filtros={filtros} setFiltros={setFiltros} />
+        )}
+        
+ 
+    
       </div> */}
+      
 
       {facturaSeleccionada && (
   <div className='contenedor-grande-tres'>
-    {/* <div className="nav-buttons">
-      <button onClick={handleAnterior} disabled={selectedIndex === null || selectedIndex === 0}>
-        Anterior
-      </button>
-      <button onClick={handleSiguiente} disabled={selectedIndex === null || selectedIndex === resultadosFiltrados.length - 1}>
-        Siguiente
-      </button>
-    </div> */}
     <div className="nav-buttons" >
       <div className="subnav-buttons">
         <button onClick={handleAnterior} disabled={selectedIndex === null || selectedIndex === 0}>
@@ -747,14 +843,33 @@ setFiltros(prev => ({
 
     <div className='Info-cliente-despacho'>
       <InfoClienteDespacho item={facturaSeleccionada} />
-      {infoDespacho && <InfoDespachoVentas despacho={infoDespacho} />}
+
+      <InfoDespachoVentas 
+          despacho={infoDespacho} 
+          sucursal={infoSucursal} 
+        />
+        
     </div>
 
     <div className='TblProductos'>
       <TblProductosFac productos={productos} subdetalles={subdetalles} tasa={tasa} />
     </div>
   </div>
+  
 )}
+
+<div>
+  <TablaListadoFcaturacion
+          // datos={mostrarFiltros ? resultadosFiltrados : resultados}
+          // onRowSelect={handleRowSelect}
+          datos={mostrarFiltros ? resultadosFiltrados : resultados}
+          onRowSelect={handleRowSelect}
+          selectedIndex={selectedIndex}
+          setSelectedIndex={setSelectedIndex}
+        />
+</div>
+
+
 
       
       

@@ -1,4 +1,4 @@
-.header {
+/* .header {
     display: flex;
     flex-direction: row;
     height: 85px;   
@@ -9,7 +9,26 @@
     padding-top: 10px;
     box-sizing: border-box; 
     
-  }
+  } */
+
+  .header {
+  position: sticky;
+  top: 0;
+  z-index: 999; /* Asegura que esté por encima de otros elementos */
+  background-color: white; /* Muy importante para evitar transparencia */
+  display: flex;
+  flex-direction: row;
+  height: 85px;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3rem;
+  /* padding-top: 2rem;
+  padding-bottom: 2rem; */
+  box-sizing: border-box;
+
+}
+
   
   /* .content-header {
     display: flex;

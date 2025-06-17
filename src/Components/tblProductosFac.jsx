@@ -97,7 +97,12 @@ const hasSubdetalles = (idVentaDet) => {
           <tbody>
             {productos.map(producto => (
             <React.Fragment key={producto.IdVentaDet}>
-              <tr onClick={() => setProductoSeleccionado(producto)}>
+              {/* <tr onClick={() => setProductoSeleccionado(producto)}> */}
+              <tr
+                onClick={() => setProductoSeleccionado(producto)}
+                className={productoSeleccionado?.IdVentaDet === producto.IdVentaDet ? 'selected-rowProduct' : ''}
+              >
+
                 <td>
                   {hasSubdetalles(producto.IdVentaDet) && (
                     <button

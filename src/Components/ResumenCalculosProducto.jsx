@@ -100,7 +100,7 @@ const monto2 = Total2/tasa
         <h3>Peso</h3>
         <div className="card"><p></p><span>{TotalPesoProcIndiv.toFixed(2)}</span></div>
         <div className="card"><p></p><span>{PesototalTodo.toFixed(2)}</span></div>
-        <div className="card"><p></p><span>{PesototalTodo.toFixed(2)}</span></div>
+        <div className="card"><p></p><span>{tasa.toFixed(2)}</span></div>
         {/* <div className="card"><p>Lista Precio</p><span>{productoSeleccionado.CodListaPrecios}</span></div> */}
       </div>
 
