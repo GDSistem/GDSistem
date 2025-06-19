@@ -6,6 +6,7 @@ import InfoClienteDespacho from '../../Components/InfoClienteDespacho';
 import FiltrosBusquedaListadoFact from '../../Components/FiltrosBusquedaListadoFact';
 import TblProductosFac from '../../Components/tblProductosFac';
 import InfoDespachoVentas from '../../Components/InfoDespachoVentas';
+import NuevoFacturacion from '../../Components/NuevoFacturacion';
 
 
 
@@ -45,6 +46,8 @@ function Facturacion() {
   const [tasa, setTasa] = useState(0);
   const [infoSucursal, setInfoSucursal] = useState(null);
   const [modoNuevo, setModoNuevo] = useState(false);
+  const [datosEditables, setDatosEditables] = useState(null);
+
 
 
   useEffect(() => {
@@ -272,6 +275,8 @@ useEffect(() => {
 
 const handleConsultar = async () => {
 
+  setModoNuevo(false);
+
 
   const {
     
@@ -367,6 +372,57 @@ setFiltros(prev => ({
         nula: item.Nula,
         idVenta: item.IdVenta,
         nomSucursal: item.NomSucursal,
+        IdEmpresa: item.IdEmpresa,
+        CodEmpresa: item.CodEmpresa,
+        NomEmpresa: item.NomEmpresa,
+        IdSucursal: item.IdSucursal,
+        IdTipoDoc: item.IdTipoDoc,
+        NomTipoDoc: item.NomTipoDoc,
+        Naturaleza: item.Naturaleza,
+        NControl: item.NControl,
+        IdCliente: item.IdCliente,
+        IdGrupoCliente: item.IdGrupoCliente,
+        CodGrupoCliente: item.CodGrupoCliente,
+        NomGrupoCliente: item.CodGrupoCliente,
+        Exportacion: item.Exportacion,
+        IdTipoPersona: item.IdTipoPersona,
+        CodTipoPersona: item.CodTipoPersona,
+        NomTipoPersona: item.NomTipoPersona,
+        Comentario: item.Comentario,
+        RetencionIva: item.RetencionIva,
+        FechaDoc: item.FechaDoc,
+        DiasCredito: item.DiasCredito,
+        FechaPromesa: item.FechaPromesa,
+        IdVendedorInt: item.IdVendedorInt,
+        CodVendedorInt: item.CodVendedorInt,
+        NomVendedorInt: item.NomVendedorInt,
+        IdVendedorExt: item.IdVendedorExt,
+        CodVendedorExt: item.CodVendedorExt,
+        NomVendedorExt: item.NomVendedorExt,
+        DireccionD: item.DireccionD,
+        PaisD: item.PaisD,
+        EstadoD: item.EstadoD,
+        CiudadD: item.CiudadD,
+        Telefono1D: item.Telefono1D,
+        Telefono2D: item.Telefono2D,
+        MontoIva: item.MontoIva,
+        TotalPeso: item.TotalPeso,
+        FechaContabilizada: item.FechaContabilizada,
+        Usuario: item.Usuario,
+        Equipo: item.Equipo,
+        FechaNula: item.FechaNula,
+        UsuarioNula: item.UsuarioNula,
+        EquipoNula: item.EquipoNula,
+        ComentarioNula: item.ComentarioNula,
+        Seguridad: item.Seguridad,
+        TipoCambio: item.TipoCambio,
+        usd: item.USD,
+        IdVentaAnt: item.IdVentaAnt,
+        PorcentajeIGTF: item.PorcentajeIGTF,
+        IGTFUS: item.IGTFUS,
+        codSucursal: item.codSucursal,
+        codTipoDoc: item.codTipoDoc,
+        
       }));
 
       
@@ -570,12 +626,19 @@ setFiltros(prev => ({
   console.log('informacion sucursar despacho', infoSucursal )
 
 
+const handleNuevo = () => {
+  setFacturaSeleccionada(null);  // Oculta la factura seleccionada actual
+  setModoNuevo(true);            // Activa el modo nuevo para mostrar NuevoFacturacion
+  // No limpiar numeroDocumento para que NuevoFacturacion pueda usarlo
+};
+
+
   return (
     <div className='bill'>
       <div className='Buscador'>
       <MenuPage onConsultar={handleConsultar}
       onModificar={() => alert('Modificar clicked!')}
-      onNuevo={() => alert('Nuevo clicked!')}
+      onNuevo={(handleNuevo)}
       onAnular={() => alert('Anular clicked!')}/>
       <div className='gran-container'>
 
@@ -693,10 +756,8 @@ setFiltros(prev => ({
 
       </div>
 
-      
-      
 
-      {facturaSeleccionada && (
+      {!modoNuevo && facturaSeleccionada && (
   <div className='contenedor-grande-tres'>
     <div className="nav-buttons" >
       <div className="subnav-buttons">
@@ -730,7 +791,17 @@ setFiltros(prev => ({
     </div>
 
     <div className='Info-cliente-despacho'>
-      <InfoClienteDespacho item={facturaSeleccionada} />
+      {/* <InfoClienteDespacho item={facturaSeleccionada} /> */}
+      <InfoClienteDespacho 
+  item={facturaSeleccionada} 
+  modoEdicion={modoNuevo}
+  onChangeCliente={(nuevoCliente) => {
+    setFacturaSeleccionada(prev => ({
+      ...prev,
+      clienteData: [nuevoCliente]
+    }));
+  }}
+/>
 
       <InfoDespachoVentas 
           despacho={infoDespacho} 
@@ -746,6 +817,7 @@ setFiltros(prev => ({
   
 )}
 
+{!modoNuevo && (
 <div>
   <TablaListadoFcaturacion
           // datos={mostrarFiltros ? resultadosFiltrados : resultados}
@@ -756,6 +828,14 @@ setFiltros(prev => ({
           setSelectedIndex={setSelectedIndex}
         />
 </div>
+)}
+
+{modoNuevo && (
+  <NuevoFacturacion 
+    resultados={resultados}
+    numeroDocumento={numeroDocumento}
+  />
+)}
 
 
 
