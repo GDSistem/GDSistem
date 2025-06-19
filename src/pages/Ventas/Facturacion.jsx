@@ -44,6 +44,8 @@ function Facturacion() {
   const [infoDespacho, setInfoDespacho] = useState(null);
   const [tasa, setTasa] = useState(0);
   const [infoSucursal, setInfoSucursal] = useState(null);
+  const [modoNuevo, setModoNuevo] = useState(false);
+
 
   useEffect(() => {
   console.log("✅ infoSucursal lista:", infoSucursal);
@@ -269,8 +271,6 @@ useEffect(() => {
 
 
 const handleConsultar = async () => {
-  // Obtener los valores desde los filtros
-
 
 
   const {
@@ -283,14 +283,7 @@ const handleConsultar = async () => {
     fechaHasta
   } = filtros;
 
-   
-
-
-
-
   const normalizar = (txt) => txt?.trim().toLowerCase();
-
-
 
 const codSucursalFinal = nombreSucursal
     ? (
@@ -700,112 +693,7 @@ setFiltros(prev => ({
 
       </div>
 
-      {/* <div className='gran-container'>
-
-
-       
-        <div className='files'>
-          <form>
-            <div className="form-row">
-            
-              <div className="form-group">
-                <label>Código Empresa:</label>
-                <input
-                  type="text"
-                  className="input-small"
-                  value={codigoEmpresa}
-                  onChange={handleEmpresaInput}
-                  onKeyDown={handleEmpresaKeyDown}
-                  placeholder="Ej: 01"
-                />
-              </div>
-              <div className="form-group">
-                <label>Empresa:</label>
-                <input type="text" value={nombreEmpresa} readOnly className='input-big' />
-              </div>
-              <div className="form-group">
-                <label> Tipo Documento:</label>
-                <select
-                  className="desplegable"
-                  value={codSeleccionado}
-                  onChange={(handleTipoDocChange) }>
-                    <option value="">-- Selecciona --</option>
-                    <option value="F">F</option>
-                    <option value="P">P</option>
-                    <option value="NC">NC</option>
-                    <option value="ND">ND</option>
-                    <option value="OI">OI</option>
-                   
-                </select>
-              </div>
-              <div className="form-group">
-                <label>Nombre Documento:</label>
-                <input type="text" value={nomTipoDoc} readOnly  className='input-big' />
-              </div>
-            </div>
-
-            <div className="form-row">
-              <div className="form-group">
-                <label>Código Sucursal:</label>
-                <input
-                  type="text"
-                  className="input-small"
-                  value={codigoSucursal}
-                  onChange={(e) => setCodigoSucursal(e.target.value)}
-                  onKeyDown={handleSucursalKeyDown}
-                  placeholder="Ej: A"
-                  disabled={!nombreEmpresa}
-                />
-              </div>
-              <div className="form-group">
-                <label>Sucursal:</label>
-                <input type="text" value={nombreSucursal} readOnly  className='input-big'/>
-              </div>
-              <div className="form-group">
-                <label># Documento:</label>
-                <input
-                  type="text"
-                  className="input-small"
-                  value={numeroDocumento}
-                  onChange={(e) => setCodigoSucursal(e.target.value)}
-                  onKeyDown={handleSucursalKeyDown}
-                  placeholder="Ej: A"
-             
-                />
-              </div>
-              <div className="form-group">
-                <label># Control:</label>
-                <input type="text" value={""} readOnly  className="input-small"/>
-              </div>
-              <div className="form-group">
-                <label>Moneda:</label>
-                <select
-                  className="desplegable"
-                  value={moneda}
-                  onChange={(e) => setMoneda(e.target.value)}
-                  
-                >
-                  <option value="">Seleccione</option>
-                  <option value="USD">USD</option>
-                  <option value="BS">BS</option>
-                </select>
-              </div>
-            </div>
-          </form>
-        </div>
-
       
-      </div>
-      
-      <div>
-    
-        {mostrarFiltros && (
-          <FiltrosBusquedaListadoFact filtros={filtros} setFiltros={setFiltros} />
-        )}
-        
- 
-    
-      </div> */}
       
 
       {facturaSeleccionada && (

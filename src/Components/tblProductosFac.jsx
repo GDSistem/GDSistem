@@ -55,6 +55,13 @@ const hasSubdetalles = (idVentaDet) => {
     );
   };
 
+  const productosOrdenados = [...productos].sort((a, b) => {
+  const itemA = parseInt(a.Item, 10);
+  const itemB = parseInt(b.Item, 10);
+  return itemA - itemB;
+});
+
+
 
   return (
     <div className='ContenedorGrand'>
@@ -95,7 +102,8 @@ const hasSubdetalles = (idVentaDet) => {
         </tr>
           </thead>
           <tbody>
-            {productos.map(producto => (
+            {/* {productos.map(producto => ( */}
+            {productosOrdenados.map(producto => (
             <React.Fragment key={producto.IdVentaDet}>
               {/* <tr onClick={() => setProductoSeleccionado(producto)}> */}
               <tr

@@ -1,24 +1,22 @@
 .bill {
     display: flex;
     flex-direction: column;
-    /* justify-content: center; */
-    /* align-items: center; */
     min-height: 80vh;
     background-color: #ffff;
-    /* margin-top: 15px; */
-    padding: 40px;
+    padding-left: 4rem;
+    padding-right: 4rem;
+    padding-bottom: 4rem;
+    padding-top: 0rem;
     
   }
   
   .gran-container{
-    /* display: flex;
-    flex-direction: row; */
+  
     display: flex;
-    justify-content: flex-start; /* alinea hacia la izquierda */
+    justify-content: flex-start; 
     gap: 40px; 
     padding-top: 20px;
-    /* padding-left: 30px; */
-    
+
   }
   .files {
    
@@ -28,23 +26,29 @@
   .files form {
     display: flex;
     flex-direction: column;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
+
+  
   
   .files label {
-    margin-top: 15px;
+    margin-top: 10px;
     margin-bottom: 5px;
     font-weight: bold;
     color: #333;
-    font-size: 14px;
+    font-size: 12px;
   }
   
   .files input {
-    padding: 10px;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
     border: 1px solid #ccc;
-    border-radius: 8px;
+    border-radius: 5px;
     font-size: 12px;
     transition: border-color 0.3s ease;
-    height: 20%;
+    height: 23%;
   }
   
   .files input:focus {
@@ -55,7 +59,7 @@
   .files input[readonly] {
     background-color: #f0f0f0;
     cursor: not-allowed;
-    height: 20%;
+    height: 23%;
   }
   
   .form-row {
@@ -67,8 +71,6 @@
   }
   
   .form-group {
-    /* flex: 1;
-    min-width: 180px; */
     display: flex;
     flex-direction: column;
   }
@@ -82,11 +84,11 @@
 
 .desplegable {
   width: 120px;
-  height: 40px;
+  height: 28px;
   padding: 6px 8px;
-  font-size: 14px;
+  font-size: 12px;
   border: 1px solid #ccc;
-  border-radius: 8px;
+  border-radius: 5px;
   box-sizing: border-box;
   background-color: #fff;
   color: #333;
@@ -98,10 +100,15 @@
 }
 
 .nav-buttons {
+  position: sticky;
+  top: 389px;
   display: flex;
   justify-content: space-between;
   gap: 16px; 
   margin-right: 30px;
+  background-color: #fff;
+  z-index: 60;
+  
 }
 
 .subnav-buttons{
@@ -146,28 +153,14 @@
 
 .Buscador {
   position: sticky;
-  top: 0;
-  background-color: white; /* para que no se vea transparente al hacer scroll */
-  z-index: 1000; /* para que quede por encima del resto */
-  padding-bottom: 10px;
+  top: 80px;
+  background-color: white; 
+  z-index: 1000; 
 }
 
-
-
-
-
-
-
-
-/* Contenedor principal */
 .contenedor-grande-tres {
   display: flex;
   flex-direction: column;
-  /* gap: 1rem; */
-  /* padding: 1rem; */
-  /* background-color: #f9f9fb; */
-  /* border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); */
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin-top: 4%;
 }
@@ -178,16 +171,14 @@
   gap: 1rem;
   background-color: white;
   padding: 0.4rem;
-  /* border: 1px solid #e0e0e0;
-  border-radius: 12px; */
 }
 
 
 .TblProductos {
   background-color: white;
   padding: 1.5rem;
-  /* border-radius: 12px;
-  border: 1px solid #e0e0e0; */
   overflow-x: auto;
 }
+
+
 
