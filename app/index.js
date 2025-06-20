@@ -30,6 +30,10 @@ app.use('/api/ventas', require('./routes/ventas/listado_routes.js'));
 app.use('/api/ventas', require('./routes/ventas/productos_routes.js'));
 app.use('/api/ventas', require('./routes/ventas/clientes_routes.js'));
 app.use('/api/ventas', require('./routes/ventas/despacho_routes.js'));
+app.use('/api/ventas', require('./routes/ventas/tipo_personas_routes.js'));
+app.use('/api/ventas', require('./routes/ventas/lista_precios_routes.js'));
+app.use('/api/ventas', require('./routes/ventas/vendedores_routes.js'));
+
 
 
 app.use('/api/documento', require('./routes/document_routes.js'));

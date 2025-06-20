@@ -2,7 +2,7 @@ const { obtenerCliente } = require('../../models/ventas/clientes_models'); // Ru
 
 // ✅ Ejemplo de payload esperado:
 // {
-//   "codCliente": "CLI0001"
+//   "codCliente": "00001"
 // }
 
 const getCliente = async (req, res) => {

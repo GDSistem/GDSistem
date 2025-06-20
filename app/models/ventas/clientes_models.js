@@ -3,7 +3,7 @@ const { poolPromise } = require('../../configs/database.js');
 
 const obtenerCliente = async (codCliente) => {
   try {
-    console.log('🔍 Buscando cliente desde VwClientes con CodCliente:', codCliente);
+    console.log('🔍 Buscando cliente desde TblClientes con CodCliente:', codCliente);
 
     const pool = await poolPromise;
 
@@ -12,14 +12,13 @@ const obtenerCliente = async (codCliente) => {
       .query(`
         SELECT
           IdCliente,
+          IdGrupoCliente,
+          IdTipoPersona,
+          IdVendedorInt,
+          IdVendedorExt,
+          IdListaPrecios,
           CodCliente,
           NomCliente,
-          IdGrupoCliente,
-          CodGrupoCliente,
-          NomGrupoCliente,
-          IdTipoPersona,
-          CodTipoPersona,
-          NomTipoPersona,
           Rif,
           Nit,
           Direccion,
@@ -33,25 +32,16 @@ const obtenerCliente = async (codCliente) => {
           Actividad,
           Observaciones,
           DiasCredito,
-          DiasAdicionales,
           MontoCredito,
           PorcentajeContado,
-          IdListaPrecios,
-          CodListaPrecios,
-          NomListaPrecios,
           RetencionIva,
           Exportacion,
-          IdVendedorInt,
-          CodVendedorInt,
-          NomVendedorInt,
-          IdVendedorExt,
-          CodVendedorExt,
-          NomVendedorExt,
+          DiasAdicionales,
           FechaCliente,
           Fecha,
           Usuario,
           Equipo
-        FROM SIGD.dbo.VwClientes
+        FROM SIGD.dbo.TblClientes
         WHERE CodCliente = @CodCliente
       `);
 
@@ -64,8 +54,9 @@ const obtenerCliente = async (codCliente) => {
 
     console.log('✅ Cliente encontrado:', cliente);
     return cliente;
+
   } catch (error) {
-    console.error('❌ Error al obtener cliente desde VwClientes:', error);
+    console.error('❌ Error al obtener cliente desde TblClientes:', error);
     throw error;
   }
 };
