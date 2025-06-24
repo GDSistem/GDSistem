@@ -1,3 +1,4 @@
+const sql = require('mssql');
 const { poolPromise } = require('../../configs/database.js');
 
 const obtenerListado = async (codEmpresa, codSucursal, codTipoDoc, fechaInicio, fechaFin) => {
@@ -11,101 +12,104 @@ const obtenerListado = async (codEmpresa, codSucursal, codTipoDoc, fechaInicio, 
   const pool = await poolPromise;
   const request = pool.request();
 
-  request.input('CodEmpresa', codEmpresa);
-  request.input('CodSucursal', codSucursal);
-  request.input('CodTipoDoc', codTipoDoc);
+  request.input('CodEmpresa', sql.VarChar, codEmpresa);
+  request.input('CodSucursal', sql.VarChar, codSucursal);
+  request.input('CodTipoDoc', sql.VarChar, codTipoDoc);
 
   if (fechaInicio) {
-    request.input('FechaInicio', fechaInicio);
+    request.input('FechaInicio', sql.DateTime, fechaInicio);
   }
   if (fechaFin) {
-    request.input('FechaFin', fechaFin);
+    request.input('FechaFin', sql.DateTime, fechaFin);
   }
 
   const result = await request.query(`
-    DECLARE @IdEmpresa INT;
-    DECLARE @IdSucursal INT;
-    DECLARE @IdTipoDoc INT;
-
-    SELECT @IdEmpresa = IdEmpresa FROM dbo.TblEmpresas WHERE CodEmpresa = @CodEmpresa;
-    SELECT @IdSucursal = IdSucursal FROM dbo.TblSucursales WHERE CodSucursal = @CodSucursal AND IdEmpresa = @IdEmpresa;
-    SELECT @IdTipoDoc = IdTipoDoc FROM dbo.TblTipoDoc WHERE CodTipoDoc = @CodTipoDoc;
-
-    IF @IdSucursal IS NOT NULL AND @IdTipoDoc IS NOT NULL
-    BEGIN
-      SELECT
-        IdVenta,
-        IdSucursal,
-        IdTipoDoc,
-        IdVentaAnt,
-        NDocumento,
-        NControl,
-        IdCliente,
-        NomCliente,
-        Exportacion,
-        IdTipoPersona,
-        Rif,
-        Nit,
-        Direccion,
-        Pais,
-        Estado,
-        Ciudad,
-        Telefono1,
-        Telefono2,
-        Fax,
-        EMail,
-        Comentario,
-        RetencionIva,
-        FechaDoc,
-        DiasCredito,
-        FechaPromesa,
-        IdVendedorInt,
-        IdVendedorExt,
-        DireccionD,
-        PaisD,
-        EstadoD,
-        CiudadD,
-        Telefono1D,
-        Telefono2D,
-        MontoBase,
-        MontoIva,
-        TotalPeso,
-        FechaContabilizada,
-        Fecha,
-        Usuario,
-        Equipo,
-        Nula,
-        FechaNula,
-        UsuarioNula,
-        EquipoNula,
-        ComentarioNula,
-        TipoCambio,
-        Reconversion,
-        TipoCambioBCV,
-        IGTF,
-        USD,
-        IGTFUS,
-        PorcentajeIGTF
-      FROM [SIGD].[dbo].[TblVentas]
-      WHERE IdSucursal = @IdSucursal
-        AND IdTipoDoc = @IdTipoDoc
-        AND (@FechaInicio IS NULL OR CONVERT(date, Fecha) >= CONVERT(date, @FechaInicio))
-        AND (@FechaFin IS NULL OR CONVERT(date, Fecha) <= CONVERT(date, @FechaFin))
-      ORDER BY Fecha DESC
-    END
-    ELSE
-    BEGIN
-      SELECT NULL AS CodTipoDoc
-    END
+    SELECT
+      IdVenta,
+      IdEmpresa,
+      CodEmpresa,
+      NomEmpresa,
+      IdSucursal,
+      CodSucursal,
+      NomSucursal,
+      IdTipoDoc,
+      CodTipoDoc,
+      NomTipoDoc,
+      Naturaleza,
+      NDocumento,
+      NControl,
+      IdCliente,
+      CodCliente,
+      NomCliente,
+      IdGrupoCliente,
+      CodGrupoCliente,
+      NomGrupoCliente,
+      Exportacion,
+      IdTipoPersona,
+      CodTipoPersona,
+      NomTipoPersona,
+      Rif,
+      Nit,
+      Direccion,
+      Pais,
+      Estado,
+      Ciudad,
+      Telefono1,
+      Telefono2,
+      Fax,
+      EMail,
+      Comentario,
+      RetencionIva,
+      FechaDoc,
+      DiasCredito,
+      FechaPromesa,
+      IdVendedorInt,
+      CodVendedorInt,
+      NomVendedorInt,
+      IdVendedorExt,
+      CodVendedorExt,
+      NomVendedorExt,
+      DireccionD,
+      PaisD,
+      EstadoD,
+      CiudadD,
+      Telefono1D,
+      Telefono2D,
+      MontoBase,
+      MontoIva,
+      MontoTotal,
+      TotalPeso,
+      FechaContabilizada,
+      Fecha,
+      Usuario,
+      Equipo,
+      Nula,
+      FechaNula,
+      UsuarioNula,
+      EquipoNula,
+      ComentarioNula,
+      Seguridad,
+      TipoCambio,
+      TipoCambioBCV,
+      IGTF,
+      USD,
+      IdVentaAnt,
+      PorcentajeIGTF,
+      IGTFUS
+    FROM SIGD.dbo.VwVentas
+    WHERE CodEmpresa = @CodEmpresa
+      AND CodSucursal = @CodSucursal
+      AND CodTipoDoc = @CodTipoDoc
+      AND (@FechaInicio IS NULL OR CONVERT(date, Fecha) >= CONVERT(date, @FechaInicio))
+      AND (@FechaFin IS NULL OR CONVERT(date, Fecha) <= CONVERT(date, @FechaFin))
+    ORDER BY Fecha DESC
   `);
 
-  return result.recordset
-    .filter(row => row.CodTipoDoc !== null)
-    .map(row => ({
-      ...row,
-      codSucursal,
-      codTipoDoc
-    }));
+  return result.recordset.map(row => ({
+    ...row,
+    codSucursal,
+    codTipoDoc
+  }));
 };
 
 module.exports = { obtenerListado };
