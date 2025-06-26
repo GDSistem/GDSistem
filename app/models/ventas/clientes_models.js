@@ -64,6 +64,7 @@ const obtenerCliente = async (codCliente) => {
 
     console.log('✅ Cliente encontrado:', cliente);
     return cliente;
+
   } catch (error) {
     console.error('❌ Error al obtener cliente desde VwClientes:', error);
     throw error;

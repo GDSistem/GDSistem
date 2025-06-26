@@ -1,83 +1,157 @@
-// import React, { useEffect, useState } from 'react';
-
-// function NuevoFacturacion({ resultados, numeroDocumento }) {
-//   const [facturaEncontrada, setFacturaEncontrada] = useState(null);
-//   const [cliente, setCliente] = useState(null);
-
-//   // Buscar factura con el mismo #Documento
-//   useEffect(() => {
-//     if (!numeroDocumento || !resultados || resultados.length === 0) return;
-
-//     const factura = resultados.find(
-//       (item) => item.numeroDocumento === numeroDocumento
-//     );
-
-//     if (factura) {
-//       setFacturaEncontrada(factura);
-//       buscarCliente(factura.codigoCliente);
-//     }
-//   }, [numeroDocumento, resultados]);
-
-//   const buscarCliente = async (codigoCliente) => {
-//     try {
-//       const response = await fetch("http://localhost:3000/api/ventas/factura/cliente", {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json"
-//         },
-//         body: JSON.stringify({ codCliente: codigoCliente })
-//       });
-
-//       if (!response.ok) {
-//         throw new Error("Error al consultar información del cliente");
-//       }
-
-//       const data = await response.json();
-//       if (data.success) {
-//         setCliente(data.data);
-//       } else {
-//         console.error("Cliente no encontrado");
-//       }
-//     } catch (error) {
-//       console.error("Error al obtener cliente:", error);
-//     }
-//   };
-
-//   return (
-//     <div className='nuevo-facturacion'>
-//       <h2>Nuevo Registro de Facturación</h2>
-
-//       {facturaEncontrada ? (
-//         <div>
-          
-
-//           {cliente && (
-//             <div>
-//               <h3>Datos del Cliente</h3>
-//               <p><strong>Nombre:</strong> {cliente.NomCliente}</p>
-//               <p><strong>RIF:</strong> {cliente.Rif}</p>
-//               <p><strong>Email:</strong> {cliente.Email}</p>
-//               {/* Puedes seguir agregando campos del cliente */}
-//             </div>
-//           )}
-//         </div>
-//       ) : (
-//         <p>No se encontró ninguna factura con ese número de documento.</p>
-//       )}
-//     </div>
-//   );
-// }
-
-// export default NuevoFacturacion;
-
 import React, { useEffect, useState } from 'react';
 import '../Styles/NuevoFacturacion.css'
+import NuevoInfoDespacho from '../Components/NuevoInfoDespacho';
+
 
 function NuevoFacturacion({ resultados, numeroDocumento }) {
   const [facturaEncontrada, setFacturaEncontrada] = useState(null);
   const [formData, setFormData] = useState({});
   const [facturaData, setFacturaData] = useState({});
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMensaje, setModalMensaje] = useState("");
 
+  const verificarCliente = async (codigoCliente) => {
+  if (!codigoCliente) return;
+
+  try {
+    const response = await fetch("http://localhost:3000/api/ventas/factura/cliente", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ codCliente: codigoCliente }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok && data.success) {
+      setFormData(prev => ({
+        ...prev,
+        ...data.data,
+      }));
+      setModalVisible(false); // Oculta el modal si estaba visible
+    } else {
+      setModalMensaje("No existe un cliente con ese código.");
+      setModalVisible(true);
+    }
+  } catch (error) {
+    console.error("Error al buscar cliente:", error);
+    setModalMensaje("Hubo un error al verificar el cliente.");
+    setModalVisible(true);
+  }
+};
+
+const verificarVendedor = async (codigo, campoCodigo, campoNombre) => {
+  if (!codigo) return;
+
+  try {
+    const response = await fetch("http://localhost:3000/api/ventas/factura/vendedores", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ codVendedor: codigo }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok && data.success && data.data.length > 0) {
+      const vendedor = data.data[0];
+      setFormData(prev => ({
+        ...prev,
+        [campoCodigo]: vendedor.CodVendedor,
+        [campoNombre]: vendedor.NomVendedor
+      }));
+      setModalVisible(false);
+    } else {
+      setModalMensaje(`El código del ${campoNombre === 'NomVendedorInt' ? 'vendedor interno' : 'vendedor externo'} no existe.`);
+      setModalVisible(true);
+      setFormData(prev => ({
+        ...prev,
+        [campoNombre]: ""
+      }));
+    }
+  } catch (error) {
+    console.error("Error al verificar vendedor:", error);
+    setModalMensaje("Hubo un error al verificar el vendedor.");
+    setModalVisible(true);
+  }
+};
+
+
+const verificarTipoPersona = async (codigoTipoPersona) => {
+  if (!codigoTipoPersona) return;
+
+  try {
+    const response = await fetch("http://localhost:3000/api/ventas/factura/tipo-personas", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ codTipoPersona: codigoTipoPersona }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok && data.success && data.data.length > 0) {
+      const tipoPersona = data.data[0];
+      setFormData(prev => ({
+        ...prev,
+        CodTipoPersona: tipoPersona.CodTipoPersona,
+        NomTipoPersona: tipoPersona.NomTipoPersona
+      }));
+      setModalVisible(false);
+    } else {
+      setModalMensaje("El código de tipo de persona no existe.");
+      setModalVisible(true);
+      setFormData(prev => ({
+        ...prev,
+        NomTipoPersona: "" // Borra el nombre si no existe
+      }));
+    }
+  } catch (error) {
+    console.error("Error al buscar tipo de persona:", error);
+    setModalMensaje("Hubo un error al verificar el tipo de persona.");
+    setModalVisible(true);
+  }
+};
+
+const verificarListaPrecios = async (codigoListaPrecios) => {
+  if (!codigoListaPrecios) return;
+
+  try {
+    const response = await fetch("http://localhost:3000/api/ventas/factura/lista-precios", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ codListaPrecios: codigoListaPrecios }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok && data.length > 0) {
+      const lista = data[0];
+      setFormData(prev => ({
+        ...prev,
+        CodListaPrecios: lista.CodListaPrecios,
+        NomListaPrecios: lista.NomListaPrecios
+      }));
+      setModalVisible(false);
+    } else {
+      setModalMensaje("El código de lista de precios no existe.");
+      setModalVisible(true);
+      setFormData(prev => ({
+        ...prev,
+        NomListaPrecios: "" // Limpia si no existe
+      }));
+    }
+  } catch (error) {
+    console.error("Error al verificar lista de precios:", error);
+    setModalMensaje("Hubo un error al verificar la lista de precios.");
+    setModalVisible(true);
+  }
+};
 
   useEffect(() => {
     if (!numeroDocumento || !resultados?.length) return;
@@ -148,6 +222,7 @@ function NuevoFacturacion({ resultados, numeroDocumento }) {
   return (
     <div className='nuevo-facturacion'>
       <h2>Nuevo Registro de Facturación</h2>
+      <NuevoInfoDespacho factura={facturaEncontrada} />
 
       {facturaEncontrada ? (
         <form className="formulario-cliente">
@@ -159,13 +234,23 @@ function NuevoFacturacion({ resultados, numeroDocumento }) {
       <div className="form-group2">
         <label>Código Cliente</label>
         {/* <input type="text" name="CodCliente" value={formData.CodCliente || ''} onChange={handleChange} /> */}
-        <input type="text" name="CodCliente" value={formData.CodCliente || ''} onChange={handleChange} />
+        {/* <input type="text" name="CodCliente" value={formData.CodCliente || ''} onChange={handleChange} /> */}
+
+    <input
+  type="text"
+  name="CodCliente"
+  value={formData.CodCliente || ''}
+  onChange={handleChange}
+  onBlur={(e) => verificarCliente(e.target.value)} // Detecta salida del input
+/>
       </div>
       <div className="form-group2">
         <label>Nombre Cliente</label>
         <input type="text" name="NomCliente" value={formData.NomCliente || ''} onChange={handleChange} />
       </div>
     </div>
+
+
 
     <div className="bloque-doble">
       <div className="form-group2">
@@ -211,7 +296,15 @@ function NuevoFacturacion({ resultados, numeroDocumento }) {
         <div className="bloque-doble">
          <div className="form-group2">
             <label>Código Tipo Persona:</label>
-            <input type="text" name="CodTipoPersona" value={formData.CodTipoPersona || ''} onChange={handleChange} />
+            {/* <input type="text" name="CodTipoPersona" value={formData.CodTipoPersona || ''} onChange={handleChange} /> */}
+            <input
+            type="text"
+            name="CodTipoPersona"
+            value={formData.CodTipoPersona || ''}
+            onChange={handleChange}
+            onBlur={(e) => verificarTipoPersona(e.target.value)} // Validación al salir del input
+            />
+
             </div>
 
             <div className="form-group2">
@@ -225,7 +318,15 @@ function NuevoFacturacion({ resultados, numeroDocumento }) {
     <div className="bloque-doble">
         <div className="form-group2">
             <label>Código Lista Precios:</label>
-            <input type="text" name="CodListaPrecios" value={formData.CodListaPrecios || ''} onChange={handleChange} />
+            {/* <input type="text" name="CodListaPrecios" value={formData.CodListaPrecios || ''} onChange={handleChange} /> */}
+            <input
+            type="text"
+            name="CodListaPrecios"
+            value={formData.CodListaPrecios || ''}
+            onChange={handleChange}
+            onBlur={(e) => verificarListaPrecios(e.target.value)} // Ejecuta la verificación al salir del campo
+            />
+
             </div>
 
             <div className="form-group2">
@@ -239,7 +340,15 @@ function NuevoFacturacion({ resultados, numeroDocumento }) {
 
         <div className="form-group2">
              <label>Código Vendedor Interno:</label>
-            <input type="text" name="CodVendedorInt" value={formData.CodVendedorInt || ''} onChange={handleChange} />
+            {/* <input type="text" name="CodVendedorInt" value={formData.CodVendedorInt || ''} onChange={handleChange} /> */}
+            <input
+            type="text"
+            name="CodVendedorInt"
+            value={formData.CodVendedorInt || ''}
+            onChange={handleChange}
+            onBlur={(e) => verificarVendedor(e.target.value, "CodVendedorInt", "NomVendedorInt")}
+            />
+
            </div>
 
             <div className="form-group2">
@@ -252,7 +361,15 @@ function NuevoFacturacion({ resultados, numeroDocumento }) {
         <div className="bloque-doble">
         <div className="form-group2">
             <label>Código Vendedor Externo:</label>
-            <input type="text" name="CodVendedorExt" value={formData.CodVendedorExt || ''} onChange={handleChange} />
+            {/* <input type="text" name="CodVendedorExt" value={formData.CodVendedorExt || ''} onChange={handleChange} /> */}
+            <input
+            type="text"
+            name="CodVendedorExt"
+            value={formData.CodVendedorExt || ''}
+            onChange={handleChange}
+            onBlur={(e) => verificarVendedor(e.target.value, "CodVendedorExt", "NomVendedorExt")}
+            />
+
             </div>
 
             <div className="form-group2">
@@ -465,6 +582,15 @@ function NuevoFacturacion({ resultados, numeroDocumento }) {
 
 
     </div>
+    {modalVisible && (
+  <div className="modal-overlay">
+    <div className="modal">
+      <p>{modalMensaje}</p>
+      <button onClick={() => setModalVisible(false)}>Cerrar</button>
+    </div>
+  </div>
+)}
+
 
  
   </div>
@@ -473,8 +599,16 @@ function NuevoFacturacion({ resultados, numeroDocumento }) {
       ) : (
         <p>No se encontró ninguna factura con ese número de documento.</p>
       )}
+
+    <div>
+        {/* {facturaEncontrada && <NuevoInfoDespacho factura={facturaEncontrada} />} */}
+        
+
     </div>
+    </div>
+    
   );
+  
 }
 
 export default NuevoFacturacion;

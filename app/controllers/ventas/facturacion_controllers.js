@@ -4,7 +4,7 @@ const { obtenerFactura} = require('../../models/ventas/facturacion_models.js'); 
 // Payload que espera recibir
 // {
 //   "codEmpresa": "01",
-//   "codSucursal": "A" 
+//   "codSucursal": "A",
 //   "codTipoDoc": "01"
 // }
 const getFactura = async (req, res) => {
