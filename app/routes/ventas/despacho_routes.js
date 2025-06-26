@@ -4,6 +4,6 @@ const { getDespacho, getSucursalDespacho } = require('../../controllers/ventas/d
 
 // Ruta para obtener los despachos según empresa, sucursal y tipo de documento
 router.post('/factura/despacho', getDespacho);
-router.post('/factura/sucursal', getSucursalDespacho);
+router.post('/factura/despacho-sucursal', getSucursalDespacho);
 
 module.exports = router;

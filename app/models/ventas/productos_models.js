@@ -228,4 +228,4 @@ const obtenerProductoPorCodigo = async (codProducto) => {
   return result.recordset;
 };
 
-module.exports = { obtenerProductos };
+module.exports = { obtenerProductos, obtenerProductoPorCodigo };
