@@ -1,193 +1,96 @@
-// import React from 'react'
-// import "../Styles/TablaListadoFacturacion.css"
-
-// function TablaListadoFcaturacion({ data }) {
-//   return (
-//     <div className="factura-table-container">
-//       <table className="factura-table">
-//         <thead>
-//           <tr>
-//             <th>Tipo Doc</th>
-//             <th>Sucursal</th>
-//             <th>Fecha</th>
-//             <th>Hora</th>
-//             <th># Documento</th>
-//             <th>Cód Cliente</th>
-//             <th>Cliente</th>
-//             <th>Tasa</th>
-//             <th>Monto</th>
-//             <th>IVA</th>
-//             <th>IGTF</th>
-//             <th>Total</th>
-//             <th>Nula</th>
-//             {/* <th>Cliente Pag</th>
-//             <th>Producto</th>
-//             <th>Despacho</th> */}
-
-//           </tr>
-//         </thead>
-//         <tbody>
-//           {data.length === 0 ? (
-//             <tr><td colSpan="13" style={{ textAlign: 'center' }}>Sin resultados</td></tr>
-//           ) : (
-//             data.map((item, index) => (
-//               <tr key={index}>
-//                 <td>{item.tipoDocumento}</td>
-//                 <td>{item.codigoSucursal}</td>
-//                 <td>{item.fecha}</td>
-//                 <td>{item.hora}</td>
-//                 <td>{item.numeroDocumento}</td>
-//                 <td>{item.codigoCliente}</td>
-//                 <td>{item.cliente}</td>
-//                 <td>{item.tasa}</td>
-//                 <td>{item.monto}</td>
-//                 <td>{item.montoIVA}</td>
-//                 <td>{item.igtf}</td>
-//                 <td>{item.total}</td>
-//                 <td>{item.nula ? 'Sí' : 'No'}</td>
-//               </tr>
-//             ))
-//           )}
-//         </tbody>
-//       </table>
-//     </div>
-// );
-// }
-
-// export default TablaListadoFcaturacion
-
-// import React, { useState } from 'react';
-// import "../Styles/TablaListadoFacturacion.css";
-
-// function TablaListadoFacturacion({ data }) {
-//   const [selectedItem, setSelectedItem] = useState(null);
-//   const [clienteInfo, setClienteInfo] = useState(null);
-//   const [despachoInfo, setDespachoInfo] = useState(null);
-
-//   const handleRowClick = (item) => {
-//     setSelectedItem(item);
-
-//     // Aquí puedes hacer el fetch real cuando tengas los endpoints.
-//     // Simulamos la respuesta:
-//     setClienteInfo({
-//       codigo: item.codigoCliente,
-//       nombre: item.cliente,
-//       direccion: "Calle Falsa 123",
-//       telefono: "0412-1234567"
-//     });
-
-//     setDespachoInfo({
-//       numeroDespacho: "D-" + item.numeroDocumento,
-//       fechaDespacho: item.fecha,
-//       status: "Entregado"
-//     });
-//   };
-
-//   return (
-//     <div className="factura-table-container">
-//       <table className="factura-table">
-//         <thead>
-//           <tr>
-//             <th>Tipo Doc</th>
-//             <th>Sucursal</th>
-//             <th>Fecha</th>
-//             <th>Hora</th>
-//             <th># Documento</th>
-//             <th>Cód Cliente</th>
-//             <th>Cliente</th>
-//             <th>Tasa</th>
-//             <th>Monto</th>
-//             <th>IVA</th>
-//             <th>IGTF</th>
-//             <th>Total</th>
-//             <th>Nula</th>
-//           </tr>
-//         </thead>
-//         <tbody>
-//           {data.length === 0 ? (
-//             <tr><td colSpan="13" style={{ textAlign: 'center' }}>Sin resultados</td></tr>
-//           ) : (
-//             data.map((item, index) => (
-//               <tr key={index} onClick={() => handleRowClick(item)} className="clickable-row">
-//                 <td>{item.tipoDocumento}</td>
-//                 <td>{item.codigoSucursal}</td>
-//                 <td>{item.fecha}</td>
-//                 <td>{item.hora}</td>
-//                 <td>{item.numeroDocumento}</td>
-//                 <td>{item.codigoCliente}</td>
-//                 <td>{item.cliente}</td>
-//                 <td>{item.tasa}</td>
-//                 <td>{item.monto}</td>
-//                 <td>{item.montoIVA}</td>
-//                 <td>{item.igtf}</td>
-//                 <td>{item.total}</td>
-//                 <td>{item.nula ? 'Sí' : 'No'}</td>
-//               </tr>
-//             ))
-//           )}
-//         </tbody>
-//       </table>
-
-//       {/* Mostrar info del cliente */}
-//       {clienteInfo && (
-//         <div className="cliente-info">
-//           <h3>Información del Cliente</h3>
-//           <p><strong>Código:</strong> {clienteInfo.codigo}</p>
-//           <p><strong>Nombre:</strong> {clienteInfo.nombre}</p>
-//           <p><strong>Dirección:</strong> {clienteInfo.direccion}</p>
-//           <p><strong>Teléfono:</strong> {clienteInfo.telefono}</p>
-//         </div>
-//       )}
-
-//       {/* Mostrar info del despacho */}
-//       {despachoInfo && (
-//         <div className="despacho-info">
-//           <h3>Información del Despacho</h3>
-//           <p><strong>Número:</strong> {despachoInfo.numeroDespacho}</p>
-//           <p><strong>Fecha:</strong> {despachoInfo.fechaDespacho}</p>
-//           <p><strong>Estado:</strong> {despachoInfo.status}</p>
-//         </div>
-//       )}
-//     </div>
-//   );
-// }
-
-// export default TablaListadoFacturacion;
-
 import React, { useState } from 'react';
 import "../Styles/TablaListadoFacturacion.css";
 
-function TablaListadoFacturacion({ datos, onRowSelect }) {
+function TablaListadoFacturacion({ datos, onRowSelect, selectedIndex, setSelectedIndex}) {
     console.log("Datos recibidos", datos);
 
-    const [selectedIndex, setSelectedIndex] = useState(null);
+    // const [selectedIndex, setSelectedIndex] = useState(null);
 
     const handleRowClick = (item, index) => {
     setSelectedIndex(index);
     onRowSelect(item);
   };
 
+  const columnas = [
+  { key: "tipoDocumento", label: "Tipo Doc", visible: true },
+  { key: "codigoSucursal", label: "Sucursal", visible: true },
+  { key: "fecha", label: "Fecha", visible: true },
+  { key: "hora", label: "Hora", visible: true },
+  { key: "numeroDocumento", label: "# Documento", visible: true },
+  { key: "codigoCliente", label: "Cód Cliente", visible: true },
+  { key: "cliente", label: "Cliente", visible: true },
+  { key: "tasa", label: "Tasa", visible: true },
+  { key: "monto", label: "Monto", visible: true },
+  { key: "montoIVA", label: "IVA", visible: true },
+  { key: "igtf", label: "IGTF", visible: true },
+  { key: "total", label: "Total", visible: true },
+  { key: "nula", label: "Nula", visible: true }
+];
+
+const [columnConfig, setColumnConfig] = useState(columnas);
+
+const toggleColumn = (key) => {
+  setColumnConfig((prev) =>
+    prev.map((col) =>
+      col.key === key ? { ...col, visible: !col.visible } : col
+    )
+  );
+};
+
+const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+const handleSort = (key) => {
+  setSortConfig((prev) => ({
+    key,
+    direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc'
+  }));
+};
+
+const sortedDatos = [...datos].sort((a, b) => {
+  if (!sortConfig.key) return 0;
+  const valA = a[sortConfig.key]?.toString().toLowerCase() ?? "";
+  const valB = b[sortConfig.key]?.toString().toLowerCase() ?? "";
+  if (valA < valB) return sortConfig.direction === 'asc' ? -1 : 1;
+  if (valA > valB) return sortConfig.direction === 'asc' ? 1 : -1;
+  return 0;
+});
+
+
+
 
 
   return (
-   
+
+    
+   <div className='Container-listado'>
+    <div className="column-controls">
+    {columnConfig.map((col) => (
+      <label key={col.key} style={{ marginRight: "10px" }}>
+        <input
+          type="checkbox"
+          checked={col.visible}
+          onChange={() => toggleColumn(col.key)}
+        />
+        {col.label}
+      </label>
+    ))}
+  </div>
     <div className="factura-table-container">
+        
   <table className="factura-table">
     <thead>
       <tr>
-        <th>Tipo Doc</th>
-        <th>Sucursal</th>
-        <th>Fecha</th>
-        <th>Hora</th>
-        <th># Documento</th>
-        <th>Cód Cliente</th>
-        <th>Cliente</th>
-        <th>Tasa</th>
-        <th>Monto</th>
-        <th>IVA</th>
-        <th>IGTF</th>
-        <th>Total</th>
-        <th>Nula</th>
+        {columnConfig.filter(c => c.visible).map((col) => (
+      // <th key={col.key}>{col.label}</th>
+      <th key={col.key} onClick={() => handleSort(col.key)} style={{ cursor: 'pointer' }}>
+        {col.label} {sortConfig.key === col.key && (
+    <span className="sort-arrow">
+      {sortConfig.direction === 'asc' ? '▲' : '▼'}
+    </span>
+  )}
+         {/* {sortConfig.key === col.key ? (sortConfig.direction === 'asc' ? '▲' : '▼') : ''} */}
+      </th>
+    ))}
+        
       </tr>
     </thead>
   </table>
@@ -198,21 +101,22 @@ function TablaListadoFacturacion({ datos, onRowSelect }) {
         {datos.length === 0 ? (
           <tr><td colSpan="13" style={{ textAlign: 'center' }}>Sin resultados</td></tr>
         ) : (
-            datos.map((item, index) => (
-            <tr key={index} onClick={() => handleRowClick(item, index)}  className={`clickable-row ${selectedIndex === index ? 'selected-row' : ''}`}>
-              <td>{item.tipoDocumento}</td>
-              <td>{item.codigoSucursal}</td>
-              <td>{item.fecha}</td>
-              <td>{item.hora}</td>
-              <td>{item.numeroDocumento}</td>
-              <td>{item.codigoCliente}</td>
-              <td>{item.cliente}</td>
-              <td>{item.tasa}</td>
-              <td>{item.monto}</td>
-              <td>{item.montoIVA}</td>
-              <td>{item.igtf}</td>
-              <td>{item.total}</td>
-              <td>{item.nula ? 'Sí' : 'No'}</td>
+            sortedDatos.map((item, index) => (
+            // <tr key={index} onClick={() => handleRowClick(item, index)}  className={`clickable-row ${selectedIndex === index ? 'selected-row' : ''}`}>
+            <tr
+            key={index}
+            onClick={() => handleRowClick(item, index)}
+            className={`clickable-row ${selectedIndex === index ? 'selected-row' : ''} ${item.nula ? 'nula-row' : ''}`}
+          >
+
+            {columnConfig.filter(c => c.visible).map((col) => (
+          <td key={col.key}>
+            {col.key === "numeroDocumento" ? item[col.key].replace(/\D/g, '') :
+             col.key === "nula" ? (item[col.key] ? "Sí" : "No") :
+             item[col.key] !== undefined && item[col.key] !== null ? item[col.key] : ""
+             }
+          </td>
+        ))}
             </tr>
           ))
         )}
@@ -220,10 +124,10 @@ function TablaListadoFacturacion({ datos, onRowSelect }) {
     </table>
   </div>
 </div>
+</div>
 
   );
 }
 
 export default TablaListadoFacturacion;
-
 

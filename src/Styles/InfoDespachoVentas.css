@@ -1,0 +1,83 @@
+.despacho-info {
+  background-color: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  width: 45%;
+  margin: 30px auto;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', sans-serif;
+  color: #333;
+  align-items: center;
+}
+
+/* Título visible y claro */
+.titulodespacho{
+
+  font-size: 24px;
+  margin-bottom: 30px;
+  color: #1e1e1e;
+  text-align: center;
+}
+
+/* Botones de tabs */
+.tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+
+.tabs button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background-color: #e0e0e0;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.tabs button.active {
+  background-color: #444595;
+  color: white;
+}
+
+.tabs button:hover {
+  background-color: #c5c5c5;
+}
+
+/* Contenedor de los datos en dos columnas */
+.info-columns {
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+  flex-wrap: wrap;
+  /* align-items: center; */
+  align-items: flex-start;
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-top: 10px;
+
+}
+
+/* Columnas izquierda y derecha */
+.info-left,
+.info-right {
+  flex: 1;
+  min-width: 200px;
+  
+}
+
+/* Texto de datos */
+.despacho-content p {
+  margin: 5px 0;
+  line-height: 1.5;
+  font-size: 14px;
+  color: #000;
+}
+
+.despacho-content strong {
+  color: #000000;
+  font-size: 15px;
+}
+

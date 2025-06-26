@@ -1,0 +1,111 @@
+.nuevo-facturacion {
+  padding: 2rem;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.nuevo-facturacion h2 {
+  margin-bottom: 1rem;
+  text-align: center;
+  color: #333;
+}
+
+.formulario-cliente {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5rem;
+}
+
+.contenedor-izquierdo, .contenedor-derecho {
+  flex: 1 1 45%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.bloque-doble {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-group2 {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group2 label {
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  color: #555;
+  font-size: 12px;margin-top: 5px;
+}
+
+.form-group2 input,
+.form-group2 select {
+  padding: 0.25rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 12px;
+  background-color: #fff;
+  transition: border 0.2s ease;
+}
+
+.form-group2 input:focus,
+.form-group2 select:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  align-self: flex-start;
+}
+
+.input-disabled {
+  background-color: #f0f0f0 !important;
+  color: black !important;
+  cursor: not-allowed !important;
+}
+
+.contenedor-subsub {
+  background-color: #f2f3ff; /* Fondo general más claro */
+  padding: 1rem;
+  border-radius: 10px;
+  margin-top: 1rem;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  text-align: center;
+  max-width: 400px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+.modal button {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+

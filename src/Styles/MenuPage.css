@@ -61,6 +61,7 @@
     flex-direction: row;
     align-items: flex-end;
     justify-content: left;
+    padding-top: 30px;
     gap: 15px; /* Espacio entre botones */
   }
   

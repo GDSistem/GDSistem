@@ -3,14 +3,28 @@
   height: 100vh;
   display: flex;
   flex-direction: row;
+  overflow-x: hidden;
 }
 
 .dashboard {
   display: flex;
   flex-direction: column;
-  height: 100vh;  /* Asegura que ocupe toda la altura de la ventana */
-  width: 100%;    /* Ocupará todo el ancho disponible */
-  position: relative;
+  height: 100vh;
+  overflow-x: hidden;
+  transition: all 0.3s ease;
+  /* width: calc(100vw - 160px); 
+  margin-left: 160px;  */
+  overflow-x: hidden; /* evita scroll horizontal */
 }
+
+.dashboard.expandido {
+  width: calc(100vw - 160px);
+  margin-left: 160px;
+}
+.dashboard.contraido {
+  width: calc(100vw - 60px);
+  margin-left: 60px;
+}
+
 
 

@@ -1,4 +1,4 @@
-.contenedor-filtros {
+/* .contenedor-filtros {
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
@@ -9,5 +9,43 @@
     padding: 6px;
     border: 1px solid #ccc;
     border-radius: 4px;
-  }
+  } */
+
+  .contenedor-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+  justify-content: flex-start;
+  padding: 1rem;
+  /* background-color: #f9fafb; */
+  /* border: 1px solid #e5e7eb; */
+  /* border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05); */
+}
+
+.contenedor-filtros input,
+.contenedor-filtros .select-filtro {
+  padding: 0.2rem 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 5px;
+  font-size: 12px;
+  background-color: #fff;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  min-width: 180px;
+  flex: 1 1 auto;
+}
+
+.contenedor-filtros input:focus,
+.contenedor-filtros .select-filtro:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.contenedor-filtros input:hover,
+.contenedor-filtros .select-filtro:hover {
+  border-color: #9ca3af;
+}
+
   

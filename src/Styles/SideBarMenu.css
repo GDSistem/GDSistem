@@ -1,56 +1,103 @@
-.sideBar{
-    height: 100%;
-    width: 160px;
-    background-color: #444595;
-    /* padding: 20px; */
+.sideBar {
+  height: 100vh;
+  background-color: #444595;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: fixed;
+  justify-content: flex-start;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  transition: width 0.3s ease;
+  border-top-right-radius: 16px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 10px;
+  gap: 0;
+}
 
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start; /* Para que los elementos se alineen desde arriba */
-    align-items: center; 
-    position: relative;
-   
-    
-    
+.sideBar.expandido {
+  width: 160px;
+}
+
+.sideBar.contraido {
+  width: 60px;
+}
+
+.logo {
+  margin: 5px 0;
 }
 
 .logo img {
-    max-width: 120px;  /* Ajusta el tamaño máximo del logo */
-    max-height: 80px;  /* Ajusta el tamaño máximo del logo */
-    width: auto;  /* Esto mantiene la proporción del logo */
-    height: auto;  /* Esto mantiene la proporción del logo */
-    margin-bottom: 10px;  /* Si deseas espacio debajo del logo */
-    margin-top: 20px;
+  max-width: 100px;
+  max-height: 100px;
+  margin: 5px 0;
 }
 
-/* Estilo para los botones */
+.sideBar.contraido .logo-img {
+  max-width: 40px;
+  max-height: 40px;
+}
+
+/* Botones del menú */
 .sidebar-button {
-    width: 130px;
-    margin: 5px 0;
-    padding: 10px;
-    background-color: #444595;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 14px;
-    text-transform: capitalize;
-    transition: background-color 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+  width: 100%;
+  margin: 4px 0;
+  padding: 15px;
+  background-color: #444595;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-start;
+  transition: all 0.3s ease;
 }
 
-/* Efecto hover */
+.sideBar.contraido .sidebar-button {
+  justify-content: center; /* Centrar ícono */
+  padding: 12px 0;
+}
 .sidebar-button:hover {
-    background-color: #6f71db;
+  background-color: #6f71db;
+}
+
+.menu-text {
+  white-space: nowrap;
 }
 
 .sidebar-button svg {
-    margin-bottom: 5px; /* Ajusta el espacio entre el ícono y el texto */
-    font-size: 18px; /* Ajusta el tamaño del ícono si es necesario */
+  font-size: 18px;
+  transition: font-size 0.3s;
 }
+
+.sideBar.contraido .sidebar-button svg {
+  font-size: 24px; /* Íconos más grandes en modo contraído */
+}
+
+.sideBar.contraido .toggle-btn {
+    margin-top: 15px;
+  align-self: center; /* Centra el botón horizontalmente */
+}
+
+.sideBar.contraido .toggle-btn svg {
+  font-size: 24px;
+}
+
+
+.toggle-btn {
+  /* margin: 10px 0; */
+  cursor: pointer;
+  color: white;
+  font-size: 20px;
+  align-self: flex-end;
+  padding: 5px;
+}
+
 
 
 
