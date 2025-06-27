@@ -1,4 +1,4 @@
-const { obtenerProductos } = require('../../models/ventas/productos_models.js'); // Asegúrate de que la ruta sea correcta
+const { obtenerProductos, obtenerProductoPorCodigo} = require('../../models/ventas/productos_models.js'); // Asegúrate de que la ruta sea correcta
 
 // ════════════════════════════════════════════════════════════════════════════
 //  Payload esperado:

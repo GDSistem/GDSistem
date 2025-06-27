@@ -1,71 +1,89 @@
-/* .despacho-info {
-  border: 2px solid #ccc;
+.nuevo-despacho-info {
+  background-color: #f9fafc;
+  border: 1px solid #e0e6ed;
   border-radius: 10px;
   padding: 20px;
-  margin-top: 25px;
-  background-color: #f9f9f9;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin-top: 20px;
+  font-family: 'Segoe UI', sans-serif;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
-.titulodespacho {
+.nuevo-despacho-titulo {
   font-size: 20px;
-  font-weight: bold;
+  font-weight: 600;
   margin-bottom: 15px;
-  color: #333;
+  color: #2a3f54;
   text-align: center;
 }
 
-.tabs {
+.nuevo-despacho-tabs {
   display: flex;
   justify-content: center;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   gap: 10px;
 }
 
-.tabs button {
-  background-color: #e0e0e0;
-  border: none;
+.nuevo-despacho-tabs button {
+  background-color: #ffffff;
+  border: 1px solid #ccc;
   padding: 8px 16px;
   border-radius: 6px;
   cursor: pointer;
+  transition: all 0.2s ease;
   font-weight: 500;
-  transition: background-color 0.3s ease;
 }
 
-.tabs button:hover {
-  background-color: #d1d1d1;
+.nuevo-despacho-tabs button:hover {
+  background-color: #f0f0f0;
 }
 
-.tabs button.active {
-  background-color: #007BFF;
-  color: white;
+.nuevo-despacho-tabs .activo {
+  background-color: #2a9d8f;
+  color: #fff;
+  border-color: #2a9d8f;
 }
 
-.despacho-content {
-  padding: 10px 15px;
-  background-color: white;
-  border-radius: 6px;
-  border: 1px solid #ddd;
+.nuevo-despacho-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.info-columns {
+.nuevo-despacho-columns {
   display: flex;
   justify-content: space-between;
+  gap: 20px;
   flex-wrap: wrap;
 }
 
-.info-left,
-.info-right {
-  width: 48%;
+.nuevo-despacho-left,
+.nuevo-despacho-right {
+  flex: 1;
+  min-width: 250px;
 }
 
-.info-left p,
-.info-right p {
-  margin: 6px 0;
-  color: #444;
+.nuevo-despacho-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.nuevo-despacho-group label {
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.nuevo-despacho-group input {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
   font-size: 14px;
+  background-color: #fff;
+  transition: border-color 0.2s ease;
 }
 
-strong {
-  color: #000;
-} */
+.nuevo-despacho-group input:focus {
+  border-color: #2a9d8f;
+  outline: none;
+}

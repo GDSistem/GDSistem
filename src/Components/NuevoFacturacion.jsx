@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import '../Styles/NuevoFacturacion.css'
 import NuevoInfoDespacho from '../Components/NuevoInfoDespacho';
+import NuevoTablaProductos from '../Components/NuevoTablaProductos';
 
 
 function NuevoFacturacion({ resultados, numeroDocumento }) {
@@ -190,6 +191,8 @@ const verificarListaPrecios = async (codigoListaPrecios) => {
         UsuarioNula: facturaOriginal.UsuarioNula,
         EquipoNula: facturaOriginal.EquipoNula,
         ComentarioNula: facturaOriginal.ComentarioNula,
+        codSucursal: facturaOriginal.codSucursal,
+        NomSucursal: facturaOriginal.NomSucursal,
     
 
         // agrega los que necesites
@@ -222,7 +225,6 @@ const verificarListaPrecios = async (codigoListaPrecios) => {
   return (
     <div className='nuevo-facturacion'>
       <h2>Nuevo Registro de Facturación</h2>
-      <NuevoInfoDespacho factura={facturaEncontrada} />
 
       {facturaEncontrada ? (
         <form className="formulario-cliente">
@@ -601,10 +603,16 @@ const verificarListaPrecios = async (codigoListaPrecios) => {
       )}
 
     <div>
-        {/* {facturaEncontrada && <NuevoInfoDespacho factura={facturaEncontrada} />} */}
         
+        <NuevoInfoDespacho factura={facturaData} formData={formData} />
 
     </div>
+
+    <div>
+        <NuevoTablaProductos/>
+    </div>
+
+    
     </div>
     
   );

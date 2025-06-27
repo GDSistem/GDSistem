@@ -421,6 +421,7 @@ setFiltros(prev => ({
         PorcentajeIGTF: item.PorcentajeIGTF,
         IGTFUS: item.IGTFUS,
         codSucursal: item.codSucursal,
+        NomSucursal: item.NomSucursal,
         codTipoDoc: item.codTipoDoc,
         
       }));
