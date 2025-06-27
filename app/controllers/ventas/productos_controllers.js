@@ -1,4 +1,4 @@
-const { obtenerProductos, obtenerProductoPorCodigo} = require('../../models/ventas/productos_models.js'); // Asegúrate de que la ruta sea correcta
+const { obtenerProductos, obtenerProductoPorCodigo, obtenerSubProductoPorCodigo} = require('../../models/ventas/productos_models.js'); // Asegúrate de que la ruta sea correcta
 
 // ════════════════════════════════════════════════════════════════════════════
 //  Payload esperado:
@@ -77,4 +77,31 @@ const getProducto = async (req, res) => {
   }
 };
 
-module.exports = { getProductos, getProducto };
+
+// Payload a enviar 
+// {
+//   "codSubProducto": "SUB123" // ejemplo de string
+// }
+const getSubProductoPorCodigo = async (req, res) => {
+  try {
+    const { codSubProducto } = req.body; // <-- CORREGIDO: ahora busca en el body
+
+    if (!codSubProducto) {
+      return res.status(400).json({ message: "El código del subproducto es requerido." });
+    }
+
+    const subProducto = await obtenerSubProductoPorCodigo(codSubProducto);
+
+    if (!subProducto || subProducto.length === 0) {
+      return res.status(404).json({ message: "Subproducto no encontrado." });
+    }
+
+    res.status(200).json(subProducto[0]); // o `subProducto` si esperas varios
+  } catch (error) {
+    console.error("Error al obtener subproducto:", error);
+    res.status(500).json({ message: "Error del servidor." });
+  }
+};
+
+
+module.exports = { getProductos, getProducto, getSubProductoPorCodigo };
