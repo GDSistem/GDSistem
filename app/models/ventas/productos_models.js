@@ -187,7 +187,7 @@ const obtenerProductos = async (idVenta, nDocumento) => {
   };
 };
 
-//Modelo para buscar la informacion de los productos
+// Modelo para buscar la información de los productos
 const obtenerProductoPorCodigo = async (codProducto) => {
   const pool = await poolPromise;
   const request = pool.request();
@@ -196,36 +196,136 @@ const obtenerProductoPorCodigo = async (codProducto) => {
 
   const result = await request.query(`
     SELECT
+      [IdTipo],
+      [CodTipo],
+      [NomTipo],
       [IdClase],
+      [CodClase],
+      [NomClase],
       [IdProducto],
-      [IdTipoMedida],
-      [IdUnidadMedida],
-      [IdMoneda],
-      [IdColor],
-      [IdTipoProducto],
-      [IdUsoProducto],
       [CodProducto],
       [NomProducto],
       [Espesor],
+      [IdTipoMedida],
+      [CodTipoMedida],
+      [NomTipoMedida],
+      [IdUnidadMedida],
+      [CodUnidadMedida],
+      [NomUnidadMedida],
       [Peso],
+      [IdMoneda],
+      [CodMoneda],
+      [NomMoneda],
       [Diametro],
       [Dificultad],
       [Desarrollo],
+      [IdColor],
+      [CodColor],
+      [NomColor],
+      [IdTipoProducto],
+      [CodTipoProducto],
+      [NomTipoProducto],
+      [IdUsoProducto],
+      [CodUsoProducto],
+      [NomUsoProducto],
       [ProductoEditable],
-      [EsAjuste],
       [Comentario],
-      [DirecDibujo],
       [Det],
       [SubDet],
       [Fecha],
       [Usuario],
       [Equipo],
+      [DirecDibujo],
+      [SNAlto],
+      [SNAncho],
+      [SNLargo],
+      [SNLados],
+      [PermisoVender],
+      [EsAjuste],
       [Dibujo]
-    FROM [SIGD].[dbo].[TblProductos]
+    FROM [SIGD].[dbo].[VwProductos]
     WHERE CodProducto = @CodProducto
   `);
 
   return result.recordset;
 };
 
-module.exports = { obtenerProductos, obtenerProductoPorCodigo };
+
+// Modelo para buscar la información de los subproductos
+const obtenerSubProductoPorCodigo = async (codSubProducto) => {
+  const pool = await poolPromise;
+  const request = pool.request();
+
+  request.input('CodSubProducto', codSubProducto);
+
+  const result = await request.query(`
+    SELECT
+      [IdTipo],
+      [CodTipo],
+      [NomTipo],
+      [IdClase],
+      [CodClase],
+      [NomClase],
+      [IdProducto],
+      [CodProducto],
+      [NomProducto],
+      [IdSubProducto],
+      [CodSubProducto],
+      [NomSubProducto],
+      [SubProductoEditable],
+      [MedidaEditable],
+      [Alto],
+      [Ancho],
+      [Largo],
+      [Redondea5],
+      [IdTipoPatente],
+      [CodTipoPatente],
+      [NomTipoPatente],
+      [IdTipoIva],
+      [CodTipoIva],
+      [NomTipoIva],
+      [Fecha],
+      [Usuario],
+      [Equipo],
+      [ProductoEditable],
+      [IdTipoMedida],
+      [CodTipoMedida],
+      [NomTipoMedida],
+      [SNAlto],
+      [SNAncho],
+      [SNLargo],
+      [SNLados],
+      [IdUnidadMedida],
+      [CodUnidadMedida],
+      [NomUnidadMedida],
+      [Peso],
+      [IdMoneda],
+      [CodMoneda],
+      [NomMoneda],
+      [TipoCambio],
+      [IdTipoProducto],
+      [CodTipoProducto],
+      [NomTipoProducto],
+      [IdUsoProducto],
+      [CodUsoProducto],
+      [NomUsoProducto],
+      [PermisoVender],
+      [Det],
+      [SubDet],
+      [PrecioEditable],
+      [Proceso],
+      [Inventario],
+      [EsAjuste],
+      [Desperdicio],
+      [Rotura],
+      [Ubicacion]
+    FROM [SIGD].[dbo].[VwSubProductos]
+    WHERE CodSubProducto = @CodSubProducto
+  `);
+
+  return result.recordset;
+};
+
+
+
+module.exports = { obtenerProductos, obtenerProductoPorCodigo, obtenerSubProductoPorCodigo };

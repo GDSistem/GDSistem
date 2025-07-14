@@ -1,4 +1,4 @@
-.nuevo-despacho-info {
+/* .nuevo-despacho-info {
   background-color: #f9fafc;
   border: 1px solid #e0e6ed;
   border-radius: 10px;
@@ -86,4 +86,125 @@
 .nuevo-despacho-group input:focus {
   border-color: #2a9d8f;
   outline: none;
+} */
+
+
+.nuevo-despacho-info {
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  width: 90%;
+  margin: 30px auto;
+  /* box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1); */
+  font-family: 'Segoe UI', sans-serif;
+  color: #333;
 }
+
+.nuevo-despacho-titulo {
+  font-size: 24px;
+  margin-bottom: 30px;
+  color: #1e1e1e;
+  text-align: center;
+  font-weight: 700;
+}
+
+/* Tabs mejorados */
+.nuevo-despacho-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.nuevo-despacho-tabs button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background-color: #e0e0e0;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  font-size: 12px;
+}
+
+.nuevo-despacho-tabs button:hover {
+  background-color: #c5c5c5;
+}
+
+.nuevo-despacho-tabs .activo {
+  background-color: #444595;
+  color: white;
+}
+
+/* Contenedor principal de contenido */
+.nuevo-despacho-content {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* Columnas divididas */
+.nuevo-despacho-columns {
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+  flex-wrap: wrap;
+  padding: 10px 30px;
+  align-items: flex-start;
+}
+
+.nuevo-despacho-left,
+.nuevo-despacho-right {
+  flex: 1;
+  min-width: 220px;
+}
+
+/* Grupo de inputs */
+.nuevo-despacho-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.nuevo-despacho-group label {
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #444;
+  font-size: 12px;
+}
+
+.nuevo-despacho-group input {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 12px;
+  background-color: #fff;
+  transition: border-color 0.2s ease;
+}
+
+.nuevo-despacho-group input:focus {
+  border-color: #444595;
+  outline: none;
+}
+
+/* Estilo responsivo */
+@media (max-width: 768px) {
+  .nuevo-despacho-columns {
+    flex-direction: column;
+    padding: 0 10px;
+  }
+
+  .nuevo-despacho-info {
+    padding: 16px;
+  }
+
+  .nuevo-despacho-titulo {
+    font-size: 20px;
+  }
+
+  .nuevo-despacho-group input {
+    font-size: 12px;
+    padding: 8px 10px;
+  }
+}
+
